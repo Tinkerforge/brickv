@@ -51,15 +51,16 @@ class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftwar
     # Messages.
     MESSAGE_INFO_START = '''With this utility you can check and update all the \
 Tinkerforge bindings and Tinkerforge Brick Viewer installed in your RED Brick.<br/><br/>
-To check whether you need updates click the <b>"Check for Updates"</b> button below.'''
+To check for updates click the <b>Check for Updates</b> button below.'''
     MESSAGE_INFO_STATE_UPDATE_DONE = 'Update successful!'
     MESSAGE_INFO_STATE_NO_UPDATES_AVAILABLE = 'There are no updates available for the RED Brick.'
     MESSAGE_INFO_STATE_UPDATES_AVAILABLE = '<b>The following updates are available:</b>'
-    MESSAGE_INFO_STATE_UPDATE_IN_PROGRESS = 'Updating RED Brick Tinkerforge software.\
-\n\nDepending on the number of updates available and the current load of the \
-RED Brick it can take a while for the update process to finish. If you close \
-this window before the update has finished then the current update process will \
-be cancelled.\n\nPlease wait...'
+    MESSAGE_INFO_STATE_UPDATE_IN_PROGRESS = '''Updating RED Brick Tinkerforge software.<br/><br/>
+Depending on the number of updates available and the current load of the
+RED Brick it can take <b>up to 2 hours</b> for the update process to finish. If you close
+this window before the update has finished then the current update process will
+be cancelled.<br/><br/>
+Please wait...'''
     MESSAGE_INFO_STATE_CHECKING_FOR_UPDATES = 'Checking if Tinkerforge software needs to be updated.\n\nPlease wait...'
     MESSAGE_ERR_UPDATE = 'Error while updating'
     MESSAGE_ERR_CHECK_LATEST_VERSIONS = 'Error while getting latest versions from tinkerforge.com. \
@@ -531,7 +532,9 @@ Please make sure that your internet connection is working.'
             elif d['name'] == 'vbnet':
                 msg += self.FMT_LI.format('VB.NET Bindings', d['from'], d['to'])
 
-        msg += '</ul><br/>'
+        msg += '</ul>'
+        msg += '''<b>Notice:</b> The update might take <b>up to 2 hours</b>.
+During the process it might look like being stuck on the Ruby bindings update. This is expected, please be patient!'''
 
         self.tedit_main.setText(msg)
 
