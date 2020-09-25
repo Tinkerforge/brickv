@@ -67,7 +67,17 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         elif d == 1:
             self.label_uptime.setText('1 Day, {0:d}:{1:02d}:{2:02d}'.format(h, m, s))
         else:
-            self.label_uptime.setText('{0} Day, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
+            self.label_uptime.setText('{0} Days, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
+
+        m, s = divmod(int(state.time_since_state_change/1000), 60)
+        h, m = divmod(m, 60)
+        d, h = divmod(h, 24)
+        if d == 0:
+            self.label_time_since_state_change.setText('{0:d}:{1:02d}:{2:02d}'.format(h, m, s))
+        elif d == 1:
+            self.label_time_since_state_change.setText('1 Day, {0:d}:{1:02d}:{2:02d}'.format(h, m, s))
+        else:
+            self.label_time_since_state_change.setText('{0} Days, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
 
     def low_level_state_cb(self, state):
         if state.resistances[0] > 100000:
@@ -81,13 +91,19 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
             res_pp = '{0} Ohm'.format(state.resistances[1])
 
         self.label_led_state.setText(LED_STATE[state.led_state])
+        self.label_adc_value_cp_pe.setText(str(state.adc_values[0]))
+        self.label_voltage_cp_pe.setText('{0:.2f} V'.format(state.voltages[0]))
+        self.label_voltage_peak_cp_pe.setText('{0:.2f} V'.format(state.voltages[2]))
         self.label_resistance_cp_pe.setText(res_cp)
+        self.label_adc_value_pp_pe.setText(str(state.adc_values[1]))
+        self.label_voltage_pp_pe.setText('{0:.2f} V'.format(state.voltages[1]))
         self.label_resistance_pp_pe.setText(res_pp)
         self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
         self.label_contactor.setText(CONTACTOR[state.gpio[3]])
         self.label_gpio_enable.setText(GPIO[state.gpio[0]])
         self.label_gpio_led.setText(GPIO[state.gpio[1]])
         self.label_gpio_motor_switch.setText(GPIO[state.gpio[2]])
+        self.label_gpio_motor_fault.setText(GPIO[state.gpio[4]])
 
     def get_hardware_configuration_async(self, conf):
         self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[conf.jumper_configuration])
