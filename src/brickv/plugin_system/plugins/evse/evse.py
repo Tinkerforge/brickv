@@ -50,33 +50,15 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.evse = self.device
 
         self.cbe_state = CallbackEmulator(self.evse.get_state, None, self.state_cb, self.increase_error_count)
+        self.cbe_low_level_state = CallbackEmulator(self.evse.get_low_level_state, None, self.low_level_state_cb, self.increase_error_count)
+
     
     def state_cb(self, state):
-        if state.resistance[0] > 100000:
-            res_cp = 'Open'
-        else:
-            res_cp = '{0} Ohm'.format(state.resistance[0])
-
-        if state.resistance[1] > 100000:
-            res_pp = 'Open'
-        else:
-            res_pp = '{0} Ohm'.format(state.resistance[1])
-
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
-        self.label_led_state.setText(LED_STATE[state.led_state])
-        self.label_resistance_cp_pe.setText(res_cp)
-        self.label_resistance_pp_pe.setText(res_pp)
-        self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
-        self.label_contactor.setText(CONTACTOR[state.gpio[3]])
         self.label_contactor_input.setText(CONTACTOR_STATE[state.contactor_state in (1, 3)])
         self.label_contactor_output.setText(CONTACTOR_STATE[state.contactor_state in (2, 3)])
         self.label_contactor_error.setText(str(state.contactor_error))
-        self.label_gpio_enable.setText(GPIO[state.gpio[0]])
-        self.label_gpio_led.setText(GPIO[state.gpio[1]])
-        self.label_gpio_motor_switch.setText(GPIO[state.gpio[2]])
         self.label_lock_state.setText(LOCK_STATE[state.lock_state])
-        self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[state.jumper_configuration])
-        self.label_lock_switch.setText(LOCK_SWITCH[state.has_lock_switch])
         m, s = divmod(int(state.uptime/1000), 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)
@@ -87,11 +69,38 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         else:
             self.label_uptime.setText('{0} Day, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
 
+    def low_level_state_cb(self, state):
+        if state.resistances[0] > 100000:
+            res_cp = 'Open'
+        else:
+            res_cp = '{0} Ohm'.format(state.resistances[0])
+
+        if state.resistances[1] > 100000:
+            res_pp = 'Open'
+        else:
+            res_pp = '{0} Ohm'.format(state.resistances[1])
+
+        self.label_led_state.setText(LED_STATE[state.led_state])
+        self.label_resistance_cp_pe.setText(res_cp)
+        self.label_resistance_pp_pe.setText(res_pp)
+        self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
+        self.label_contactor.setText(CONTACTOR[state.gpio[3]])
+        self.label_gpio_enable.setText(GPIO[state.gpio[0]])
+        self.label_gpio_led.setText(GPIO[state.gpio[1]])
+        self.label_gpio_motor_switch.setText(GPIO[state.gpio[2]])
+
+    def get_hardware_configuration_async(self, conf):
+        self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[conf.jumper_configuration])
+        self.label_lock_switch.setText(LOCK_SWITCH[conf.has_lock_switch])
+
     def start(self):
+        async_call(self.evse.get_hardware_configuration, None, self.get_hardware_configuration_async, self.increase_error_count)
         self.cbe_state.set_period(100)
+        self.cbe_low_level_state.set_period(100)
 
     def stop(self):
         self.cbe_state.set_period(0)
+        self.cbe_low_level_state.set_period(0)
 
     def destroy(self):
         pass
