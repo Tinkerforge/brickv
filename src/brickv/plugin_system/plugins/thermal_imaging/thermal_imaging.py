@@ -2,6 +2,7 @@
 """
 Thermal Imaging Plugin
 Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 thermal_imaging.py: Thermal Imaging Plugin Implementation
 
@@ -115,6 +116,8 @@ class ThermalImage(QWidget):
         # Standard
         standard = []
 
+        # The palette is gnuplot's PM3D palette.
+        # See here for details: https://stackoverflow.com/questions/28495390/thermal-imaging-palette
         for x in range(256):
             x /= 255.0
             r = int(round(255 * math.sqrt(x)))
