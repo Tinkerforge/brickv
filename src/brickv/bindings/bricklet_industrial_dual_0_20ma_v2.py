@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -224,7 +224,7 @@ class BrickletIndustrialDual020mAV2(Device):
 
     def get_sample_rate(self):
         """
-        Returns the gain as set by :func:`Set Sample Rate`.
+        Returns the sample rate as set by :func:`Set Sample Rate`.
         """
         self.check_validity()
 
@@ -477,8 +477,7 @@ class BrickletIndustrialDual020mAV2(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
-        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.

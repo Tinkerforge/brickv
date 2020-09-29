@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -519,7 +519,7 @@ class BrickletNFC(Device):
 
     def cardemu_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
-        Writes the NDEF messages that is to be transferred to the NFC peer.
+        Writes the NDEF message that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -594,7 +594,7 @@ class BrickletNFC(Device):
 
     def p2p_write_ndef_low_level(self, ndef_length, ndef_chunk_offset, ndef_chunk_data):
         """
-        Writes the NDEF messages that is to be transferred to the NFC peer.
+        Writes the NDEF message that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size for P2P transfer is 255 byte.
 
@@ -859,8 +859,7 @@ class BrickletNFC(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
-        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
@@ -1027,7 +1026,7 @@ class BrickletNFC(Device):
 
     def cardemu_write_ndef(self, ndef):
         """
-        Writes the NDEF messages that is to be transferred to the NFC peer.
+        Writes the NDEF message that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size in Cardemu mode is 255 byte.
 
@@ -1057,7 +1056,7 @@ class BrickletNFC(Device):
 
     def p2p_write_ndef(self, ndef):
         """
-        Writes the NDEF messages that is to be transferred to the NFC peer.
+        Writes the NDEF message that is to be transferred to the NFC peer.
 
         The maximum supported NDEF message size for P2P transfer is 255 byte.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-11.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -699,7 +699,7 @@ class BrickletPerformanceStepper(Device):
 
     def get_short_configuration(self):
         """
-        Returns the configuration as set by :func:`Set Misc Configuration`.
+        Returns the configuration as set by :func:`Set Short Configuration`.
         """
         self.check_validity()
 

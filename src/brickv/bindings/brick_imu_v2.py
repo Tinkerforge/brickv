@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -724,7 +724,7 @@ class BrickIMUV2(Device):
         function corresponds to the maximum baudrate (see :func:`Set SPITFP Baudrate Config`).
 
         Regulatory testing is done with the default baudrate. If CE compatibility
-        or similar is necessary in you applications we recommend to not change
+        or similar is necessary in your applications we recommend to not change
         the baudrate.
 
         .. versionadded:: 2.0.5$nbsp;(Firmware)

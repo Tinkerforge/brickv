@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-07-07.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -248,7 +248,7 @@ class BrickletUnknown(Device):
         """
         This function is equivalent to the normal enumerate function.
         It is used to trigger the initial enumeration of CoMCU-Bricklets.
-        See :cb:`Enumerate`.
+        See :cb:`Enumerate` callback.
         """
         self.check_validity()
 
@@ -269,8 +269,7 @@ class BrickletUnknown(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
-        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.

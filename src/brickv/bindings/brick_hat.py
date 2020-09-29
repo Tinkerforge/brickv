@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-06-08.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -368,14 +368,12 @@ class BrickHAT(Device):
 
     def get_identity(self):
         """
-        Returns the UID, the UID where the Bricklet is connected to,
+        Returns the UID, the UID where the HAT is connected to
+        (typically '0' as the HAT is the root device in the topology),
         the position, the hardware and firmware version as well as the
         device identifier.
 
-        The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        The Raspberry Pi HAT (Zero) Brick is always at position 'i' and the Bricklet
-        connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
-        position 'z'.
+        The HAT (Zero) Brick is always at position 'i'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
