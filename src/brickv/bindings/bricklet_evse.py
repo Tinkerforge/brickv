@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-25.      #
+# This file was automatically generated on 2020-09-29.      #
 #                                                           #
 # Python Bindings Version 2.1.26                            #
 #                                                           #
@@ -21,6 +21,7 @@ except ValueError:
 GetState = namedtuple('State', ['iec61851_state', 'contactor_state', 'contactor_error', 'lock_state', 'time_since_state_change', 'uptime'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch'])
 GetLowLevelState = namedtuple('LowLevelState', ['low_level_mode_enabled', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'motor_direction', 'motor_duty_cycle'])
+GetADCCalibration = namedtuple('ADCCalibration', ['calibration_ongoing', 'min_value', 'max_value'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -39,6 +40,8 @@ class BrickletEVSE(Device):
     FUNCTION_GET_HARDWARE_CONFIGURATION = 2
     FUNCTION_GET_LOW_LEVEL_STATE = 3
     FUNCTION_SET_LOW_LEVEL_OUTPUT = 4
+    FUNCTION_CALIBRATE_ADC = 5
+    FUNCTION_GET_ADC_CALIBRATION = 6
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -109,6 +112,8 @@ class BrickletEVSE(Device):
         self.response_expected[BrickletEVSE.FUNCTION_GET_HARDWARE_CONFIGURATION] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_LOW_LEVEL_STATE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_LOW_LEVEL_OUTPUT] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSE.FUNCTION_CALIBRATE_ADC] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_ADC_CALIBRATION] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -147,7 +152,7 @@ class BrickletEVSE(Device):
         """
         self.check_validity()
 
-        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 35, '! B H 2H 3h 2I 5! H H'))
+        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 34, '! B H 2H 3h 2I 5! ! H'))
 
     def set_low_level_output(self, low_level_mode_enabled, cp_duty_cycle, motor_direction, motor_duty_cycle, relay_enabled, password):
         """
@@ -163,6 +168,24 @@ class BrickletEVSE(Device):
         password = int(password)
 
         self.ipcon.send_request(self, BrickletEVSE.FUNCTION_SET_LOW_LEVEL_OUTPUT, (low_level_mode_enabled, cp_duty_cycle, motor_direction, motor_duty_cycle, relay_enabled, password), '! H ! H H I', 0, '')
+
+    def calibrate_adc(self, password):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        password = int(password)
+
+        return self.ipcon.send_request(self, BrickletEVSE.FUNCTION_CALIBRATE_ADC, (password,), 'I', 9, '!')
+
+    def get_adc_calibration(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return GetADCCalibration(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ADC_CALIBRATION, (), '', 13, '! h h'))
 
     def get_spitfp_error_count(self):
         """
