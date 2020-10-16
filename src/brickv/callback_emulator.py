@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 import threading
 import logging
 import time
+import queue
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -52,7 +53,7 @@ class CallbackEmulator(QObject):
         self.use_result_signal = use_result_signal
         self.debug_exception = debug_exception
         self.thread = None
-        self.thread_id = 0
+        self.period_queue = None
 
         if self.use_result_signal:
             self.qtcb_result.connect(self.cb_result)
@@ -64,11 +65,23 @@ class CallbackEmulator(QObject):
                 self.qtcb_error.connect(self.error_callback)
 
     def set_period(self, period): # milliseconds
-        self.thread_id += 1 # force current thread (if any) to exit eventually
+        assert period >= 0, period
 
-        if period > 0:
-            self.thread = threading.Thread(target=self.loop, args=(self.thread_id, period), daemon=True)
-            self.thread.start()
+        if self.thread == None:
+            if period > 0:
+                self.period_queue = queue.Queue()
+                self.period_queue.put(period / 1000)
+
+                self.thread = threading.Thread(target=self.loop, args=(self.period_queue,), daemon=True)
+                self.thread.start()
+        else:
+            if period != 0:
+                self.period_queue.put(period)
+            else:
+                self.period_queue.put(None)
+                self.period_queue = None
+
+                self.thread = None
 
     def cb_result(self, result):
         arguments = tuple()
@@ -90,21 +103,22 @@ class CallbackEmulator(QObject):
 
         self.result_callback(*arguments)
 
-    def loop(self, thread_id, period):
+    def loop(self, period_queue):
+        period = 0
         monotonic_timestamp = time.monotonic()
-        first = True
 
-        while thread_id == self.thread_id:
-            if not first:
-                elapsed = time.monotonic() - monotonic_timestamp
-                remaining = max(period / 1000.0 - elapsed, 0)
-                time.sleep(remaining)
+        while True:
+            elapsed = time.monotonic() - monotonic_timestamp
+            remaining = max(period - elapsed, 0)
 
-                monotonic_timestamp = time.monotonic()
+            try:
+                period = period_queue.get(timeout=remaining)
+            except queue.Empty:
+                pass
 
-            first = False
+            monotonic_timestamp = time.monotonic()
 
-            if thread_id != self.thread_id:
+            if period == None:
                 break
 
             try:
