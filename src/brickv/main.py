@@ -41,6 +41,7 @@ import threading
 import subprocess
 from copy import deepcopy
 import platform
+import urllib.parse
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -68,11 +69,11 @@ def prepare_package(package_name):
 prepare_package('brickv')
 
 from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR, QUrl
+from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
-                            QMessageBox, QSplashScreen
+                            QMessageBox, QSplashScreen, QSizePolicy, QFileDialog
 
 # QOperatingSystemVersion is only available since Qt 5.9
 try:
@@ -227,7 +228,7 @@ class BrickViewer(QApplication):
 def error_report_main():
     error_message = sys.stdin.read()
     label_suffix, error_message = error_message.split('!!!')
-    error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
+    formatted_error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
 
     app = QApplication(sys.argv)
 
@@ -253,15 +254,46 @@ def error_report_main():
     right_widget.setLayout(QVBoxLayout())
     right_widget.layout().setContentsMargins(0, 0, 0, 0)
 
-    label = QLabel("Please report this error to <a href='mailto:info@tinkerforge.com'>info@tinkerforge.com</a>.<br/>" +
+    top_widget = QWidget()
+    top_widget.setLayout(QHBoxLayout())
+    top_widget.layout().setContentsMargins(0, 0, 0, 0)
+
+    top_right_widget = QWidget()
+    top_right_widget.setLayout(QVBoxLayout())
+    top_right_widget.layout().setContentsMargins(0, 0, 0, 0)
+
+    right_widget.layout().addWidget(top_widget)
+
+    mail_url = 'mailto:info@tinkerforge.com?subject=BrickV Error Report&body=PLEASE ALSO REPORT WHAT YOU TRIED TO DO, WHEN THE ERROR WAS REPORTED.{}'.format(urllib.parse.quote("\n\n"+error_message))
+
+    label = QLabel("Please report this error to <a href='{}'>info@tinkerforge.com</a>.<br/>".format(mail_url) +
                    "Please also report what you tried to do, when the error was reported.<br/><br/>" +
                    "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.{}".format(label_suffix))
     label.setWordWrap(True)
     label.setOpenExternalLinks(True)
-    right_widget.layout().addWidget(label)
+
+    # Add stretch to get maximum horizontal space for the label
+    top_widget.layout().addWidget(label, 1)
+    top_widget.layout().addWidget(top_right_widget)
+
+    def save():
+        date = datetime.datetime.now().replace(microsecond=0).isoformat()
+        date = date.replace('T', '_').replace(':', '-')
+        filename, _selected_filter = QFileDialog.getSaveFileName(widget, "Save Error Report", "brickv_error_report_{}.txt".format(date))
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(error_message)
+
+    btn = QPushButton("Save to file")
+    btn.clicked.connect(save)
+    top_right_widget.layout().addWidget(btn)
+
+    btn = QPushButton("Send per mail")
+    btn.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(mail_url)))
+    top_right_widget.layout().addWidget(btn)
 
     tb = QTextBrowser()
-    tb.setHtml(error_message)
+    tb.setHtml(formatted_error_message)
     right_widget.layout().addWidget(tb)
 
     cbox = QCheckBox("Show this message again")
