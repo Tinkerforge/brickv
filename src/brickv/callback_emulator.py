@@ -54,6 +54,7 @@ class CallbackEmulator(QObject):
         self.debug_exception = debug_exception
         self.thread = None
         self.period_queue = None
+        self.enable_ref = None
 
         if self.use_result_signal:
             self.qtcb_result.connect(self.cb_result)
@@ -69,15 +70,19 @@ class CallbackEmulator(QObject):
 
         if self.thread == None:
             if period > 0:
+                self.enable_ref = [True]
+
                 self.period_queue = queue.Queue()
                 self.period_queue.put(period / 1000)
 
-                self.thread = threading.Thread(target=self.loop, args=(self.period_queue,), daemon=True)
+                self.thread = threading.Thread(target=self.loop, args=(self.period_queue, self.enable_ref), daemon=True)
                 self.thread.start()
         else:
             if period != 0:
                 self.period_queue.put(period)
             else:
+                self.enable_ref[0] = False
+
                 self.period_queue.put(None)
                 self.period_queue = None
 
@@ -103,11 +108,11 @@ class CallbackEmulator(QObject):
 
         self.result_callback(*arguments)
 
-    def loop(self, period_queue):
+    def loop(self, period_queue, enable_ref):
         period = 0
         monotonic_timestamp = time.monotonic()
 
-        while True:
+        while enable_ref[0]:
             elapsed = time.monotonic() - monotonic_timestamp
             remaining = max(period - elapsed, 0)
 
@@ -132,14 +137,18 @@ class CallbackEmulator(QObject):
                 if self.debug_exception:
                     logging.exception('Error while getting callback result')
 
+                if not enable_ref[0]:
+                    break
+
                 if self.pass_exception_to_error_callback:
                     self.qtcb_error_with_exception.emit(e)
                 else:
                     self.qtcb_error.emit(e)
-
-                continue
-
-            if self.use_result_signal:
-                self.qtcb_result.emit(result)
             else:
-                self.cb_result(result)
+                if not enable_ref[0]:
+                    break
+
+                if self.use_result_signal:
+                    self.qtcb_result.emit(result)
+                else:
+                    self.cb_result(result)
