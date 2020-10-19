@@ -274,8 +274,9 @@ class ScriptManager:
                     if si.decode_output_as_utf8:
                         try:
                             out = result.data.decode('utf-8')
-                        except UnicodeDecodeError:
-                            out = None
+                        except UnicodeDecodeError as e:
+                            self._report_result_and_cleanup(si, ScriptResult('Could not decode stdout for script "{0}" as UTF-8: {1}'.format(si.name, e), None, None, None))
+                            return
                     else:
                         out = result.data
 
@@ -292,8 +293,9 @@ class ScriptManager:
                             if si.decode_output_as_utf8:
                                 try:
                                     err = result.data.decode('utf-8')
-                                except UnicodeDecodeError:
-                                    err = None
+                                except UnicodeDecodeError as e:
+                                    self._report_result_and_cleanup(si, ScriptResult('Could not decode stderr for script "{0}" as UTF-8: {1}'.format(si.name, e), None, None, None))
+                                    return
                             else:
                                 err = result.data
 
