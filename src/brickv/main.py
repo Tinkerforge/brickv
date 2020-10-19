@@ -264,7 +264,7 @@ def error_report_main():
 
     right_widget.layout().addWidget(top_widget)
 
-    mail_url = 'mailto:info@tinkerforge.com?subject=BrickV Error Report&body=PLEASE ALSO REPORT WHAT YOU TRIED TO DO, WHEN THE ERROR WAS REPORTED.{}'.format(urllib.parse.quote("\n\n"+error_message))
+    mail_url = 'mailto:info@tinkerforge.com?subject=Brickv Error Report&body=PLEASE ALSO REPORT WHAT YOU TRIED TO DO, WHEN THE ERROR WAS REPORTED.{}'.format(urllib.parse.quote("\n\n"+error_message))
 
     label = QLabel("Please report this error to <a href='{}'>info@tinkerforge.com</a>.<br/>".format(mail_url) +
                    "Please also report what you tried to do, when the error was reported.<br/><br/>" +
