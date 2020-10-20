@@ -73,7 +73,7 @@ from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
-                            QMessageBox, QSplashScreen, QSizePolicy, QFileDialog
+                            QSplashScreen, QSizePolicy, QFileDialog
 
 # QOperatingSystemVersion is only available since Qt 5.9
 try:
@@ -85,6 +85,7 @@ except:
 from brickv import config
 from brickv.async_call import ASYNC_EVENT, async_event_handler
 from brickv.load_pixmap import load_pixmap
+from brickv.ui_errorreporter import Ui_ErrorReporter
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
@@ -225,6 +226,9 @@ class BrickViewer(QApplication):
 
         return QApplication.notify(self, receiver, event)
 
+class ErrorReporter(QMainWindow, Ui_ErrorReporter):
+    pass
+
 def error_report_main():
     error_message = sys.stdin.read()
     label_suffix, error_message = error_message.split('!!!')
@@ -237,81 +241,42 @@ def error_report_main():
         from brickv.mac_pasteboard_mime_fixed import MacPasteboardMimeFixed
         mac_pasteboard_mime_fixed = MacPasteboardMimeFixed()
 
-    window = QMainWindow()
+    window = ErrorReporter()
+    window.setupUi(window)
     window.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
     window.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
-    widget = QWidget()
-    window.setCentralWidget(widget)
-    widget.setLayout(QHBoxLayout())
+    mail_url = 'mailto:info@tinkerforge.com?subject=Brickv Error Report&body=PLEASE ALSO DESCRIBE WHAT YOU TRIED TO DO AT THE TIME THE ERROR OCCURRED.{}'.format(urllib.parse.quote("\n\n"+error_message))
+    title = "<b>Please report this error to <a href='{}'>info@tinkerforge.com</a>.<b>".format(mail_url)
+    description = "You can either save the report to a text file by clicking the <b>Save</b> button below and email the file to us or you can click the <b>Email</b> button below to prepopulate an email in your email program.<br><br>" + \
+                  "Please also describe what you tried to do at the time the error occurred.<br/><br/>" + \
+                  "If you know what caused the error and could work around it, please tell us anyway. This allows us to improve the robustness of Brick Viewer.{}".format(label_suffix)
 
-    icon = QLabel()
-    icon.setPixmap(QMessageBox.standardIcon(QMessageBox.Critical))
-    icon.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
-    widget.layout().addWidget(icon)
-
-    right_widget = QWidget()
-    right_widget.setLayout(QVBoxLayout())
-    right_widget.layout().setContentsMargins(0, 0, 0, 0)
-
-    top_widget = QWidget()
-    top_widget.setLayout(QHBoxLayout())
-    top_widget.layout().setContentsMargins(0, 0, 0, 0)
-
-    top_right_widget = QWidget()
-    top_right_widget.setLayout(QVBoxLayout())
-    top_right_widget.layout().setContentsMargins(0, 0, 0, 0)
-
-    right_widget.layout().addWidget(top_widget)
-
-    mail_url = 'mailto:info@tinkerforge.com?subject=Brickv Error Report&body=PLEASE ALSO REPORT WHAT YOU TRIED TO DO, WHEN THE ERROR WAS REPORTED.{}'.format(urllib.parse.quote("\n\n"+error_message))
-
-    label = QLabel("Please report this error to <a href='{}'>info@tinkerforge.com</a>.<br/>".format(mail_url) +
-                   "Please also report what you tried to do, when the error was reported.<br/><br/>" +
-                   "If you know what caused the error and could work around it, please report it anyway. This allows us to improve the error messages.{}".format(label_suffix))
-    label.setWordWrap(True)
-    label.setOpenExternalLinks(True)
-
-    # Add stretch to get maximum horizontal space for the label
-    top_widget.layout().addWidget(label, 1)
-    top_widget.layout().addWidget(top_right_widget)
+    window.label_title.setText(title)
+    window.label_description.setText(description)
 
     def save():
         date = datetime.datetime.now().replace(microsecond=0).isoformat()
         date = date.replace('T', '_').replace(':', '-')
-        filename, _selected_filter = QFileDialog.getSaveFileName(widget, "Save Error Report", "brickv_error_report_{}.txt".format(date))
+        filename, _selected_filter = QFileDialog.getSaveFileName(window, "Save Report To File", "brickv_error_report_{}.txt".format(date))
+
         if filename:
             with open(filename, 'w') as f:
                 f.write(error_message)
 
-    btn = QPushButton("Save to file")
-    btn.clicked.connect(save)
-    top_right_widget.layout().addWidget(btn)
+    window.button_save.clicked.connect(save)
+    window.button_email.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(mail_url)))
+    window.text_error.setHtml(formatted_error_message)
+    window.check_show_again.setChecked(True)
+    window.button_close.clicked.connect(lambda event: app.exit())
 
-    btn = QPushButton("Send per mail")
-    btn.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(mail_url)))
-    top_right_widget.layout().addWidget(btn)
-
-    tb = QTextBrowser()
-    tb.setHtml(formatted_error_message)
-    right_widget.layout().addWidget(tb)
-
-    cbox = QCheckBox("Show this message again")
-    cbox.setChecked(True)
-    right_widget.layout().addWidget(cbox)
-
-    btn = QPushButton("Close")
-    btn.clicked.connect(lambda event: app.exit())
-    right_widget.layout().addWidget(btn)
-
-    widget.layout().addWidget(right_widget)
     window.setMinimumSize(640, 400)
-    window.resize(950, 600)
+    window.resize(800, 800)
     window.show()
 
     app.exec_()
 
-    return int(cbox.isChecked())
+    return int(window.check_show_again.isChecked())
 
 def main():
     try:
