@@ -2,6 +2,7 @@
 """
 IMU 3.0 Plugin
 Copyright (C) 2020 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 imu_v3.py: IMU 3.0 Plugin implementation
 
@@ -110,7 +111,7 @@ class WrapperWidget(QWidget):
         self.setMinimumSize(200, 200)
         self.glWidget = IMUV33DWidget()
         self.layout().addWidget(self.glWidget)
-        self.setWindowTitle('3D View - IMU Brickletlet 3.0 - Brick Viewer ' + config.BRICKV_VERSION)
+        self.setWindowTitle('3D View - IMU Bricklet 3.0 - Brick Viewer ' + config.BRICKV_VERSION)
 
     def closeEvent(self, _event):
         self.plugin.imu_gl_wrapper = None
