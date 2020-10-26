@@ -51,6 +51,7 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
 
         self.cbe_state = CallbackEmulator(self.evse.get_state, None, self.state_cb, self.increase_error_count)
         self.cbe_low_level_state = CallbackEmulator(self.evse.get_low_level_state, None, self.low_level_state_cb, self.increase_error_count)
+        self.cbe_max_charging_current = CallbackEmulator(self.evse.get_max_charging_current, None, self.max_charging_current_cb, self.increase_error_count)
 
     
     def state_cb(self, state):
@@ -105,6 +106,11 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.label_gpio_motor_switch.setText(GPIO[state.gpio[2]])
         self.label_gpio_motor_fault.setText(GPIO[state.gpio[4]])
 
+    def max_charging_current_cb(self, mcc):
+        self.label_max_current_configured.setText('{0:.1f} A'.format(mcc.max_current_configured/1000))
+        self.label_max_current_incoming_cable.setText('{0:.1f} A'.format(mcc.max_current_incoming_cable/1000))
+        self.label_max_current_outgoing_cable.setText('{0:.1f} A'.format(mcc.max_current_outgoing_cable/1000))
+
     def get_hardware_configuration_async(self, conf):
         self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[conf.jumper_configuration])
         self.label_lock_switch.setText(LOCK_SWITCH[conf.has_lock_switch])
@@ -113,10 +119,12 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         async_call(self.evse.get_hardware_configuration, None, self.get_hardware_configuration_async, self.increase_error_count)
         self.cbe_state.set_period(100)
         self.cbe_low_level_state.set_period(100)
+        self.cbe_max_charging_current.set_period(500)
 
     def stop(self):
         self.cbe_state.set_period(0)
         self.cbe_low_level_state.set_period(0)
+        self.cbe_max_charging_current.set_period(0)
 
     def destroy(self):
         pass
