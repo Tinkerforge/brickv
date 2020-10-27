@@ -2,6 +2,7 @@
 """
 RGB LED Plugin
 Copyright (C) 2017 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
 
 rgb_led_button.py: RGB LED Button Plugin Implementation
 
@@ -109,7 +110,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.spin_l.setValue(l)
         self.changing = False
 
-        self.rgb_led_button.set_color(r, g, b)
+        async_call(self.rgb_led_button.set_color, (r, g, b), None, self.increase_error_count)
         self.label_color.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(r, g, b))
 
     def hsl_changed(self, *_args):
@@ -127,7 +128,7 @@ class RGBLEDButton(COMCUPluginBase, Ui_RGBLEDButton):
         self.spin_b.setValue(b)
         self.changing = False
 
-        self.rgb_led_button.set_color(r, g, b)
+        async_call(self.rgb_led_button.set_color, (r, g, b), None, self.increase_error_count)
         self.label_color.setStyleSheet('QLabel {{ background: #{:02x}{:02x}{:02x} }}'.format(r, g, b))
 
     def get_color_async(self, rgb):
