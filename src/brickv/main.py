@@ -196,7 +196,14 @@ class ExceptionReporter:
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-            show_again = bool(subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=report_message, universal_newlines=True).returncode)
+            rc = subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=report_message, universal_newlines=True).returncode
+
+            show_again = rc & 1 == 1
+            exit_requested = rc & 2 == 2
+
+            if exit_requested:
+                QApplication.exit(1)
+
             if not show_again:
                 ignored.append(hash_)
 
@@ -268,15 +275,18 @@ def error_report_main():
     window.button_email.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(mail_url)))
     window.text_error.setHtml(formatted_error_message)
     window.check_show_again.setChecked(True)
-    window.button_close.clicked.connect(lambda event: app.exit())
+    window.button_close.clicked.connect(lambda event: app.exit(int(window.check_show_again.isChecked())))
+
+    def close_and_exit():
+        app.exit(int(window.check_show_again.isChecked()) + 2)
+
+    window.button_close_and_exit.clicked.connect(lambda event: close_and_exit())
 
     window.setMinimumSize(640, 400)
     window.resize(800, 800)
     window.show()
 
-    app.exec_()
-
-    return int(window.check_show_again.isChecked())
+    return app.exec_()
 
 def main():
     try:
