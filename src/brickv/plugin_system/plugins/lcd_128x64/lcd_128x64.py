@@ -174,7 +174,7 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
                 else:
                     data.append(False)
 
-        self.lcd.write_pixels(0, 0, 127, 63, data)
+        async_call(self.lcd.write_pixels, (0, 0, 127, 63, data), None, self.increase_error_count)
 
     def get_display_configuration_async(self, conf):
         self.contrast_slider.setValue(conf.contrast)
