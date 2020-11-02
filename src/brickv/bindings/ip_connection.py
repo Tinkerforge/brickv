@@ -104,7 +104,7 @@ if sys.hexversion < 0x03000000:
     def create_char(value): # return str with len() == 1 and ord() <= 255
         if isinstance(value, str) and len(value) == 1: # Python2 str satisfies ord() <= 255 by default
             return value
-        elif isinstance(value, unicode) and len(value) == 1:
+        elif isinstance(value, unicode) and len(value) == 1: # pylint: disable=undefined-variable
             code_point = ord(value)
 
             if code_point <= 255:
@@ -136,7 +136,7 @@ if sys.hexversion < 0x03000000:
             return map(create_char, value)
         elif isinstance(value, str): # Python2 str satisfies ord() <= 255 by default
             return list(value)
-        elif isinstance(value, unicode):
+        elif isinstance(value, unicode): # pylint: disable=undefined-variable
             chars = []
 
             for char in value:
@@ -175,7 +175,7 @@ if sys.hexversion < 0x03000000:
     def create_string(value): # return str with ord() <= 255 for all chars
         if isinstance(value, str): # Python2 str satisfies ord() <= 255 by default
             return value
-        elif isinstance(value, unicode):
+        elif isinstance(value, unicode): # pylint: disable=undefined-variable
             chars = []
 
             for char in value:

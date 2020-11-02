@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-01.      #
+# This file was automatically generated on 2020-11-02.      #
 #                                                           #
-# Python Bindings Version 2.1.26                            #
+# Python Bindings Version 2.1.27                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -168,7 +166,7 @@ class BrickletIndustrialDualACRelay(Device):
         Relay 1 will turn on and in 1.5s it will turn off again.
 
         A monoflop can be used as a failsafe mechanism. For example: Lets assume you
-        have a RS485 bus and a Industrial Dual Relay Bricklet connected to one of the
+        have a RS485 bus and a Industrial Dual AC Relay Bricklet connected to one of the
         slave stacks. You can now call this function every second, with a time parameter
         of two seconds. The relay will be on all the time. If now the RS485
         connection is lost, the relay will turn off in at most two seconds.
@@ -368,7 +366,7 @@ class BrickletIndustrialDualACRelay(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always at
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.

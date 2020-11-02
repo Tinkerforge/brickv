@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-29.      #
+# This file was automatically generated on 2020-11-02.      #
 #                                                           #
-# Python Bindings Version 2.1.26                            #
+# Python Bindings Version 2.1.27                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -116,7 +116,7 @@ class BrickletPiezoSpeaker(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always at
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.

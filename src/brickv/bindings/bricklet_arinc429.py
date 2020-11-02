@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-09-29.      #
+# This file was automatically generated on 2020-11-02.      #
 #                                                           #
-# Python Bindings Version 2.1.26                            #
+# Python Bindings Version 2.1.27                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -20,13 +20,11 @@ except ValueError:
 
 DebugGetDiscretes = namedtuple('DebugGetDiscretes', ['rx_discretes', 'tx_discretes'])
 DebugReadRegisterLowLevel = namedtuple('DebugReadRegisterLowLevel', ['value_length', 'value_data', 'rw_error'])
-GetCapabilities = namedtuple('Capabilities', ['rx_channels', 'rx_filter_frames', 'tx_channels', 'tx_schedule_slots', 'tx_schedule_frames'])
+GetCapabilities = namedtuple('Capabilities', ['tx_total_scheduler_tasks', 'tx_used_scheduler_tasks', 'rx_total_frame_filters', 'rx_used_frame_filters'])
 GetHeartbeatCallbackConfiguration = namedtuple('HeartbeatCallbackConfiguration', ['period', 'value_has_to_change'])
 GetChannelConfiguration = namedtuple('ChannelConfiguration', ['parity', 'speed'])
-GetPrioLabels = namedtuple('PrioLabels', ['prio_enabled', 'label'])
-GetRXLabelConfiguration = namedtuple('RXLabelConfiguration', ['sdi', 'timeout'])
-ReadNextFrame = namedtuple('ReadNextFrame', ['status', 'frame'])
-GetReceiveFrameCallbackConfiguration = namedtuple('ReceiveFrameCallbackConfiguration', ['period', 'value_has_to_change'])
+ReadFrame = namedtuple('ReadFrame', ['status', 'frame', 'age'])
+GetRXCallbackConfiguration = namedtuple('RXCallbackConfiguration', ['enabled', 'value_has_to_change', 'timeout'])
 GetScheduleEntry = namedtuple('ScheduleEntry', ['job', 'frame_index', 'frame', 'dwell_time'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -42,7 +40,7 @@ class BrickletARINC429(Device):
     DEVICE_URL_PART = 'arinc429' # internal
 
     CALLBACK_HEARTBEAT = 7
-    CALLBACK_RECEIVE_FRAME = 21
+    CALLBACK_FRAME_MESSAGE = 20
 
 
     FUNCTION_DEBUG_GET_DISCRETES = 1
@@ -55,20 +53,20 @@ class BrickletARINC429(Device):
     FUNCTION_GET_CHANNEL_CONFIGURATION = 9
     FUNCTION_SET_CHANNEL_MODE = 10
     FUNCTION_GET_CHANNEL_MODE = 11
-    FUNCTION_CLEAR_PRIO_LABELS = 12
-    FUNCTION_SET_PRIO_LABELS = 13
-    FUNCTION_GET_PRIO_LABELS = 14
-    FUNCTION_CLEAR_RX_LABELS = 15
-    FUNCTION_SET_RX_LABEL_CONFIGURATION = 16
-    FUNCTION_GET_RX_LABEL_CONFIGURATION = 17
-    FUNCTION_READ_NEXT_FRAME = 18
-    FUNCTION_SET_RECEIVE_FRAME_CALLBACK_CONFIGURATION = 19
-    FUNCTION_GET_RECEIVE_FRAME_CALLBACK_CONFIGURATION = 20
-    FUNCTION_WRITE_FRAME_DIRECT = 22
-    FUNCTION_WRITE_FRAME_SCHEDULED = 23
+    FUNCTION_CLEAR_ALL_RX_FILTERS = 12
+    FUNCTION_CLEAR_RX_FILTER = 13
+    FUNCTION_SET_RX_STANDARD_FILTERS = 14
+    FUNCTION_SET_RX_FILTER = 15
+    FUNCTION_GET_RX_FILTER = 16
+    FUNCTION_READ_FRAME = 17
+    FUNCTION_SET_RX_CALLBACK_CONFIGURATION = 18
+    FUNCTION_GET_RX_CALLBACK_CONFIGURATION = 19
+    FUNCTION_WRITE_FRAME_DIRECT = 21
+    FUNCTION_WRITE_FRAME_SCHEDULED = 22
+    FUNCTION_CLEAR_SCHEDULE_ENTRIES = 23
     FUNCTION_SET_SCHEDULE_ENTRY = 24
     FUNCTION_GET_SCHEDULE_ENTRY = 25
-    FUNCTION_CLEAR_SCHEDULE_ENTRIES = 26
+    FUNCTION_RESET_A429 = 26
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -114,27 +112,28 @@ class BrickletARINC429(Device):
     CHANNEL_RX10 = 42
     CHANNEL_RX11 = 43
     CHANNEL_RX12 = 44
-    BUFFER_ANYTHING = 0
-    BUFFER_PRIO1 = 1
-    BUFFER_PRIO2 = 2
-    BUFFER_PRIO3 = 3
-    BUFFER_FIFO = 4
-    SDI_DATA = 0
-    SDI_ADDRESS = 1
-    PARITY_TRANSPARENT = 0
-    PARITY_PARITY = 1
+    SDI_SDI0 = 0
+    SDI_SDI1 = 1
+    SDI_SDI2 = 2
+    SDI_SDI3 = 3
+    SDI_DATA = 4
+    PARITY_DATA = 0
+    PARITY_AUTO = 1
     SPEED_HS = 0
     SPEED_LS = 1
-    CHANNEL_MODE_UNINIT = 0
-    CHANNEL_MODE_PASSIVE = 1
-    CHANNEL_MODE_ACTIVE = 2
-    CHANNEL_MODE_FILTER = 3
-    CHANNEL_MODE_RUNNING = 4
-    FRAME_STATUS_TIMEOUT = 0
-    FRAME_STATUS_UPDATE = 1
-    SCHEDULER_JOB_MUTE = 0
-    SCHEDULER_JOB_SINGLE = 1
-    SCHEDULER_JOB_CYCLIC = 2
+    CHANNEL_MODE_PASSIVE = 0
+    CHANNEL_MODE_ACTIVE = 1
+    CHANNEL_MODE_RUN = 2
+    FRAME_STATUS_UPDATE = 0
+    FRAME_STATUS_TIMEOUT = 1
+    SCHEDULER_JOB_SKIP = 0
+    SCHEDULER_JOB_DWELL = 1
+    SCHEDULER_JOB_SINGLE = 2
+    SCHEDULER_JOB_CYCLIC = 3
+    SCHEDULER_JOB_RETRANS_RX1 = 4
+    SCHEDULER_JOB_RETRANS_RX2 = 5
+    A429_MODE_NORMAL = 0
+    A429_MODE_DEBUG = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -170,20 +169,20 @@ class BrickletARINC429(Device):
         self.response_expected[BrickletARINC429.FUNCTION_GET_CHANNEL_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletARINC429.FUNCTION_SET_CHANNEL_MODE] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletARINC429.FUNCTION_GET_CHANNEL_MODE] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_PRIO_LABELS] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletARINC429.FUNCTION_SET_PRIO_LABELS] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletARINC429.FUNCTION_GET_PRIO_LABELS] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_RX_LABELS] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletARINC429.FUNCTION_SET_RX_LABEL_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletARINC429.FUNCTION_GET_RX_LABEL_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_READ_NEXT_FRAME] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_SET_RECEIVE_FRAME_CALLBACK_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_GET_RECEIVE_FRAME_CALLBACK_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_ALL_RX_FILTERS] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_RX_FILTER] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_SET_RX_STANDARD_FILTERS] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletARINC429.FUNCTION_SET_RX_FILTER] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_GET_RX_FILTER] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_READ_FRAME] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_SET_RX_CALLBACK_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletARINC429.FUNCTION_GET_RX_CALLBACK_CONFIGURATION] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletARINC429.FUNCTION_WRITE_FRAME_DIRECT] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletARINC429.FUNCTION_WRITE_FRAME_SCHEDULED] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_SCHEDULE_ENTRIES] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletARINC429.FUNCTION_SET_SCHEDULE_ENTRY] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletARINC429.FUNCTION_GET_SCHEDULE_ENTRY] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletARINC429.FUNCTION_CLEAR_SCHEDULE_ENTRIES] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletARINC429.FUNCTION_RESET_A429] = BrickletARINC429.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletARINC429.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletARINC429.FUNCTION_SET_BOOTLOADER_MODE] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletARINC429.FUNCTION_GET_BOOTLOADER_MODE] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -197,26 +196,24 @@ class BrickletARINC429(Device):
         self.response_expected[BrickletARINC429.FUNCTION_READ_UID] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletARINC429.FUNCTION_GET_IDENTITY] = BrickletARINC429.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletARINC429.CALLBACK_HEARTBEAT] = (15, 'B B B H H')
-        self.callback_formats[BrickletARINC429.CALLBACK_RECEIVE_FRAME] = (16, 'B B B I B')
+        self.callback_formats[BrickletARINC429.CALLBACK_HEARTBEAT] = (23, 'B H 3H 3H')
+        self.callback_formats[BrickletARINC429.CALLBACK_FRAME_MESSAGE] = (19, 'B B H B I H')
 
         ipcon.add_device(self)
 
     def debug_get_discretes(self):
         """
-        Debug function to read the discrete signals from the A429 chip.
-
-        RX Discretes Bit   9: MB2-1   - pending frame in RX2, PRIO 1
-                           8: MB2-2   -                            2
-                           7: MB2-3   -                            3
+        Low-level debug function to read the discrete signals from the A429 chip.
+        RX Discretes Bit   9: MB2-1   - pending frame in RX2, PRIO 1 mailbox
+                           8: MB2-2   -                            2 mailbox
+                           7: MB2-3   -                            3 mailbox
                            6: R2FLAG  -                       FIFO
-                           5: R2INT   -                       FIFO
-                           4: MB1-1   - pending frame in RX1, PRIO 1
-                           3: MB1-2   -                            2
-                           2: MB1-3   -                            3
+                           5: R2INT   -                       FIFO (pulse only)
+                           4: MB1-1   - pending frame in RX1, PRIO 1 mailbox
+                           3: MB1-2   -                            2 mailbox
+                           2: MB1-3   -                            3 mailbox
                            1: R1FLAG  -                       FIFO
-                           0: R1INT   -                       FIFO
-
+                           0: R1INT   -                       FIFO (pulse only)
         TX Discretes Bit 2-7: unused
                            1: TFULL   - TX buffer full
                            0: TEMPTY  - TX buffer empty
@@ -227,7 +224,11 @@ class BrickletARINC429(Device):
 
     def debug_read_register_low_level(self, op_code):
         """
-        Debug function to read from a SPI register of the A429 chip.
+        Low-level debug function to execute a direct SPI read access on the A429 chip.
+         * OP Code:      code number of the SPI read command
+         * Value Length: number of bytes read
+         * Value Data:   data bytes read
+         * RW Error:     'OK' if the read access was successful, else error code
         """
         self.check_validity()
 
@@ -237,7 +238,11 @@ class BrickletARINC429(Device):
 
     def debug_write_register_low_level(self, op_code, value_length, value_data):
         """
-        Debug function to write to a SPI register of the A429 chip.
+        Low-level debug function to execute a direct SPI write access on the A429 chip.
+         * OP Code:      code number of the SPI read command
+         * Value Length: number of bytes to write
+         * Value Data:   data bytes to write
+         * RW Error:     'OK' if the write access was successful, else error code
         """
         self.check_validity()
 
@@ -249,43 +254,44 @@ class BrickletARINC429(Device):
 
     def get_capabilities(self):
         """
-        Get the number of RX and TX channels available on this device,
-        plus the max number of scheduler slots and scheduled frames.
+        Get the TX and RX capabilities and their current usage:
+         * TX Total Scheduler Tasks: total number of task entries in the scheduling table.
+         * TX Used Scheduler Tasks:  number of task entries that are currently in use.
+         * RX Total Frame Filters:   total number of frame filters that can be defined per channel.
+         * RX Used Frame Filters:    number of frame filters that are currently in use per each channel.
         """
         self.check_validity()
 
-        return GetCapabilities(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CAPABILITIES, (), '', 16, 'B H B H H'))
+        return GetCapabilities(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CAPABILITIES, (), '', 18, 'H H H 2H'))
 
-    def set_heartbeat_callback_configuration(self, channel, period, value_has_to_change):
+    def set_heartbeat_callback_configuration(self, period, value_has_to_change):
         """
-        The period is the period with which the :cb:`Heartbeat` callback is triggered periodically.
-        A value of 0 turns the callback off.
+        Set the bricklet heartbeat which reports the statistics counters for processed frames and lost frames.
+        The period is the period with which the :cb:`Heartbeat` callback is triggered periodically. A value of 0 turns the callback off.
+        When 'Value Has To Change' is enabled, the heartbeat will only be sent if there is a change in the statistics numbers.
         """
         self.check_validity()
 
-        channel = int(channel)
         period = int(period)
         value_has_to_change = bool(value_has_to_change)
 
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_HEARTBEAT_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B B !', 0, '')
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_HEARTBEAT_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'B !', 0, '')
 
-    def get_heartbeat_callback_configuration(self, channel):
+    def get_heartbeat_callback_configuration(self):
         """
-
+        Get the configuration of the bricklet heartbeat reporting the statistics counters.
         """
         self.check_validity()
 
-        channel = int(channel)
-
-        return GetHeartbeatCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_HEARTBEAT_CALLBACK_CONFIGURATION, (channel,), 'B', 10, 'B !'))
+        return GetHeartbeatCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_HEARTBEAT_CALLBACK_CONFIGURATION, (), '', 10, 'B !'))
 
     def set_channel_configuration(self, channel, parity, speed):
         """
-        Configure the selected channel:
-
-         * Channel:   channel to configure
-         * Parity:    'parity' for automatic parity adjustment, 'transparent' for transparent mode
-         * Speed:     'hs' for high speed (100 kbit/s), 'ls' for low speed (12.5 kbit/s)
+        Set the data transmission properties of the selected channel:
+         * Channel: channel to configure
+         * Parity:  'parity_auto' for automatic parity adjustment, 'parity_data' for parity bit supplied by the application or if used for data.
+         * Speed:   'speed_hs' for high speed mode (100 kbit/s), 'speed_ls' for low speed mode (12.5 kbit/s).
+        When parity set to 'parity_auto', frames received with a parity error will be counted in the lost frames counter but discarded otherwise.
         """
         self.check_validity()
 
@@ -297,7 +303,7 @@ class BrickletARINC429(Device):
 
     def get_channel_configuration(self, channel):
         """
-
+        Get the data transmission properties of the selected channel.
         """
         self.check_validity()
 
@@ -307,9 +313,10 @@ class BrickletARINC429(Device):
 
     def set_channel_mode(self, channel, mode):
         """
-        Set the channel to active or passive mode. In passive mode, the TX channel output becomes high-Z.
-        This may happen while still frames are sent from the TX FIFO, effectively trashing these frames.
-        RX channels are not affected by this setting.
+        Set the operating mode of the selected channel:
+         * passive: TX channel: all transmissions are stopped and the hardware interface becomes high-Z. RX channels: all arriving frames will be discarded.
+         * active:  TX channel: Arinc429 frames can be sent via the 'Write Frame Direct' function. RX channels: arriving frames will be processed according to the frame filter and callback settings.
+         * run:     TX channels only: the scheduler will run and transmit frames according to the entries made in the scheduler task table.
         """
         self.check_validity()
 
@@ -320,14 +327,7 @@ class BrickletARINC429(Device):
 
     def get_channel_mode(self, channel):
         """
-        Set the channel to active or passive mode. In passive mode, the TX channel output becomes high-Z.
-        This may happen while still frames are sent from the TX FIFO, effectively trashing these frames.
-        RX channels are not affected by this setting.
-
-        Returns an error if:
-         * the selected channel is not a valid channel,
-         * the selected channel is not initialized yet,
-         * the mode is neither 'active' nor 'passive'.
+        Get the operating mode of the selected channel.
         """
         self.check_validity()
 
@@ -335,132 +335,128 @@ class BrickletARINC429(Device):
 
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CHANNEL_MODE, (channel,), 'B', 9, 'B')
 
-    def clear_prio_labels(self, channel):
+    def clear_all_rx_filters(self, channel):
         """
-        Disables the priority receive buffers of the selected channel.
-        """
-        self.check_validity()
-
-        channel = int(channel)
-
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_PRIO_LABELS, (channel,), 'B', 0, '')
-
-    def set_prio_labels(self, channel, label):
-        """
-        Set the labels for the priority receive buffers of the selected channel.
-        """
-        self.check_validity()
-
-        channel = int(channel)
-        label = list(map(int, label))
-
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_PRIO_LABELS, (channel, label), 'B 3B', 0, '')
-
-    def get_prio_labels(self, channel):
-        """
-        Read the labels configured on the priority receive buffers of the selected channel.
+        Clear all receive filters on the selected RX channel.
         """
         self.check_validity()
 
         channel = int(channel)
 
-        return GetPrioLabels(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_PRIO_LABELS, (channel,), 'B', 12, '! 3B'))
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_ALL_RX_FILTERS, (channel,), 'B', 0, '')
 
-    def clear_rx_labels(self, channel):
+    def clear_rx_filter(self, channel, label, sdi):
         """
-        Clear all RX label configurations for the given channel(s).
-        """
-        self.check_validity()
-
-        channel = int(channel)
-
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_RX_LABELS, (channel,), 'B', 0, '')
-
-    def set_rx_label_configuration(self, channel, label, sdi, timeout):
-        """
-        Set the function of the SDI bits and the timeout for a specific label on the selected channel.
-        The timeout value is in multiples of 10 ms, a timeout value of zero disables the timeout.
-
-        Returns an error if:
-         * the selected channel is not a valid channel
-         * the value for SDI     is not valid
-         * the value for timeout is not valid (> 250)
+        Clear one receive filter on the selected RX channel.
+         * Channel: selected channel.
+         * Label:   label code of the filter.
+         * SDI:     SDI code of the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+         * Success: returns 'True' if the filter was cleared or 'False' if a respective filter was not set.
         """
         self.check_validity()
 
         channel = int(channel)
         label = int(label)
         sdi = int(sdi)
-        timeout = int(timeout)
 
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_LABEL_CONFIGURATION, (channel, label, sdi, timeout), 'B B B H', 0, '')
+        return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
 
-    def get_rx_label_configuration(self, channel, label):
+    def set_rx_standard_filters(self, channel):
         """
-        Set the function of the SDI bits and the timeout for a specific label on the selected channel.
-        The timeout value is in multiples of 10 ms, a timeout value of zero disables the timeout.
+        Set a receive filter for each label value (0-255) with SDI bits set for data. Any previously existing filters will be overwritten.
+        """
+        self.check_validity()
 
-        Returns an error if:
-         * the selected channel is not a valid channel
-         * the value for SDI     is not valid
-         * the value for timeout is not valid (> 250)
+        channel = int(channel)
+
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_STANDARD_FILTERS, (channel,), 'B', 0, '')
+
+    def set_rx_filter(self, channel, label, sdi):
+        """
+        Set a receive filter on the selected channel:
+         * Channel: selected channel.
+         * Label:   label code for the filter.
+         * SDI:     SDI code for the filter (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+         * Success: returns 'True' if the filter was set or 'False' if a respective filter could not be set up (e.g. because label + SDI collides with an already existing filter or all available filters are used up).
         """
         self.check_validity()
 
         channel = int(channel)
         label = int(label)
+        sdi = int(sdi)
 
-        return GetRXLabelConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RX_LABEL_CONFIGURATION, (channel, label), 'B B', 11, 'B H'))
+        return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
 
-    def read_next_frame(self, channel, buffer):
+    def get_rx_filter(self, channel, label, sdi):
         """
-        Do a direct read of a A429 frame from the selected receive channel and buffer.
-        """
-        self.check_validity()
-
-        channel = int(channel)
-        buffer = int(buffer)
-
-        return ReadNextFrame(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_READ_NEXT_FRAME, (channel, buffer), 'B B', 13, '! I'))
-
-    def set_receive_frame_callback_configuration(self, channel, period, value_has_to_change):
-        """
-        Enables or disables the generation of callbacks on receiving A429 frames.
-
-        If the `value has to change`-parameter is set to TRUE, the callback is only
-        triggered when the frame data have changed, else it is triggered on every
-        reception of a new frame.
+        Query if a specific filter is set up or not:
+         * Channel:    channel to query.
+         * Label:      label code to query for.
+         * SDI:        SDI usage to query for (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits shall be used for data).
+         * Configured: returns 'True' if the inquired filter exists, else 'False'.
         """
         self.check_validity()
 
         channel = int(channel)
-        period = int(period)
+        label = int(label)
+        sdi = int(sdi)
+
+        return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
+
+    def read_frame(self, channel, label, sdi):
+        """
+        Direct read of an Arinc429 frame, i.e. without using the callback mechanism.
+        In order to be able to do a direct read of a frame with a certain label and SDI combination, a respective receive filter needs to be set up beforehand.
+         * Channel: RX channel to read from.
+         * Label:   label code of the frame to read.
+         * SDI:     SDI code of the frame to read (SDI_SDI0 to SDI_SDI3 or SDI_DATA if SDI bits are used for data).
+         * Status:  returns 'True' if a respective frame was received, else 'False'.
+         * Frame:   returns the complete Arinc429 frame including the label and SDI bits. If 'parity_auto' is set for the channel, the parity bit will always come as 0.
+         * Age:     time in milliseconds since this frame (label + SDI combination) was received last. If not received for so far or after a previous timeout, 60000 or the timeout value set with the 'Set RX Callback Configuration' function will be returned.
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        label = int(label)
+        sdi = int(sdi)
+
+        return ReadFrame(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_READ_FRAME, (channel, label, sdi), 'B B B', 15, '! I H'))
+
+    def set_rx_callback_configuration(self, channel, enabled, value_has_to_change, timeout):
+        """
+        Set the configuration of the Arinc429 frame reception callback:
+         * Channel:             selected RX channel.
+         * Enabled:             select 'True' for activating the frame callbacks and 'False' for deactivating them.
+         * Value Has To Change: select 'True' if callbacks shall only be sent for frames whose data have changed. With 'False' a callback will be sent on every frame reception.
+         * Timeout:             time period for all frames (label and SDI combinations) on this channel.
+
+        Despite on frame reception, a callback is also generated if a frame encounters a timeout, i.e. if it is not periodically received again before the set timeout period has expired.
+        In order to have callbacks being generated at all, respective receive filters need to be set up.
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        enabled = bool(enabled)
         value_has_to_change = bool(value_has_to_change)
+        timeout = int(timeout)
 
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RECEIVE_FRAME_CALLBACK_CONFIGURATION, (channel, period, value_has_to_change), 'B B !', 0, '')
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_CALLBACK_CONFIGURATION, (channel, enabled, value_has_to_change, timeout), 'B ! ! H', 0, '')
 
-    def get_receive_frame_callback_configuration(self, channel):
+    def get_rx_callback_configuration(self, channel):
         """
-        Enables or disables the generation of callbacks on receiving A429 frames.
-
-        If the `value has to change`-parameter is set to TRUE, the callback is only
-        triggered when the frame data have changed, else it is triggered on every
-        reception of a new frame.
+        Get the configuration of the frame reception callback.
         """
         self.check_validity()
 
         channel = int(channel)
 
-        return GetReceiveFrameCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RECEIVE_FRAME_CALLBACK_CONFIGURATION, (channel,), 'B', 10, 'B !'))
+        return GetRXCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RX_CALLBACK_CONFIGURATION, (channel,), 'B', 12, '! ! H'))
 
     def write_frame_direct(self, channel, frame):
         """
-        Immediate write of an A429 frame to the selected transmit channel.
-
-        Returns an error if:
-         * the selected channel is not a valid TX channel,
-         * the selected channel is not configured yet,
-         * the transmit queue   is full.
+        Immediately transmit an Arinc429 frame:
+         * Channel: selected transmit channel.
+         * frame:   complete Arinc429 frame including the label and SDI bits. If 'parity_auto' is set for the channel, the parity bit will be set (adjusted) automatically.
         """
         self.check_validity()
 
@@ -469,83 +465,88 @@ class BrickletARINC429(Device):
 
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FRAME_DIRECT, (channel, frame), 'B I', 0, '')
 
-    def write_frame_scheduled(self, frame_index, frame):
+    def write_frame_scheduled(self, channel, frame_index, frame):
         """
-        Set or update the value of a frame that is transmitted by the scheduler.
-
-         * Frame Index: index number of the frame (the scheduler picks the frames by this index number)
-         * Frame:       the A429 frame itself
-        """
-        self.check_validity()
-
-        frame_index = int(frame_index)
-        frame = int(frame)
-
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FRAME_SCHEDULED, (frame_index, frame), 'H I', 0, '')
-
-    def set_schedule_entry(self, channel, slot_index, job, frame_index, dwell_time):
-        """
-        Program a TX schedule entry for the selected TX channel:
-
-         * Channel:     selected TX channel
-         * Slot_Index:  schedule entry
-         * Job:         activity assigned to this job
-         * Frame_Index: frame    assigned to this slot (by frame index)
-         * Dwell_Time:   time in ms to wait before executing the next slot
-
-        Returns an error if:
-         * the selected channel is not a valid TX channel,
-         * the slot  index number is outside of the valid range.
-         * the frame index number is outside of the valid range.
+        Set or update an Arinc429 frame that is transmitted by the scheduler using the task types 'Single' and 'Cyclic'.
+         * Channel:     selected transmit channel.
+         * Frame Index: index number that will be used in the transmit scheduler task table to refer to this frame.
+         * frame:       complete Arinc429 frame including the label and SDI bits. If 'parity_auto' is set for the channel, the parity bit will be set (adjusted) automatically.
         """
         self.check_validity()
 
         channel = int(channel)
-        slot_index = int(slot_index)
+        frame_index = int(frame_index)
+        frame = int(frame)
+
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FRAME_SCHEDULED, (channel, frame_index, frame), 'B H I', 0, '')
+
+    def clear_schedule_entries(self, channel, task_index_first, task_index_last):
+        """
+        Clear a range of transmit scheduler task table entries:
+         * Channel: selected TX channel.
+         * First:   index of the first table entry to be cleared.
+         * Last:    index of the last  table entry to be cleared.
+        To clear a single entry, set 'First' and 'Last' to the one index of the one entry to be cleared.
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        task_index_first = int(task_index_first)
+        task_index_last = int(task_index_last)
+
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_SCHEDULE_ENTRIES, (channel, task_index_first, task_index_last), 'B H H', 0, '')
+
+    def set_schedule_entry(self, channel, task_index, job, frame_index, dwell_time):
+        """
+        Set an entry in the transmit scheduler task table:
+         * Channel:     selected TX channel
+         * Task Index:  index number of the task, the scheduler processes the task table in ascending order of these index numbers.
+         * Job:         activity assigned to this entry, see below.
+         * Frame Index: frame assigned to this task, either the 'Frame Index' used along with the :func: `Write Frame Scheduled` or the extended label (label + SDI) in case of RX1/RX2 retransmits.
+         * Dwell Time:  time to wait before executing the next task table entry (0-250 milliseconds).
+
+        When the scheduler is set to 'run' mode via the :func:`Set Channel Mode`, it continuously loops through the task table and executes the assigned tasks.
+        It starts with the task stored at task index 0.
+        The scheduler can execute the following activity types (jobs):
+         * Skip:        the task is skipped, i.e. no frame is transmitted and no dwelling is done. The frame index and dwell time are not used.
+         * Dwell        the scheduler executes the dwelling but does not transmit any frame. The frame index is not used.
+         * Single:      the scheduler transmits the referenced frame, but only once. On subsequent executions the frame is not sent until it is renewed via the :func:`Write Frame Scheduled`, then the process repeats.
+         * Cyclic:      the scheduler transmits the referenced frame and executed the dwelling on each round.
+         * Retrans RX1: the scheduler retransmits a frame that was previously received on the RX1 channel. The frame to send is referenced by setting the 'Frame Index' to its extended label code, which is a 10 bit number made of the label code in the lower bits and the two SDI bits in the upper bits. If the SDI bits are used for data, set the SDI bits to zero. As long as the referenced frame was not received yet, or if it is in timeout, no frame will be sent.
+         * Retrans RX2: same as before, but for frames received on the RX2 channel.
+        """
+        self.check_validity()
+
+        channel = int(channel)
+        task_index = int(task_index)
         job = int(job)
         frame_index = int(frame_index)
         dwell_time = int(dwell_time)
 
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_SCHEDULE_ENTRY, (channel, slot_index, job, frame_index, dwell_time), 'B H B H B', 0, '')
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_SCHEDULE_ENTRY, (channel, task_index, job, frame_index, dwell_time), 'B H B H B', 0, '')
 
-    def get_schedule_entry(self, channel, slot_index):
+    def get_schedule_entry(self, channel, task_index):
         """
-        Read a TX schedule entry.
-
-         * Channel:     selected TX channel
-         * Slot Index:  schedule entry (0..num_tx_slots-1)
-         * Job:         activity done in this job
-         * Frame Index: index of the frame assigned to this slot
-         * Frame:       value of the frame assigned to this slot
-         * Dwell Time:  time in ms waited before the next slot is executed
+        Get a transmit scheduler task table entry.
         """
         self.check_validity()
 
         channel = int(channel)
-        slot_index = int(slot_index)
+        task_index = int(task_index)
 
-        return GetScheduleEntry(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_SCHEDULE_ENTRY, (channel, slot_index), 'B H', 16, 'B H I B'))
+        return GetScheduleEntry(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_SCHEDULE_ENTRY, (channel, task_index), 'B H', 16, 'B H I B'))
 
-    def clear_schedule_entries(self, channel, slot_index_first, slot_index_last):
+    def reset_a429(self, mode):
         """
-        Clear a range of TX schedule entries.
-
-         * Channel:   selected TX channel
-         * First:     first schedule entry (0..num_tx_slots-1) to be cleared
-         * Last:      last  schedule entry (0..num_tx_slots-1) to be cleared
-
-        Returns an error if:
-         * the selected channel is not a valid TX channel,
-         * the selected slot numbers are outside of the valid range,
-         * the slot numbers are in wrong order (last < first)
+        Reset the A429 bricklet. The bricklet will restart in the selected mode:
+         * 'Normal': normal operating mode with all high-level Arinc429 frame processing being executed.
+         * 'Debug':  debug mode with all high-level processing suspended, for use in conjunction with the low-level debug functions.
         """
         self.check_validity()
 
-        channel = int(channel)
-        slot_index_first = int(slot_index_first)
-        slot_index_last = int(slot_index_last)
+        mode = int(mode)
 
-        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_SCHEDULE_ENTRIES, (channel, slot_index_first, slot_index_last), 'B H H', 0, '')
+        self.ipcon.send_request(self, BrickletARINC429.FUNCTION_RESET_A429, (mode,), 'B', 0, '')
 
     def get_spitfp_error_count(self):
         """
@@ -703,7 +704,7 @@ class BrickletARINC429(Device):
         device identifier.
 
         The position can be 'a', 'b', 'c', 'd', 'e', 'f', 'g' or 'h' (Bricklet Port).
-        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always as
+        A Bricklet connected to an :ref:`Isolator Bricklet <isolator_bricklet>` is always at
         position 'z'.
 
         The device identifier numbers can be found :ref:`here <device_identifier>`.
@@ -713,7 +714,11 @@ class BrickletARINC429(Device):
 
     def debug_read_register(self, op_code):
         """
-        Debug function to read from a SPI register of the A429 chip.
+        Low-level debug function to execute a direct SPI read access on the A429 chip.
+         * OP Code:      code number of the SPI read command
+         * Value Length: number of bytes read
+         * Value Data:   data bytes read
+         * RW Error:     'OK' if the read access was successful, else error code
         """
         op_code = int(op_code)
 
@@ -723,7 +728,11 @@ class BrickletARINC429(Device):
 
     def debug_write_register(self, op_code, value):
         """
-        Debug function to write to a SPI register of the A429 chip.
+        Low-level debug function to execute a direct SPI write access on the A429 chip.
+         * OP Code:      code number of the SPI read command
+         * Value Length: number of bytes to write
+         * Value Data:   data bytes to write
+         * RW Error:     'OK' if the write access was successful, else error code
         """
         op_code = int(op_code)
         value = list(map(int, value))
