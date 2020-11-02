@@ -589,3 +589,7 @@
 - Avoid UI jumps on value changes in Energy Monitor Bricklet plugin
 - Add extra checkbox to avoid accidental port number changes
 - Handle all errors while downloading firmware updates
+
+2020-11-02: 2.4.15 (<unknown>)
+- Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
+- Improve error handling and reporting
