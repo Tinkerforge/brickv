@@ -277,6 +277,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletHumidityV2_found = False
     try:
+        from brickv.bindings.bricklet_imu_v3 import BrickletIMUV3
+        BrickletIMUV3_found = True
+    except ImportError:
+        BrickletIMUV3_found = False
+    try:
         from brickv.bindings.bricklet_industrial_counter import BrickletIndustrialCounter
         BrickletIndustrialCounter_found = True
     except ImportError:
@@ -301,6 +306,11 @@ if 'merged_data_logger_modules' not in globals():
         BrickletIndustrialDual020mAV2_found = True
     except ImportError:
         BrickletIndustrialDual020mAV2_found = False
+    try:
+        from brickv.bindings.bricklet_industrial_dual_ac_relay import BrickletIndustrialDualACRelay
+        BrickletIndustrialDualACRelay_found = True
+    except ImportError:
+        BrickletIndustrialDualACRelay_found = False
     try:
         from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
         BrickletIndustrialDualAnalogIn_found = True
@@ -857,6 +867,11 @@ else:
     except ImportError:
         BrickletHumidityV2_found = False
     try:
+        from tinkerforge.bindings.bricklet_imu_v3 import BrickletIMUV3
+        BrickletIMUV3_found = True
+    except ImportError:
+        BrickletIMUV3_found = False
+    try:
         from tinkerforge.bricklet_industrial_counter import BrickletIndustrialCounter
         BrickletIndustrialCounter_found = True
     except ImportError:
@@ -881,6 +896,11 @@ else:
         BrickletIndustrialDual020mAV2_found = True
     except ImportError:
         BrickletIndustrialDual020mAV2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_ac_relay import BrickletIndustrialDualACRelay
+        BrickletIndustrialDualACRelay_found = True
+    except ImportError:
+        BrickletIndustrialDualACRelay_found = False
     try:
         from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
         BrickletIndustrialDualAnalogIn_found = True
@@ -2774,6 +2794,84 @@ if BrickletHumidityV2_found:
         'options_setter': None,
         'options': None
     }
+if BrickletIMUV3_found:
+    device_specs[BrickletIMUV3.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletIMUV3,
+        'values': [
+            {
+                'name': 'Orientation',
+                'getter': lambda device: device.get_orientation(),
+                'subvalues': ['Heading', 'Roll', 'Pitch'],
+                'unit': ['°/16', '°/16', '°/16'],
+                'advanced': False
+            },
+            {
+                'name': 'Linear Acceleration',
+                'getter': lambda device: device.get_linear_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': False
+            },
+            {
+                'name': 'Gravity Vector',
+                'getter': lambda device: device.get_gravity_vector(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': False
+            },
+            {
+                'name': 'Quaternion',
+                'getter': lambda device: device.get_quaternion(),
+                'subvalues': ['W', 'X', 'Y', 'Z'],
+                'unit': ['1/16383', '1/16383', '1/16383', '1/16383'],
+                'advanced': False
+            },
+            {
+                'name': 'Acceleration',
+                'getter': lambda device: device.get_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': True
+            },
+            {
+                'name': 'Magnetic Field',
+                'getter': lambda device: device.get_magnetic_field(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/16 µT ', '1/16 µT ', '1/16 µT '],
+                'advanced': True
+            },
+            {
+                'name': 'Angular Velocity',
+                'getter': lambda device: device.get_angular_velocity(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/16 °/s', '1/16 °/s', '1/16 °/s'],
+                'advanced': True
+            },
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': True
+            },
+            #{
+            #    'name': 'All Data',
+            #    'getter': lambda device: device.get_all_data(),
+            #    'subvalues': # FIXME: nested arrays
+            #    'unit': # FIXME: nested arrays
+            #    'advanced': False
+            #},
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None # FIXME: ranges
+    }
 if BrickletIndustrialCounter_found:
     device_specs[BrickletIndustrialCounter.DEVICE_DISPLAY_NAME] = {
         'class': BrickletIndustrialCounter,
@@ -3133,6 +3231,28 @@ if BrickletIndustrialDual020mAV2_found:
                 'default': '1x'
             }
         ]
+    }
+if BrickletIndustrialDualACRelay_found:
+    device_specs[BrickletIndustrialDualACRelay.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletIndustrialDualACRelay,
+        'values': [
+            {
+                'name': 'State',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1'],
+                'unit': [None, None],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
     }
 if BrickletIndustrialDualAnalogInV2_found:
     device_specs[BrickletIndustrialDualAnalogInV2.DEVICE_DISPLAY_NAME] = {
