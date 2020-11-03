@@ -593,3 +593,4 @@
 2020-11-03: 2.4.15 (<unknown>)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
 - Improve error handling and reporting
+- Support running on integrated GPU on macOS

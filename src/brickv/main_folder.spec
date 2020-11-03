@@ -120,7 +120,8 @@ if utils.macos:
                      'LSMinimumSystemVersion': '10.11', # required for PyQt 5.11.3
                      'CFBundleVersion': utils.version.split('+')[0],
                      'CFBundleShortVersionString': utils.version.split('+')[0],
-                     'NSHighResolutionCapable': 'True'
+                     'NSHighResolutionCapable': 'True',
+                     'NSSupportsAutomaticGraphicsSwitching': 'True'
                  })
 
 utils.post_generate()
