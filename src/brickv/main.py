@@ -203,6 +203,7 @@ class ExceptionReporter:
 
             if exit_requested:
                 QApplication.exit(1)
+                return
 
             if not show_again:
                 ignored.append(hash_)
