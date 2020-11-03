@@ -7653,7 +7653,7 @@ dict_provider = \
                                              'password': 'mms',
                                              'usage': {'@type': 'mms'},
                                              'username': 'mms'}],
-                                    'balance-check': {'ussd': '*127*1*#'},
+                                    'balance-check': {'ussd': '*127*1#'},
                                     'balance-top-up': {'ussd': {'#text': '*128*CODE#',
                                                                 '@replacement': 'CODE'}},
                                     'network-id': {'@mcc': '260', '@mnc': '03'},
