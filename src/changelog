@@ -590,7 +590,7 @@
 - Add extra checkbox to avoid accidental port number changes
 - Handle all errors while downloading firmware updates
 
-2020-11-03: 2.4.15 (<unknown>)
+2020-11-03: 2.4.15 (3291acd)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
 - Improve error handling and reporting
 - Support running on integrated GPU on macOS
