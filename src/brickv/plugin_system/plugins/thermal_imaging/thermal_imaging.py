@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import math
+import time
 
 from PyQt5.QtCore import pyqtSignal, Qt, QSize, QPoint, QLineF
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QLabel
@@ -406,6 +407,27 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
         self.update_agc_roi_label()
 
+        self.fps_average_length = 10
+        self.last_ten_image_times = []
+        self.qtcb_high_contrast_image.connect(self.update_fps)
+        self.qtcb_temperature_image.connect(self.update_fps)
+
+    def update_fps(self):
+        self.last_ten_image_times.append(time.time())
+        if len(self.last_ten_image_times) > self.fps_average_length:
+            self.last_ten_image_times.pop(0)
+
+        if len(self.last_ten_image_times) == self.fps_average_length:
+            rel_time_sum = 0
+            for i in range(1, self.fps_average_length):
+                rel_time_sum += self.last_ten_image_times[i] - self.last_ten_image_times[i - 1]
+
+            fps = (self.fps_average_length - 1) / rel_time_sum
+            self.fps_label.setText("{:1.1f}".format(fps))
+        else:
+            self.fps_label.setText("...")
+
+
     def detach_image_clicked(self):
         if self.thermal_image_wrapper != None:
             self.thermal_image_wrapper.close()
@@ -459,6 +481,7 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
         async_call(self.thermal_imaging.set_image_transfer_config, config, None, self.increase_error_count)
 
         self.high_contrast_groupbox.setVisible(config == BrickletThermalImaging.IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE)
+        self.last_ten_image_times = []
 
     def update_resolution(self):
         self.thermal_image.wait_for_minmax = 2
@@ -614,6 +637,7 @@ class ThermalImaging(COMCUPluginBase, Ui_ThermalImaging):
 
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_HIGH_CONTRAST_IMAGE, self.qtcb_high_contrast_image.emit)
         self.thermal_imaging.register_callback(self.thermal_imaging.CALLBACK_TEMPERATURE_IMAGE, self.qtcb_temperature_image.emit)
+        self.last_ten_image_times = []
 
     def stop(self):
         if self.thermal_image_wrapper is not None:
