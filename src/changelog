@@ -595,5 +595,5 @@
 - Improve error handling and reporting
 - Support running on integrated GPU on macOS
 
-2020-11-04: 2.4.16 (<unknown>)
+2020-11-04: 2.4.16 (4e86e84)
 - Reduce Qt requirement to 5.11 to fix crash on macOS
