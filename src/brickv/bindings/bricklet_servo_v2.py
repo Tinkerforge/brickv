@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-11-02.      #
+# This file was automatically generated on 2020-11-05.      #
 #                                                           #
 # Python Bindings Version 2.1.27                            #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletServoV2(Device):
     DEVICE_DISPLAY_NAME = 'Servo Bricklet 2.0'
     DEVICE_URL_PART = 'servo_v2' # internal
 
+    CALLBACK_POSITION_REACHED = 27
 
 
     FUNCTION_GET_STATUS = 1
@@ -58,7 +59,10 @@ class BrickletServoV2(Device):
     FUNCTION_GET_INPUT_VOLTAGE_CONFIGURATION = 20
     FUNCTION_GET_OVERALL_CURRENT = 21
     FUNCTION_GET_INPUT_VOLTAGE = 22
-    FUNCTION_CALIBRATE_SERVO_CURRENT = 23
+    FUNCTION_SET_CURRENT_CALIBRATION = 23
+    FUNCTION_GET_CURRENT_CALIBRATION = 24
+    FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION = 25
+    FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION = 26
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -119,7 +123,10 @@ class BrickletServoV2(Device):
         self.response_expected[BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE_CONFIGURATION] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_OVERALL_CURRENT] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletServoV2.FUNCTION_CALIBRATE_SERVO_CURRENT] = BrickletServoV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletServoV2.FUNCTION_SET_CURRENT_CALIBRATION] = BrickletServoV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletServoV2.FUNCTION_GET_CURRENT_CALIBRATION] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletServoV2.FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION] = BrickletServoV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletServoV2.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -133,6 +140,7 @@ class BrickletServoV2(Device):
         self.response_expected[BrickletServoV2.FUNCTION_READ_UID] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_IDENTITY] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletServoV2.CALLBACK_POSITION_REACHED] = (11, 'B h')
 
         ipcon.add_device(self)
 
@@ -236,7 +244,7 @@ class BrickletServoV2(Device):
         acceleration = int(acceleration)
         deceleration = int(deceleration)
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_MOTION_CONFIGURATION, (servo_channel, velocity, acceleration, deceleration), 'H H H H', 0, '')
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_MOTION_CONFIGURATION, (servo_channel, velocity, acceleration, deceleration), 'H I I I', 0, '')
 
     def get_motion_configuration(self, servo_channel):
         """
@@ -247,7 +255,7 @@ class BrickletServoV2(Device):
 
         servo_channel = int(servo_channel)
 
-        return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_MOTION_CONFIGURATION, (servo_channel,), 'H', 14, 'H H H'))
+        return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_MOTION_CONFIGURATION, (servo_channel,), 'H', 20, 'I I I'))
 
     def set_pulse_width(self, servo_channel, min, max):
         """
@@ -354,7 +362,7 @@ class BrickletServoV2(Device):
         what the correct period is, the default value (19.5ms) will most likely
         work fine.
 
-        The minimum possible period is 1µs and the maximum is 65535µs.
+        The minimum possible period is 1µs and the maximum is 1000000µs.
 
         The default value is 19.5ms (19500µs).
         """
@@ -441,13 +449,45 @@ class BrickletServoV2(Device):
 
         return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 10, 'H')
 
-    def calibrate_servo_current(self):
+    def set_current_calibration(self, offset):
         """
         TODO
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_CALIBRATE_SERVO_CURRENT, (), '', 0, '')
+        offset = list(map(int, offset))
+
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_CURRENT_CALIBRATION, (offset,), '10h', 0, '')
+
+    def get_current_calibration(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_CURRENT_CALIBRATION, (), '', 28, '10h')
+
+    def set_position_reached_callback_configuration(self, servo_channel, enabled):
+        """
+        Enable/Disable :cb:`Position Reached` callback.
+        """
+        self.check_validity()
+
+        servo_channel = int(servo_channel)
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletServoV2.FUNCTION_SET_POSITION_REACHED_CALLBACK_CONFIGURATION, (servo_channel, enabled), 'H !', 0, '')
+
+    def get_position_reached_callback_configuration(self, servo_channel):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Position Reached Callback Configuration`.
+        """
+        self.check_validity()
+
+        servo_channel = int(servo_channel)
+
+        return self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_POSITION_REACHED_CALLBACK_CONFIGURATION, (servo_channel,), 'H', 9, '!')
 
     def get_spitfp_error_count(self):
         """
@@ -612,5 +652,14 @@ class BrickletServoV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletServoV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 ServoV2 = BrickletServoV2 # for backward compatibility

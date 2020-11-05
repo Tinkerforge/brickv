@@ -275,7 +275,7 @@ class ServoV2(COMCUPluginBase, Ui_ServoV2):
     def update_servo_specific(self):
         servo = self.selected_servo()
 
-        if servo == 255:
+        if servo == 0xFFFF:
             self.enable_checkbox.setChecked(False)
             return
 
@@ -301,8 +301,8 @@ class ServoV2(COMCUPluginBase, Ui_ServoV2):
     def velocity_update(self, servo, velocity):
         self.velocity_list[servo].set_height(velocity * 100 // 0xFFFF)
 
-    def current_update(self, servo, acceleration):
-        self.current_list[servo].set_height(acceleration * 100 // 0xFFFF)
+    def current_update(self, servo, current):
+        self.current_list[servo].set_height(min(100, current * 100 // 200))
 
     def enable_update(self, servo, enabled):
         if enabled:
@@ -380,7 +380,7 @@ class ServoV2(COMCUPluginBase, Ui_ServoV2):
             self.servo.set_degree(servo, degree_min, degree_max)
         except ip_connection.Error:
             return
-    
+
     def cb_status(self, status):
         servo = self.selected_servo()
         self.input_voltage_update(status.input_voltage)
