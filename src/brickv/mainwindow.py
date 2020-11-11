@@ -969,8 +969,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_tree_view()
 
     def cb_connected(self, connect_reason):
-        self.disconnect_times = []
-
         self.update_ui_state()
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
@@ -1034,6 +1032,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def cb_disconnected(self, disconnect_reason):
         self.hide_status('mainwindow_hotplug')
+
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
             self.auto_reconnects = 0
             self.label_auto_reconnects.hide()
@@ -1043,7 +1042,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST or not self.ipcon.get_auto_reconnect():
             self.update_ui_state()
-        elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.time() + 1:
+        elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.monotonic() + 1:
             self.disconnect_times = []
             self.ipcon.set_auto_reconnect(False)
             self.update_ui_state()
@@ -1052,7 +1051,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, 'Connection',
                                  'Stopped automatic reconnecting due to multiple connection errors in a row.')
         else:
-            self.disconnect_times.append(time.time())
+            self.disconnect_times = self.disconnect_times[-3:] + [time.monotonic()]
             self.update_ui_state(IPConnection.CONNECTION_STATE_PENDING)
 
     def set_tree_view_defaults(self):
