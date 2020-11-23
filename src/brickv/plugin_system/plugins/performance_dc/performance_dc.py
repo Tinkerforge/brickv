@@ -33,6 +33,8 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.slider_spin_syncer import SliderSpinSyncer
 
 class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
+    qtcb_emergency_shutdown = pyqtSignal()
+
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletPerformanceDC, *args)
 
@@ -40,19 +42,19 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
 
         self.dc = self.device
 
+        self.qem = QErrorMessage(self)
+        self.qtcb_emergency_shutdown.connect(self.cb_emergency_shutdown)
+        self.dc.register_callback(self.dc.CALLBACK_EMERGENCY_SHUTDOWN, self.qtcb_emergency_shutdown.emit)
+    
         self.full_brake_button.clicked.connect(self.full_brake_clicked)
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
         self.radio_mode_coast.toggled.connect(self.coast_value_changed)
 
-        self.gpio0_stop_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
-        self.gpio0_stop_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
-        self.gpio0_brake_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
-        self.gpio0_brake_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(0))
-        self.gpio1_stop_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
-        self.gpio1_stop_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
-        self.gpio1_brake_rising_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
-        self.gpio1_brake_falling_check.stateChanged.connect(lambda: self.gpio_action_changed(1))
+        self.gpio0_rising_combo.currentIndexChanged.connect(lambda x: self.gpio_action_changed(0))
+        self.gpio0_falling_combo.currentIndexChanged.connect(lambda x: self.gpio_action_changed(0))
+        self.gpio1_rising_combo.currentIndexChanged.connect(lambda x: self.gpio_action_changed(1))
+        self.gpio1_falling_combo.currentIndexChanged.connect(lambda x: self.gpio_action_changed(1))
         self.gpio0_debounce_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(0))
         self.gpio0_stop_deceleration_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(0))
         self.gpio1_debounce_spin.valueChanged.connect(lambda: self.gpio_configuration_changed(1))
@@ -94,6 +96,14 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPerformanceDC.DEVICE_IDENTIFIER
+
+    def cb_emergency_shutdown(self):
+        # Refresh enabled checkbox in case of emergency shutdown
+        async_call(self.dc.get_enabled, None, self.get_enabled_async, self.increase_error_count)
+
+        if not self.qem.isVisible():
+            self.qem.setWindowTitle("Emergency Shutdown")
+            self.qem.showMessage("Emergency Shutdown: Short-Circuit or Over-Temperature or Under-Voltage")
 
     def brake_value_changed(self, checked):
         if checked:
@@ -168,15 +178,33 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
 
     def get_gpio_action_async(self, channel, action):
         if channel == 0:
-            self.gpio0_stop_rising_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE) != 0)
-            self.gpio0_stop_falling_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE) != 0)
-            self.gpio0_brake_rising_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE) != 0)
-            self.gpio0_brake_falling_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE) != 0)
+            if action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE: # full brake has higher priority
+                self.gpio0_rising_combo.setCurrentIndex(2)
+            elif action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE:
+                self.gpio0_rising_combo.setCurrentIndex(1)
+            else:
+                self.gpio0_rising_combo.setCurrentIndex(0)
+
+            if action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE: # full brake has higher priority
+                self.gpio0_falling_combo.setCurrentIndex(2)
+            elif action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE:
+                self.gpio0_falling_combo.setCurrentIndex(1)
+            else:
+                self.gpio0_rising_combo.setCurrentIndex(0)
         elif channel == 1:
-            self.gpio1_stop_rising_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE) != 0)
-            self.gpio1_stop_falling_check.setChecked((action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE) != 0)
-            self.gpio1_brake_rising_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE) != 0)
-            self.gpio1_brake_falling_check.setChecked((action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE) != 0)
+            if action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE: # full brake has higher priority
+                self.gpio1_rising_combo.setCurrentIndex(2)
+            elif action & self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE:
+                self.gpio1_rising_combo.setCurrentIndex(1)
+            else:
+                self.gpio1_rising_combo.setCurrentIndex(0)
+
+            if action & self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE: # full brake has higher priority
+                self.gpio1_falling_combo.setCurrentIndex(2)
+            elif action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE:
+                self.gpio1_falling_combo.setCurrentIndex(1)
+            else:
+                self.gpio1_rising_combo.setCurrentIndex(0)
 
     def get_gpio_state_async(self, state):
         if state[0]:
@@ -218,15 +246,18 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
     def gpio_action_changed(self, channel):
         action = 0
         if channel == 0:
-            if self.gpio0_stop_rising_check.isChecked():   action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
-            if self.gpio0_stop_falling_check.isChecked():  action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
-            if self.gpio0_brake_rising_check.isChecked():  action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
-            if self.gpio0_brake_falling_check.isChecked(): action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
+            rising  = self.gpio0_rising_combo.currentIndex()
+            falling = self.gpio0_falling_combo.currentIndex()
         elif channel == 1:
-            if self.gpio1_stop_rising_check.isChecked():   action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
-            if self.gpio1_stop_falling_check.isChecked():  action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
-            if self.gpio1_brake_rising_check.isChecked():  action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
-            if self.gpio1_brake_falling_check.isChecked(): action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
+            rising  = self.gpio1_rising_combo.currentIndex()
+            falling = self.gpio1_falling_combo.currentIndex()
+        else:
+            return # unreachable
+
+        if rising  == 1: action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
+        if falling == 1: action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
+        if rising  == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
+        if falling == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
         
         # TODO: Retain callback configuration
         self.dc.set_gpio_action(channel, action)

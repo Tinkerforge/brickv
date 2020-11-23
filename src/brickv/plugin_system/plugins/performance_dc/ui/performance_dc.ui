@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>863</width>
+    <width>714</width>
     <height>375</height>
    </rect>
   </property>
@@ -602,6 +602,19 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <spacer name="horizontalSpacer_14">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>&lt;b&gt;GPIO 0&lt;/b&gt;</string>
@@ -622,18 +635,28 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>State:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="gpio0_state_label">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>State</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="gpio0_state_label">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <spacer name="horizontalSpacer_19">
@@ -649,44 +672,57 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Action:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QCheckBox" name="gpio0_stop_rising_check">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>stop rising</string>
+          <string>Action Rising Edge:</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QCheckBox" name="gpio0_stop_falling_check">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>stop falling</string>
+          <string>Action Falling Edge:</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
-       <item>
-        <widget class="QCheckBox" name="gpio0_brake_rising_check">
-         <property name="text">
-          <string>brake rising</string>
-         </property>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="gpio0_rising_combo">
+         <item>
+          <property name="text">
+           <string>No Action</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Normal Stop</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Full Brake</string>
+          </property>
+         </item>
         </widget>
        </item>
-       <item>
-        <widget class="QCheckBox" name="gpio0_brake_falling_check">
-         <property name="text">
-          <string>brake falling</string>
-         </property>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="gpio0_falling_combo">
+         <item>
+          <property name="text">
+           <string>No Action</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Normal Stop</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Full Brake</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -705,57 +741,48 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Debounce:</string>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Debounce:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="gpio0_debounce_spin">
+         <property name="suffix">
+          <string>ms</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Stop Deceleration:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="gpio0_stop_deceleration_spin">
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QSpinBox" name="gpio0_debounce_spin">
-       <property name="suffix">
-        <string>ms</string>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_13">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_13">
-       <property name="text">
-        <string>Stop Deceleration:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="gpio0_stop_deceleration_spin">
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>65535</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_14">
+      <spacer name="horizontalSpacer_17">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -779,6 +806,19 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
+      <spacer name="horizontalSpacer_16">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>&lt;b&gt;GPIO 1&lt;/b&gt;</string>
@@ -799,18 +839,28 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_16">
-       <property name="text">
-        <string>State:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="gpio1_state_label">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>State</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="gpio1_state_label">
+         <property name="text">
+          <string>TBD</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <spacer name="horizontalSpacer_20">
@@ -826,50 +876,63 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Action:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
-       <item>
-        <widget class="QCheckBox" name="gpio1_stop_rising_check">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_17">
          <property name="text">
-          <string>stop rising</string>
+          <string>Action Rising Edge:</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QCheckBox" name="gpio1_stop_falling_check">
+       <item row="1" column="1">
+        <widget class="QComboBox" name="gpio1_falling_combo">
+         <item>
+          <property name="text">
+           <string>No Action</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Normal Stop</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Full Brake</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_19">
          <property name="text">
-          <string>stop falling</string>
+          <string>Action Falling Edge:</string>
          </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="gpio1_rising_combo">
+         <item>
+          <property name="text">
+           <string>No Action</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Normal Stop</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Full Brake</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_9">
-       <item>
-        <widget class="QCheckBox" name="gpio1_brake_rising_check">
-         <property name="text">
-          <string>brake rising</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="gpio1_brake_falling_check">
-         <property name="text">
-          <string>brake falling</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_16">
+      <spacer name="horizontalSpacer_13">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -882,57 +945,48 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Debounce:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="gpio1_debounce_spin">
-       <property name="suffix">
-        <string>ms</string>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_17">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_14">
-       <property name="text">
-        <string>Stop Deceleration:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="gpio1_stop_deceleration_spin">
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>65535</number>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Stop Deceleration:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Debounce:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QSpinBox" name="gpio1_stop_deceleration_spin">
+         <property name="suffix">
+          <string/>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="gpio1_debounce_spin">
+         <property name="suffix">
+          <string>ms</string>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <spacer name="horizontalSpacer_18">

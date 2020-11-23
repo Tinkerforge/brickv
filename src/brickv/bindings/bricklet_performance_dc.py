@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-11-02.      #
+# This file was automatically generated on 2020-11-11.      #
 #                                                           #
 # Python Bindings Version 2.1.27                            #
 #                                                           #
@@ -21,6 +21,7 @@ except ValueError:
 GetMotion = namedtuple('Motion', ['acceleration', 'deceleration'])
 GetPowerStatistics = namedtuple('PowerStatistics', ['voltage', 'current', 'temperature'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['debounce', 'stop_deceleration'])
+GetCurrentVelocityCallbackConfiguration = namedtuple('CurrentVelocityCallbackConfiguration', ['period', 'value_has_to_change'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -33,6 +34,9 @@ class BrickletPerformanceDC(Device):
     DEVICE_DISPLAY_NAME = 'Performance DC Bricklet'
     DEVICE_URL_PART = 'performance_dc' # internal
 
+    CALLBACK_EMERGENCY_SHUTDOWN = 35
+    CALLBACK_VELOCITY_REACHED = 36
+    CALLBACK_CURRENT_VELOCITY = 37
 
 
     FUNCTION_SET_ENABLED = 1
@@ -48,19 +52,27 @@ class BrickletPerformanceDC(Device):
     FUNCTION_SET_PWM_FREQUENCY = 11
     FUNCTION_GET_PWM_FREQUENCY = 12
     FUNCTION_GET_POWER_STATISTICS = 13
-    FUNCTION_SET_GPIO_CONFIGURATION = 14
-    FUNCTION_GET_GPIO_CONFIGURATION = 15
-    FUNCTION_SET_GPIO_ACTION = 16
-    FUNCTION_GET_GPIO_ACTION = 17
-    FUNCTION_GET_GPIO_STATE = 18
-    FUNCTION_SET_ERROR_LED_CONFIG = 19
-    FUNCTION_GET_ERROR_LED_CONFIG = 20
-    FUNCTION_SET_CW_LED_CONFIG = 21
-    FUNCTION_GET_CW_LED_CONFIG = 22
-    FUNCTION_SET_CCW_LED_CONFIG = 23
-    FUNCTION_GET_CCW_LED_CONFIG = 24
-    FUNCTION_SET_GPIO_LED_CONFIG = 25
-    FUNCTION_GET_GPIO_LED_CONFIG = 26
+    FUNCTION_SET_THERMAL_SHUTDOWN = 14
+    FUNCTION_GET_THERMAL_SHUTDOWN = 15
+    FUNCTION_SET_GPIO_CONFIGURATION = 16
+    FUNCTION_GET_GPIO_CONFIGURATION = 17
+    FUNCTION_SET_GPIO_ACTION = 18
+    FUNCTION_GET_GPIO_ACTION = 19
+    FUNCTION_GET_GPIO_STATE = 20
+    FUNCTION_SET_ERROR_LED_CONFIG = 21
+    FUNCTION_GET_ERROR_LED_CONFIG = 22
+    FUNCTION_SET_CW_LED_CONFIG = 23
+    FUNCTION_GET_CW_LED_CONFIG = 24
+    FUNCTION_SET_CCW_LED_CONFIG = 25
+    FUNCTION_GET_CCW_LED_CONFIG = 26
+    FUNCTION_SET_GPIO_LED_CONFIG = 27
+    FUNCTION_GET_GPIO_LED_CONFIG = 28
+    FUNCTION_SET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION = 29
+    FUNCTION_GET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION = 30
+    FUNCTION_SET_VELOCITY_REACHED_CALLBACK_CONFIGURATION = 31
+    FUNCTION_GET_VELOCITY_REACHED_CALLBACK_CONFIGURATION = 32
+    FUNCTION_SET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION = 33
+    FUNCTION_GET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION = 34
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -140,6 +152,8 @@ class BrickletPerformanceDC(Device):
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_PWM_FREQUENCY] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_PWM_FREQUENCY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_POWER_STATISTICS] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_THERMAL_SHUTDOWN] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_THERMAL_SHUTDOWN] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_ACTION] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
@@ -153,6 +167,12 @@ class BrickletPerformanceDC(Device):
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CCW_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_GPIO_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_GPIO_LED_CONFIG] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_VELOCITY_REACHED_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_VELOCITY_REACHED_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_SET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletPerformanceDC.FUNCTION_GET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_BOOTLOADER_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_BOOTLOADER_MODE] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -166,6 +186,9 @@ class BrickletPerformanceDC(Device):
         self.response_expected[BrickletPerformanceDC.FUNCTION_READ_UID] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_IDENTITY] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletPerformanceDC.CALLBACK_EMERGENCY_SHUTDOWN] = (8, '')
+        self.callback_formats[BrickletPerformanceDC.CALLBACK_VELOCITY_REACHED] = (10, 'h')
+        self.callback_formats[BrickletPerformanceDC.CALLBACK_CURRENT_VELOCITY] = (10, 'h')
 
         ipcon.add_device(self)
 
@@ -331,6 +354,24 @@ class BrickletPerformanceDC(Device):
 
         return GetPowerStatistics(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_POWER_STATISTICS, (), '', 14, 'H H h'))
 
+    def set_thermal_shutdown(self, temperature):
+        """
+        TBD
+        """
+        self.check_validity()
+
+        temperature = int(temperature)
+
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_THERMAL_SHUTDOWN, (temperature,), 'B', 0, '')
+
+    def get_thermal_shutdown(self):
+        """
+        TBD
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_THERMAL_SHUTDOWN, (), '', 9, 'B')
+
     def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
         TBD
@@ -464,6 +505,72 @@ class BrickletPerformanceDC(Device):
         channel = int(channel)
 
         return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_GPIO_LED_CONFIG, (channel,), 'B', 9, 'B')
+
+    def set_emergency_shutdown_callback_configuration(self, enabled):
+        """
+        Enable/Disable :cb:`Emergency Shutdown` callback.
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
+
+    def get_emergency_shutdown_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Emergency Shutdown Callback Configuration`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION, (), '', 9, '!')
+
+    def set_velocity_reached_callback_configuration(self, enabled):
+        """
+        Enable/Disable :cb:`Velocity Reached` callback.
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_VELOCITY_REACHED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
+
+    def get_velocity_reached_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Velocity Reached Callback Configuration`.
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_VELOCITY_REACHED_CALLBACK_CONFIGURATION, (), '', 9, '!')
+
+    def set_current_velocity_callback_configuration(self, period, value_has_to_change):
+        """
+        The period is the period with which the :cb:`Current Velocity`
+        callback is triggered periodically. A value of 0 turns the callback off.
+
+        If the `value has to change`-parameter is set to true, the callback is only
+        triggered after the value has changed. If the value didn't change within the
+        period, the callback is triggered immediately on change.
+
+        If it is set to false, the callback is continuously triggered with the period,
+        independent of the value.
+        """
+        self.check_validity()
+
+        period = int(period)
+        value_has_to_change = bool(value_has_to_change)
+
+        self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_SET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
+
+    def get_current_velocity_callback_configuration(self):
+        """
+        Returns the callback configuration as set by
+        :func:`Set Current Velocity Callback Configuration`.
+        """
+        self.check_validity()
+
+        return GetCurrentVelocityCallbackConfiguration(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
         """
@@ -628,5 +735,14 @@ class BrickletPerformanceDC(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletPerformanceDC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+
+    def register_callback(self, callback_id, function):
+        """
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 PerformanceDC = BrickletPerformanceDC # for backward compatibility
