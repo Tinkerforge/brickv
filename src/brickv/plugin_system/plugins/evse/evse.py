@@ -33,7 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.slider_spin_syncer import SliderSpinSyncer
 
 IEC61851_STATE = ['A', 'B', 'C', 'D', 'EF']
-LED_STATE = ['Off', 'On', 'Blinking', 'Breathing']
+LED_STATE = ['Off', 'On', 'Blinking', 'Flicker', 'Breathing']
 CONTACTOR_STATE = ['Not Live', 'Live']
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
 JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software', 'Unconfigured']
