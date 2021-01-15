@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-11-05.      #
+# This file was automatically generated on 2021-01-15.      #
 #                                                           #
-# Python Bindings Version 2.1.27                            #
+# Python Bindings Version 2.1.28                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -27,7 +25,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletServoV2(Device):
     """
-    TBD
+    Drives up to 10 RC Servos
     """
 
     DEVICE_IDENTIFIER = 2157
@@ -140,13 +138,24 @@ class BrickletServoV2(Device):
         self.response_expected[BrickletServoV2.FUNCTION_READ_UID] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletServoV2.FUNCTION_GET_IDENTITY] = BrickletServoV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletServoV2.CALLBACK_POSITION_REACHED] = (11, 'B h')
+        self.callback_formats[BrickletServoV2.CALLBACK_POSITION_REACHED] = (12, 'H h')
 
         ipcon.add_device(self)
 
     def get_status(self):
         """
-        TODO
+        Returns the status information of the Servo Bricklet 2.0.
+
+        The status includes
+
+        * for each channel if it is enabled or disabled,
+        * for each channel the current position,
+        * for each channel the current velocity,
+        * for each channel the current usage and
+        * the input voltage.
+
+        Please note that the position and the velocity is a snapshot of the
+        current position and velocity of the servo in motion.
         """
         self.check_validity()
 
@@ -154,7 +163,7 @@ class BrickletServoV2(Device):
 
     def set_enable(self, servo_channel, enable):
         """
-        Enables a servo (0 to 9). If a servo is enabled, the configured position,
+        Enables a servo channel (0 to 9). If a servo is enabled, the configured position,
         velocity, acceleration, etc. are applied immediately.
         """
         self.check_validity()
@@ -166,7 +175,7 @@ class BrickletServoV2(Device):
 
     def get_enabled(self, servo_channel):
         """
-        Returns *true* if the specified servo is enabled, *false* otherwise.
+        Returns *true* if the specified servo channel is enabled, *false* otherwise.
         """
         self.check_validity()
 
@@ -176,7 +185,7 @@ class BrickletServoV2(Device):
 
     def set_position(self, servo_channel, position):
         """
-        Sets the position in °/100 for the specified servo.
+        Sets the position in °/100 for the specified servo channel.
 
         The default range of the position is -9000 to 9000, but it can be specified
         according to your servo with :func:`Set Degree`.
@@ -194,7 +203,7 @@ class BrickletServoV2(Device):
 
     def get_position(self, servo_channel):
         """
-        Returns the position of the specified servo as set by :func:`Set Position`.
+        Returns the position of the specified servo channel as set by :func:`Set Position`.
         """
         self.check_validity()
 
@@ -204,7 +213,7 @@ class BrickletServoV2(Device):
 
     def get_current_position(self, servo_channel):
         """
-        Returns the *current* position of the specified servo. This may not be the
+        Returns the *current* position of the specified servo channel. This may not be the
         value of :func:`Set Position` if the servo is currently approaching a
         position goal.
         """
@@ -216,9 +225,9 @@ class BrickletServoV2(Device):
 
     def get_current_velocity(self, servo_channel):
         """
-        Returns the *current* velocity of the specified servo. This may not be the
-        value of TBD if the servo is currently approaching a
-        velocity goal.
+        Returns the *current* velocity of the specified servo channel. This may not be the
+        velocity specified by :func:`Set Motion Configuration`. if the servo is
+        currently approaching a velocity goal.
         """
         self.check_validity()
 
@@ -228,14 +237,13 @@ class BrickletServoV2(Device):
 
     def set_motion_configuration(self, servo_channel, velocity, acceleration, deceleration):
         """
-        TODO: Acc/Dec in °/100s²
+        Sets the maximum velocity of the specified servo channel in °/100s as well as
+        the acceleration and deceleration in °/100s²
 
-        Sets the maximum velocity of the specified servo in °/100s.
+        With a velocity of 0 °/100s the position will be set immediately (no velocity).
 
-        The minimum velocity is 0 (no movement) and the maximum velocity is 65535.
-        With a value of 65535 the position will be set immediately (no velocity).
-
-        The default value is 65535.
+        With an acc-/deceleration of 0 °/100s² the velocity will be set immediately
+        (no acc-/deceleration).
         """
         self.check_validity()
 
@@ -248,8 +256,7 @@ class BrickletServoV2(Device):
 
     def get_motion_configuration(self, servo_channel):
         """
-        TODO: Acc/Dec
-        Returns the velocity of the specified servo as set by :func:`Set Motion Configuration`.
+        Returns the motion configuration as set by :func:`Set Motion Configuration`.
         """
         self.check_validity()
 
@@ -259,7 +266,7 @@ class BrickletServoV2(Device):
 
     def set_pulse_width(self, servo_channel, min, max):
         """
-        Sets the minimum and maximum pulse width of the specified servo in µs.
+        Sets the minimum and maximum pulse width of the specified servo channel in µs.
 
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
@@ -287,7 +294,7 @@ class BrickletServoV2(Device):
 
     def get_pulse_width(self, servo_channel):
         """
-        Returns the minimum and maximum pulse width for the specified servo as set by
+        Returns the minimum and maximum pulse width for the specified servo channel as set by
         :func:`Set Pulse Width`.
         """
         self.check_validity()
@@ -298,7 +305,7 @@ class BrickletServoV2(Device):
 
     def set_degree(self, servo_channel, min, max):
         """
-        Sets the minimum and maximum degree for the specified servo (by default
+        Sets the minimum and maximum degree for the specified servo channel (by default
         given as °/100).
 
         This only specifies the abstract values between which the minimum and maximum
@@ -339,7 +346,7 @@ class BrickletServoV2(Device):
 
     def get_degree(self, servo_channel):
         """
-        Returns the minimum and maximum degree for the specified servo as set by
+        Returns the minimum and maximum degree for the specified servo channel as set by
         :func:`Set Degree`.
         """
         self.check_validity()
@@ -350,7 +357,7 @@ class BrickletServoV2(Device):
 
     def set_period(self, servo_channel, period):
         """
-        Sets the period of the specified servo in µs.
+        Sets the period of the specified servo channel in µs.
 
         Usually, servos are controlled with a
         `PWM <https://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
@@ -375,7 +382,7 @@ class BrickletServoV2(Device):
 
     def get_period(self, servo_channel):
         """
-        Returns the period for the specified servo as set by :func:`Set Period`.
+        Returns the period for the specified servo channel as set by :func:`Set Period`.
         """
         self.check_validity()
 
@@ -385,7 +392,7 @@ class BrickletServoV2(Device):
 
     def get_servo_current(self, servo_channel):
         """
-        Returns the current consumption of the specified servo in mA.
+        Returns the current consumption of the specified servo channel in mA.
         """
         self.check_validity()
 
@@ -395,7 +402,7 @@ class BrickletServoV2(Device):
 
     def set_servo_current_configuration(self, servo_channel, averaging_duration):
         """
-        TODO
+        Sets the averaging duration of the current measurement for the specified servo channel in ms.
         """
         self.check_validity()
 
@@ -406,7 +413,8 @@ class BrickletServoV2(Device):
 
     def get_servo_current_configuration(self, servo_channel):
         """
-        TODO
+        Returns the servo current configuration for the specified servo channel as set
+        by :func:`Set Servo Current Configuration`.
         """
         self.check_validity()
 
@@ -416,7 +424,7 @@ class BrickletServoV2(Device):
 
     def set_input_voltage_configuration(self, averaging_duration):
         """
-        TODO
+        Sets the averaging duration of the input voltage measurement for the specified servo channel in ms.
         """
         self.check_validity()
 
@@ -426,7 +434,7 @@ class BrickletServoV2(Device):
 
     def get_input_voltage_configuration(self):
         """
-        TODO
+        Returns the input voltage configuration as set by :func:`Set Input Voltage Configuration`.
         """
         self.check_validity()
 
@@ -451,7 +459,9 @@ class BrickletServoV2(Device):
 
     def set_current_calibration(self, offset):
         """
-        TODO
+        Sets an offset value (in mA) for each channel.
+
+        Note: On delivery the Servo Bricklet 2.0 is already calibrated.
         """
         self.check_validity()
 
@@ -461,7 +471,7 @@ class BrickletServoV2(Device):
 
     def get_current_calibration(self):
         """
-        TODO
+        Returns the current calibration as set by :func:`Set Current Calibration`.
         """
         self.check_validity()
 

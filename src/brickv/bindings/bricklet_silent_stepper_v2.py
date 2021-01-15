@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-11-27.      #
+# This file was automatically generated on 2021-01-15.      #
 #                                                           #
-# Python Bindings Version 2.1.27                            #
+# Python Bindings Version 2.1.28                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -250,7 +250,7 @@ class BrickletSilentStepperV2(Device):
 
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_UNDER_VOLTAGE] = (10, 'H')
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_POSITION_REACHED] = (12, 'i')
-        self.callback_formats[BrickletSilentStepperV2.CALLBACK_ALL_DATA] = (24, 'H i i H H H')
+        self.callback_formats[BrickletSilentStepperV2.CALLBACK_ALL_DATA] = (22, 'H i i H H')
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_NEW_STATE] = (10, 'B B')
 
         ipcon.add_device(self)
@@ -526,7 +526,7 @@ class BrickletSilentStepperV2(Device):
          before disabling the motor power. The :func:`Stop` function will **not**
          wait until the motor is actually stopped. You have to explicitly wait for the
          appropriate time after calling the :func:`Stop` function before calling
-         the :func:`Disable` function.
+         the :func:`Set Enabled` with false function.
         """
         self.check_validity()
 

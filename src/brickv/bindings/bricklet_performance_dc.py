@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2020-11-11.      #
+# This file was automatically generated on 2021-01-15.      #
 #                                                           #
-# Python Bindings Version 2.1.27                            #
+# Python Bindings Version 2.1.28                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -27,7 +25,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletPerformanceDC(Device):
     """
-    TBD
+    Drives one brushed DC motor with up to 36V and 10A
     """
 
     DEVICE_IDENTIFIER = 2156
@@ -194,7 +192,8 @@ class BrickletPerformanceDC(Device):
 
     def set_enabled(self, enabled):
         """
-        TBD
+        Enables/Disables the driver chip. The driver parameters can be configured
+        (velocity, acceleration, etc) before it is enabled.
         """
         self.check_validity()
 
@@ -204,7 +203,7 @@ class BrickletPerformanceDC(Device):
 
     def get_enabled(self):
         """
-        TBD
+        Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         self.check_validity()
 
@@ -214,13 +213,13 @@ class BrickletPerformanceDC(Device):
         """
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
         0 is stop and 32767 is full speed forward. Depending on the
-        acceleration (see TBD), the motor is not immediately
+        acceleration (see :func:`Set Motion`), the motor is not immediately
         brought to the velocity but smoothly accelerated.
 
         The velocity describes the duty cycle of the PWM with which the motor is
         controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
         You can not only control the duty cycle of the PWM but also the frequency,
-        see TBD.
+        see :func:`Set PWM Frequency`.
         """
         self.check_validity()
 
@@ -248,16 +247,16 @@ class BrickletPerformanceDC(Device):
 
     def set_motion(self, acceleration, deceleration):
         """
-        Sets the acceleration of the motor. It is given in *velocity/s*. An
-        acceleration of 10000 means, that every second the velocity is increased
+        Sets the acceleration and deceleration of the motor. It is given in *velocity/s*.
+        An acceleration of 10000 means, that every second the velocity is increased
         by 10000 (or about 30% duty cycle).
 
         For example: If the current velocity is 0 and you want to accelerate to a
         velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
         an acceleration of 1600.
 
-        If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
-        is immediately given to the motor.
+        If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a
+        new velocity is immediately given to the motor.
         """
         self.check_validity()
 
@@ -268,7 +267,7 @@ class BrickletPerformanceDC(Device):
 
     def get_motion(self):
         """
-        Returns the acceleration as set by :func:`Set Motion`.
+        Returns the acceleration/deceleration as set by :func:`Set Motion`.
         """
         self.check_validity()
 
@@ -348,7 +347,7 @@ class BrickletPerformanceDC(Device):
 
     def get_power_statistics(self):
         """
-        TBD
+        Returns input voltage, current usage and temperature of the driver.
         """
         self.check_validity()
 
@@ -356,7 +355,13 @@ class BrickletPerformanceDC(Device):
 
     def set_thermal_shutdown(self, temperature):
         """
-        TBD
+        Sets a temperature threshold that is used for thermal shutdown.
+
+        Additionally to this user defined threshold the driver chip will shut down at a
+        temperature of 150°C.
+
+        If a thermal shutdown is triggered the driver is disabled and has to be
+        explicitly re-enabled with :func:`Set Enabled`.
         """
         self.check_validity()
 
@@ -366,7 +371,7 @@ class BrickletPerformanceDC(Device):
 
     def get_thermal_shutdown(self):
         """
-        TBD
+        Returns the thermal shutdown temperature as set by :func:`Set Thermal Shutdown`.
         """
         self.check_validity()
 
@@ -374,7 +379,9 @@ class BrickletPerformanceDC(Device):
 
     def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
-        TBD
+        Sets the GPIO configuration for the given channel.
+        You can configure a debounce and the deceleration that is used if the action is
+        configured as ``normal stop``. See :func:`Set GPIO Action`.
         """
         self.check_validity()
 
@@ -386,7 +393,7 @@ class BrickletPerformanceDC(Device):
 
     def get_gpio_configuration(self, channel):
         """
-        TBD
+        Returns the GPIO configuration for a channel as set by :func:`Set GPIO Configuration`.
         """
         self.check_validity()
 
@@ -396,7 +403,15 @@ class BrickletPerformanceDC(Device):
 
     def set_gpio_action(self, channel, action):
         """
-        TBD
+        Sets the GPIO action for the given channel.
+
+        The action can be a normal stop, a full brake or a callback. Each for a rising
+        edge or falling edge. The actions are a bitmask they can be used at the same time.
+        You can for example trigger a full brake and a callback at the same time or for
+        rising and falling edge.
+
+        The deceleration speed for the normal stop can be configured with
+        :func:`Set GPIO Configuration`.
         """
         self.check_validity()
 
@@ -407,7 +422,7 @@ class BrickletPerformanceDC(Device):
 
     def get_gpio_action(self, channel):
         """
-        TBD
+        Returns the GPIO action for a channel as set by :func:`Set GPIO Action`.
         """
         self.check_validity()
 
@@ -417,7 +432,8 @@ class BrickletPerformanceDC(Device):
 
     def get_gpio_state(self):
         """
-        TBD
+        Returns the GPIO state for both channels. True if the state is ``high`` and
+        false if the state is ``low``.
         """
         self.check_validity()
 
@@ -425,14 +441,14 @@ class BrickletPerformanceDC(Device):
 
     def set_error_led_config(self, config):
         """
-        Configures the touch LED to be either turned off, turned on, blink in
-        heartbeat mode or show TBD.
+        Configures the error LED to be either turned off, turned on, blink in
+        heartbeat mode or show an error.
 
-        TODO:
+        If the LED is configured to show errors it has three different states:
 
-        * one second interval blink: Input voltage too small
-        * 250ms interval blink: Overtemperature warning
-        * full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+        * Off: No error present.
+        * 1s interval blinking: Input voltage too low (below 6V).
+        * 250ms interval blinking: Overtemperature or overcurrent.
         """
         self.check_validity()
 
@@ -450,7 +466,8 @@ class BrickletPerformanceDC(Device):
 
     def set_cw_led_config(self, config):
         """
-        TBD
+        Configures the CW LED to be either turned off, turned on, blink in
+        heartbeat mode or if the motor turn clockwise.
         """
         self.check_validity()
 
@@ -468,7 +485,8 @@ class BrickletPerformanceDC(Device):
 
     def set_ccw_led_config(self, config):
         """
-        TBD
+        Configures the CCW LED to be either turned off, turned on, blink in
+        heartbeat mode or if the motor turn counter-clockwise.
         """
         self.check_validity()
 
@@ -486,8 +504,10 @@ class BrickletPerformanceDC(Device):
 
     def set_gpio_led_config(self, channel, config):
         """
-        Configures the touch LED to be either turned off, turned on, blink in
-        heartbeat mode or show TBD.
+        Configures the GPIO LED to be either turned off, turned on, blink in
+        heartbeat mode or the GPIO state.
+
+        The GPIO LED can be configured for both channels.
         """
         self.check_validity()
 
