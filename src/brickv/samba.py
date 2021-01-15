@@ -183,9 +183,13 @@ class SAMBA:
         try:
             self.port = Serial(port_name, 115200, timeout=5)
         except SerialException as e:
-            if '[Errno 13]' in str(e):
+            str_e = str(e)
+
+            if '[Errno 13]' in str_e or 'Zugriff verweigert' in str_e:
                 if sys.platform.startswith('linux'):
                     raise SAMBAException("No permission to open serial port, try starting {0} as root".format(application_name))
+                elif sys.platform == 'win32':
+                    raise SAMBAException("No permission to open serial port, try starting {0} as Administrator".format(application_name))
                 else:
                     raise SAMBAException("No permission to open serial port")
             else:
