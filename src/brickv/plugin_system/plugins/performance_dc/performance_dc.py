@@ -69,6 +69,88 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity, None, self.get_current_velocity_async, self.increase_error_count)
         self.cbe_gpio_state       = CallbackEmulator(self.dc.get_gpio_state,       None, self.get_gpio_state_async,       self.increase_error_count)
 
+        self.error_led_off_action = QAction('Off', self)
+        self.error_led_off_action.triggered.connect(lambda: self.dc.set_error_led_config(BrickletPerformanceDC.ERROR_LED_CONFIG_OFF))
+        self.error_led_on_action = QAction('On', self)
+        self.error_led_on_action.triggered.connect(lambda: self.dc.set_error_led_config(BrickletPerformanceDC.ERROR_LED_CONFIG_ON))
+        self.error_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.error_led_show_heartbeat_action.triggered.connect(lambda: self.dc.set_error_led_config(BrickletPerformanceDC.ERROR_LED_CONFIG_SHOW_HEARTBEAT))
+        self.error_led_show_error_action = QAction('Show Error', self)
+        self.error_led_show_error_action.triggered.connect(lambda: self.dc.set_error_led_config(BrickletPerformanceDC.ERROR_LED_CONFIG_SHOW_ERROR))
+
+        self.extra_configs += [(1, 'Error LED:', [self.error_led_off_action,
+                                                  self.error_led_on_action,
+                                                  self.error_led_show_heartbeat_action,
+                                                  self.error_led_show_error_action])]
+
+        self.cw_led_off_action = QAction('Off', self)
+        self.cw_led_off_action.triggered.connect(lambda: self.dc.set_cw_led_config(BrickletPerformanceDC.CW_LED_CONFIG_OFF))
+        self.cw_led_on_action = QAction('On', self)
+        self.cw_led_on_action.triggered.connect(lambda: self.dc.set_cw_led_config(BrickletPerformanceDC.CW_LED_CONFIG_ON))
+        self.cw_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.cw_led_show_heartbeat_action.triggered.connect(lambda: self.dc.set_cw_led_config(BrickletPerformanceDC.CW_LED_CONFIG_SHOW_HEARTBEAT))
+        self.cw_led_show_cw_as_forward_action = QAction('Show CW As Forward', self)
+        self.cw_led_show_cw_as_forward_action.triggered.connect(lambda: self.dc.set_cw_led_config(BrickletPerformanceDC.CW_LED_CONFIG_SHOW_CW_AS_FORWARD))
+        self.cw_led_show_cw_as_backward_action = QAction('Show CW As Backward', self)
+        self.cw_led_show_cw_as_backward_action.triggered.connect(lambda: self.dc.set_cw_led_config(BrickletPerformanceDC.CW_LED_CONFIG_SHOW_CW_AS_BACKWARD))
+
+        self.extra_configs += [(2, 'CW LED:', [self.cw_led_off_action,
+                                               self.cw_led_on_action,
+                                               self.cw_led_show_heartbeat_action,
+                                               self.cw_led_show_cw_as_forward_action,
+                                               self.cw_led_show_cw_as_backward_action])]
+
+        self.ccw_led_off_action = QAction('Off', self)
+        self.ccw_led_off_action.triggered.connect(lambda: self.dc.set_ccw_led_config(BrickletPerformanceDC.CCW_LED_CONFIG_OFF))
+        self.ccw_led_on_action = QAction('On', self)
+        self.ccw_led_on_action.triggered.connect(lambda: self.dc.set_ccw_led_config(BrickletPerformanceDC.CCW_LED_CONFIG_ON))
+        self.ccw_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.ccw_led_show_heartbeat_action.triggered.connect(lambda: self.dc.set_ccw_led_config(BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_HEARTBEAT))
+        self.ccw_led_show_ccw_as_forward_action = QAction('Show CCW As Forward', self)
+        self.ccw_led_show_ccw_as_forward_action.triggered.connect(lambda: self.dc.set_ccw_led_config(BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_CCW_AS_FORWARD))
+        self.ccw_led_show_ccw_as_backward_action = QAction('Show CCW As Backward', self)
+        self.ccw_led_show_ccw_as_backward_action.triggered.connect(lambda: self.dc.set_ccw_led_config(BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_CCW_AS_BACKWARD))
+
+        self.extra_configs += [(2, 'CCW LED:', [self.ccw_led_off_action,
+                                                self.ccw_led_on_action,
+                                                self.ccw_led_show_heartbeat_action,
+                                                self.ccw_led_show_ccw_as_forward_action,
+                                                self.ccw_led_show_ccw_as_backward_action])]
+
+        self.gpio0_led_off_action = QAction('Off', self)
+        self.gpio0_led_off_action.triggered.connect(lambda: self.dc.set_gpio_led_config(0, BrickletPerformanceDC.GPIO_LED_CONFIG_OFF))
+        self.gpio0_led_on_action = QAction('On', self)
+        self.gpio0_led_on_action.triggered.connect(lambda: self.dc.set_gpio_led_config(0, BrickletPerformanceDC.GPIO_LED_CONFIG_ON))
+        self.gpio0_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.gpio0_led_show_heartbeat_action.triggered.connect(lambda: self.dc.set_gpio_led_config(0, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_HEARTBEAT))
+        self.gpio0_led_show_show_gpio_active_high_action = QAction('Show GPIO Active High', self)
+        self.gpio0_led_show_show_gpio_active_high_action.triggered.connect(lambda: self.dc.set_gpio_led_config(0, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_HIGH))
+        self.gpio0_led_show_show_gpio_active_low_action = QAction('Show GPIO Active Low', self)
+        self.gpio0_led_show_show_gpio_active_low_action.triggered.connect(lambda: self.dc.set_gpio_led_config(0, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_LOW))
+
+        self.extra_configs += [(3, 'GPIO0 LED:', [self.gpio0_led_off_action,
+                                                  self.gpio0_led_on_action,
+                                                  self.gpio0_led_show_heartbeat_action,
+                                                  self.gpio0_led_show_show_gpio_active_high_action,
+                                                  self.gpio0_led_show_show_gpio_active_low_action])]
+
+        self.gpio1_led_off_action = QAction('Off', self)
+        self.gpio1_led_off_action.triggered.connect(lambda: self.dc.set_gpio_led_config(1, BrickletPerformanceDC.GPIO_LED_CONFIG_OFF))
+        self.gpio1_led_on_action = QAction('On', self)
+        self.gpio1_led_on_action.triggered.connect(lambda: self.dc.set_gpio_led_config(1, BrickletPerformanceDC.GPIO_LED_CONFIG_ON))
+        self.gpio1_led_show_heartbeat_action = QAction('Show Heartbeat', self)
+        self.gpio1_led_show_heartbeat_action.triggered.connect(lambda: self.dc.set_gpio_led_config(1, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_HEARTBEAT))
+        self.gpio1_led_show_show_gpio_active_high_action = QAction('Show GPIO Active High', self)
+        self.gpio1_led_show_show_gpio_active_high_action.triggered.connect(lambda: self.dc.set_gpio_led_config(1, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_HIGH))
+        self.gpio1_led_show_show_gpio_active_low_action = QAction('Show GPIO Active Low', self)
+        self.gpio1_led_show_show_gpio_active_low_action.triggered.connect(lambda: self.dc.set_gpio_led_config(1, BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_LOW))
+
+        self.extra_configs += [(3, 'GPIO1 LED:', [self.gpio1_led_off_action,
+                                                  self.gpio1_led_on_action,
+                                                  self.gpio1_led_show_heartbeat_action,
+                                                  self.gpio1_led_show_show_gpio_active_high_action,
+                                                  self.gpio1_led_show_show_gpio_active_low_action])]
+
     def start(self):
         async_call(self.dc.get_drive_mode,    None, self.get_drive_mode_async,    self.increase_error_count)
         async_call(self.dc.get_velocity,      None, self.get_velocity_async,      self.increase_error_count)
@@ -80,6 +162,12 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         async_call(self.dc.get_gpio_configuration, 1, lambda x: self.get_gpio_configuration_async(1, x), self.increase_error_count)
         async_call(self.dc.get_gpio_action,        0, lambda x: self.get_gpio_action_async(0, x),        self.increase_error_count)
         async_call(self.dc.get_gpio_action,        1, lambda x: self.get_gpio_action_async(1, x),        self.increase_error_count)
+
+        async_call(self.dc.get_error_led_config, None, self.get_error_led_config_async, self.increase_error_count)
+        async_call(self.dc.get_cw_led_config,    None, self.get_cw_led_config_async,    self.increase_error_count)
+        async_call(self.dc.get_ccw_led_config,   None, self.get_ccw_led_config_async,   self.increase_error_count)
+        async_call(self.dc.get_gpio_led_config,  0,    self.get_gpio0_led_config_async, self.increase_error_count)
+        async_call(self.dc.get_gpio_led_config,  1,    self.get_gpio1_led_config_async, self.increase_error_count)
 
         self.cbe_gpio_state.set_period(200)
         self.cbe_power_statistics.set_period(100)
@@ -96,6 +184,64 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletPerformanceDC.DEVICE_IDENTIFIER
+
+    def get_error_led_config_async(self, config):
+        if config == BrickletPerformanceDC.ERROR_LED_CONFIG_OFF:
+            self.error_led_off_action.trigger()
+        elif config == BrickletPerformanceDC.ERROR_LED_CONFIG_ON:
+            self.error_led_on_action.trigger()
+        elif config == BrickletPerformanceDC.ERROR_LED_CONFIG_SHOW_HEARTBEAT:
+            self.error_led_show_heartbeat_action.trigger()
+        elif config == BrickletPerformanceDC.ERROR_LED_CONFIG_SHOW_ERROR:
+            self.error_led_show_error_action.trigger()
+
+    def get_cw_led_config_async(self, config):
+        if config == BrickletPerformanceDC.CW_LED_CONFIG_OFF:
+            self.cw_led_off_action.trigger()
+        elif config == BrickletPerformanceDC.CW_LED_CONFIG_ON:
+            self.cw_led_on_action.trigger()
+        elif config == BrickletPerformanceDC.CW_LED_CONFIG_SHOW_HEARTBEAT:
+            self.cw_led_show_heartbeat_action.trigger()
+        elif config == BrickletPerformanceDC.CW_LED_CONFIG_SHOW_CW_AS_FORWARD:
+            self.cw_led_show_cw_as_forward_action.trigger()
+        elif config == BrickletPerformanceDC.CW_LED_CONFIG_SHOW_CW_AS_BACKWARD:
+            self.cw_led_show_cw_as_backward_action.trigger()
+
+    def get_ccw_led_config_async(self, config):
+        if config == BrickletPerformanceDC.CCW_LED_CONFIG_OFF:
+            self.ccw_led_off_action.trigger()
+        elif config == BrickletPerformanceDC.CCW_LED_CONFIG_ON:
+            self.ccw_led_on_action.trigger()
+        elif config == BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_HEARTBEAT:
+            self.ccw_led_show_heartbeat_action.trigger()
+        elif config == BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_CCW_AS_FORWARD:
+            self.ccw_led_show_ccw_as_forward_action.trigger()
+        elif config == BrickletPerformanceDC.CCW_LED_CONFIG_SHOW_CCW_AS_BACKWARD:
+            self.ccw_led_show_ccw_as_backward_action.trigger()
+
+    def get_gpio0_led_config_async(self, config):
+        if config == BrickletPerformanceDC.GPIO_LED_CONFIG_OFF:
+            self.gpio0_led_off_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_ON:
+            self.gpio0_led_on_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_HEARTBEAT:
+            self.gpio0_led_show_heartbeat_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_HIGH:
+            self.gpio0_led_show_show_gpio_active_high_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_LOW:
+            self.gpio0_led_show_show_gpio_active_low_action.trigger()
+
+    def get_gpio1_led_config_async(self, config):
+        if config == BrickletPerformanceDC.GPIO_LED_CONFIG_OFF:
+            self.gpio1_led_off_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_ON:
+            self.gpio1_led_on_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_HEARTBEAT:
+            self.gpio1_led_show_heartbeat_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_HIGH:
+            self.gpio1_led_show_show_gpio_active_high_action.trigger()
+        elif config == BrickletPerformanceDC.GPIO_LED_CONFIG_SHOW_GPIO_ACTIVE_LOW:
+            self.gpio1_led_show_show_gpio_active_low_action.trigger()
 
     def cb_emergency_shutdown(self):
         # Refresh enabled checkbox in case of emergency shutdown
