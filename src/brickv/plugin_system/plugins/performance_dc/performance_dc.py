@@ -45,7 +45,7 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         self.qem = QErrorMessage(self)
         self.qtcb_emergency_shutdown.connect(self.cb_emergency_shutdown)
         self.dc.register_callback(self.dc.CALLBACK_EMERGENCY_SHUTDOWN, self.qtcb_emergency_shutdown.emit)
-    
+
         self.full_brake_button.clicked.connect(self.full_brake_clicked)
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
@@ -258,7 +258,7 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         if falling == 1: action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
         if rising  == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
         if falling == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
-        
+
         # TODO: Retain callback configuration
         self.dc.set_gpio_action(channel, action)
 
