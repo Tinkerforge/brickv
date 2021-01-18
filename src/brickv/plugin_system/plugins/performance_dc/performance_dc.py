@@ -390,7 +390,11 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
             return
 
     def gpio_action_changed(self, channel):
-        action = 0
+        async_call(self.dc.get_gpio_action, channel, lambda x: self.gpio_action_changed_step2(channel, x), self.increase_error_count)
+
+    def gpio_action_changed_step2(self, channel, action):
+        action &= self.dc.GPIO_ACTION_CALLBACK_RISING_EDGE | self.dc.GPIO_ACTION_CALLBACK_FALLING_EDGE
+
         if channel == 0:
             rising  = self.gpio0_rising_combo.currentIndex()
             falling = self.gpio0_falling_combo.currentIndex()
@@ -400,12 +404,11 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         else:
             return # unreachable
 
-        if rising  == 1: action = action | self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
-        if falling == 1: action = action | self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
-        if rising  == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
-        if falling == 2: action = action | self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
+        if rising  == 1: action |= self.dc.GPIO_ACTION_NORMAL_STOP_RISING_EDGE
+        if falling == 1: action |= self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE
+        if rising  == 2: action |= self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE
+        if falling == 2: action |= self.dc.GPIO_ACTION_FULL_BRAKE_FALLING_EDGE
 
-        # TODO: Retain callback configuration
         self.dc.set_gpio_action(channel, action)
 
     def gpio_configuration_changed(self, channel):
