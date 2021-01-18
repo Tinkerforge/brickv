@@ -190,7 +190,7 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
             elif action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE:
                 self.gpio0_falling_combo.setCurrentIndex(1)
             else:
-                self.gpio0_rising_combo.setCurrentIndex(0)
+                self.gpio0_falling_combo.setCurrentIndex(0)
         elif channel == 1:
             if action & self.dc.GPIO_ACTION_FULL_BRAKE_RISING_EDGE: # full brake has higher priority
                 self.gpio1_rising_combo.setCurrentIndex(2)
@@ -204,7 +204,7 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
             elif action & self.dc.GPIO_ACTION_NORMAL_STOP_FALLING_EDGE:
                 self.gpio1_falling_combo.setCurrentIndex(1)
             else:
-                self.gpio1_rising_combo.setCurrentIndex(0)
+                self.gpio1_falling_combo.setCurrentIndex(0)
 
     def get_gpio_state_async(self, state):
         if state[0]:
