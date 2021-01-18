@@ -648,6 +648,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if len(configs) > 0:
             for cfg in configs:
+                while len(info_bars) <= cfg[0]:
+                    info_bars.append(QHBoxLayout())
+                    info_bars[-1].addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
                 if cfg[1] != None:
                     combobox = QComboBox()
 
@@ -685,7 +689,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 info_bars[action[0]].addWidget(button)
 
-        def more_clicked(button, info_bar):
+        def more_clicked(button, info_bars):
             visible = button.text().replace('&', '') == 'More' # remove &s, they mark the buttons hotkey
 
             if visible:
@@ -693,25 +697,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 button.setText('More')
 
+            for info_bar in info_bars:
+                for i in range(info_bar.count()):
+                    widget = info_bar.itemAt(i).widget()
+
+                    if widget != None:
+                        widget.setVisible(visible)
+
+        more_button = QPushButton('More')
+        more_button.clicked.connect(lambda: more_clicked(more_button, info_bars[1:]))
+
+        info_bars[0].addWidget(more_button)
+
+        for info_bar in info_bars[1:]:
             for i in range(info_bar.count()):
                 widget = info_bar.itemAt(i).widget()
 
                 if widget != None:
-                    widget.setVisible(visible)
+                    widget.hide()
 
-        more_button = QPushButton('More')
-        more_button.clicked.connect(lambda: more_clicked(more_button, info_bars[1]))
-
-        info_bars[0].addWidget(more_button)
-
-        for i in range(info_bars[1].count()):
-            widget = info_bars[1].itemAt(i).widget()
-
-            if widget != None:
-                widget.hide()
-
-        layout.addLayout(info_bars[0])
-        layout.addLayout(info_bars[1])
+        for info_bar in info_bars:
+            layout.addLayout(info_bar)
 
         line = QFrame()
         line.setObjectName("MainWindow_line")
