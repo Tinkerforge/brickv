@@ -61,3 +61,6 @@
 
 2020-11-03: 2.1.4 (a2dcfea)
 - Add support for IMU Bricklet 3.0 and Industrial Dual AC Relay Bricklet
+
+2021-01-15: 2.1.5 (<unknown>)
+- Add support for Performance DC Bricklet and Servo Bricklet 2.0
