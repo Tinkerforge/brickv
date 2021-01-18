@@ -462,6 +462,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletParticulateMatter_found = False
     try:
+        from brickv.bindings.bricklet_performance_dc import BrickletPerformanceDC
+        BrickletPerformanceDC_found = True
+    except ImportError:
+        BrickletPerformanceDC_found = False
+    try:
         from brickv.bindings.bricklet_ptc import BrickletPTC
         BrickletPTC_found = True
     except ImportError:
@@ -542,6 +547,11 @@ if 'merged_data_logger_modules' not in globals():
         BrickletSegmentDisplay4x7V2_found = True
     except ImportError:
         BrickletSegmentDisplay4x7V2_found = False
+    try:
+        from brickv.bindings.bricklet_servo_v2 import BrickletServoV2
+        BrickletServoV2_found = True
+    except ImportError:
+        BrickletServoV2_found = False
     try:
         from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
         BrickletSolidStateRelay_found = True
@@ -1052,6 +1062,11 @@ else:
     except ImportError:
         BrickletParticulateMatter_found = False
     try:
+        from tinkerforge.bricklet_performance_dc import BrickletPerformanceDC
+        BrickletPerformanceDC_found = True
+    except ImportError:
+        BrickletPerformanceDC_found = False
+    try:
         from tinkerforge.bricklet_ptc import BrickletPTC
         BrickletPTC_found = True
     except ImportError:
@@ -1132,6 +1147,11 @@ else:
         BrickletSegmentDisplay4x7V2_found = True
     except ImportError:
         BrickletSegmentDisplay4x7V2_found = False
+    try:
+        from tinkerforge.bricklet_servo_v2 import BrickletServoV2
+        BrickletServoV2_found = True
+    except ImportError:
+        BrickletServoV2_found = False
     try:
         from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
         BrickletSolidStateRelay_found = True
@@ -6748,6 +6768,127 @@ if BrickletDMX_found:
                 'subvalues': ['Overrun Error Count', 'Framing Error Count'],
                 'unit': [None, None],
                 'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickletServoV2_found:
+    device_specs[BrickletServoV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletServoV2,
+        'values': [
+            {
+                'name': 'Servo Current (Servo 0)',
+                'getter': lambda device: device.get_servo_current(0),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 1)',
+                'getter': lambda device: device.get_servo_current(1),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 2)',
+                'getter': lambda device: device.get_servo_current(2),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 3)',
+                'getter': lambda device: device.get_servo_current(3),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 4)',
+                'getter': lambda device: device.get_servo_current(4),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 5)',
+                'getter': lambda device: device.get_servo_current(5),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 6)',
+                'getter': lambda device: device.get_servo_current(6),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 7)',
+                'getter': lambda device: device.get_servo_current(7),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 8)',
+                'getter': lambda device: device.get_servo_current(8),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 9)',
+                'getter': lambda device: device.get_servo_current(9),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Overall Current',
+                'getter': lambda device: device.get_overall_current(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Input Voltage',
+                'getter': lambda device: device.get_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None, # FIXME: add 'Servo Current Configuration' and 'Input Voltage Configuration' options
+        'options': None
+    }
+if BrickletPerformanceDC_found:
+    device_specs[BrickletPerformanceDC.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletPerformanceDC,
+        'values': [
+            {
+                'name': 'Power Statistics',
+                'getter': lambda device: device.get_power_statistics(),
+                'subvalues': ['Voltage', 'Current', 'Temperature'],
+                'unit': ['mV', 'mA', '°C/10'],
+                'advanced': False
             },
             {
                 'name': 'Chip Temperature',
