@@ -110,6 +110,8 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('hat_', 'HAT_')
     elif name.startswith('xmc1400_'):
         name = name.replace('xmc1400_', 'XMC1400_')
+    elif name.endwith('_dc'):
+        name = name.replace('_dc', '_DC')
 
     words = name.split('_')
     parts = []
