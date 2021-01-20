@@ -598,5 +598,5 @@
 2020-11-04: 2.4.16 (4e86e84)
 - Reduce Qt requirement to 5.11 to fix crash on macOS
 
-2021-01-15: 2.4.17 (<unknown>)
+2021-01-18: 2.4.17 (9e90f93)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
