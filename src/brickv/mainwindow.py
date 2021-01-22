@@ -146,7 +146,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(100)
         self.reset_view()
-        self.button_advanced.setDisabled(True)
 
         self.fw_version_fetcher = LatestFWVersionFetcher()
         self.fw_version_fetcher.fw_versions_avail.connect(self.fw_versions_fetched)
@@ -228,6 +227,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stacked_widget.setCurrentWidget(self.page_not_connected)
 
         self.last_status_message_id = ''
+
+        self.ipcon_available = False
+
+        self.update_ui_state()
 
     def disable_auto_search_for_updates(self):
         self.fw_version_fetcher.abort()
@@ -484,6 +487,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.flashing_window.refresh_update_tree_view()
 
+        self.flashing_window.set_ipcon_available(self.ipcon_available)
         self.flashing_window.show()
         self.flashing_window.tab_widget.setCurrentWidget(self.flashing_window.tab_updates)
 
@@ -491,6 +495,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.advanced_window is None:
             self.advanced_window = AdvancedWindow(self)
 
+        self.advanced_window.set_ipcon_available(self.ipcon_available)
         self.advanced_window.show()
 
     def data_logger_clicked(self):
@@ -1080,8 +1085,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if connection_state is None:
             connection_state = self.ipcon.get_connection_state()
 
-        self.button_flashing.setDisabled(False)
-
         if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
             self.button_connect.setText('Connect')
             self.combo_host.setDisabled(False)
@@ -1090,8 +1093,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.checkbox_different_port.setDisabled(False)
             self.checkbox_authentication.setDisabled(False)
             self.edit_secret.setDisabled(False)
-            self.button_advanced.setDisabled(True)
             self.stacked_widget.setCurrentWidget(self.page_not_connected)
+
+            self.ipcon_available = False
         elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
             self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
@@ -1101,11 +1105,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
             self.stacked_widget.setCurrentWidget(self.page_connected)
-            self.update_advanced_window()
 
             # restart all pause plugins
             for info in inventory.get_device_infos():
                 info.plugin.resume_plugin()
+
+            self.ipcon_available = True
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Auto-Reconnect')
             self.combo_host.setDisabled(True)
@@ -1114,13 +1119,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.checkbox_different_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
-            self.button_advanced.setDisabled(True)
-            self.button_flashing.setDisabled(True)
             self.stacked_widget.setCurrentWidget(self.page_auto_reconnect)
 
             # pause all running plugins
             for info in inventory.get_device_infos():
                 info.plugin.pause_plugin()
+
+            self.ipcon_available = False
 
         enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
 
@@ -1129,6 +1134,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         for device_info in inventory.get_device_infos():
             device_info.tab_window.setEnabled(enable)
+
+        if self.flashing_window != None:
+            self.flashing_window.set_ipcon_available(self.ipcon_available)
+
+        if self.advanced_window != None:
+            self.advanced_window.set_ipcon_available(self.ipcon_available)
 
         QApplication.processEvents()
 
@@ -1219,11 +1230,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.set_tree_view_defaults()
         self.tree_view.header().setSortIndicator(sis, sio)
-        self.update_advanced_window()
         self.delayed_refresh_updates_timer.start()
-
-    def update_advanced_window(self):
-        self.button_advanced.setEnabled(len(inventory.get_brick_infos()) > 0)
 
     def delayed_refresh_updates(self):
         self.delayed_refresh_updates_timer.stop()

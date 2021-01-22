@@ -145,6 +145,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
+
+        self.ipcon_available = False
         self.ignore_tab_changed_event = False
 
         self.tool_infos = {}
@@ -760,8 +762,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # resulting in endless recursion.
         self.ignore_tab_changed_event = True
         idx = self.tab_widget.currentIndex()
-        self.tab_widget.setTabEnabled(2, self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
-        self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
+        self.tab_widget.setTabEnabled(2, self.ipcon_available and self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
+        self.tab_widget.setTabEnabled(3, self.ipcon_available and len(self.extension_infos) > 0)
 
         if self.tab_widget.isTabEnabled(idx):
             self.tab_widget.setCurrentIndex(idx)
@@ -1946,7 +1948,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(sis, sio)
 
-        if is_update:
+        if is_update and self.ipcon_available:
             self.update_button_bricklets.setEnabled(True)
         else:
             self.update_button_bricklets.setEnabled(False)
@@ -2162,3 +2164,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def show_red_brick_update(self):
         get_main_window().show_red_brick_update()
+
+    def set_ipcon_available(self, ipcon_available):
+        last_ipcon_available = self.ipcon_available
+
+        self.ipcon_available = ipcon_available
+
+        if last_ipcon_available != ipcon_available:
+            # ensure auto-update button has correct state
+            self.refresh_update_tree_view()
+
+        self.update_ui_state()

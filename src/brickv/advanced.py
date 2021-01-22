@@ -39,6 +39,8 @@ class AdvancedWindow(QDialog, Ui_Advanced):
 
         self.setupUi(self)
 
+        self.ipcon_available = False
+
         self.button_calibrate.setEnabled(False)
 
         self.brick_infos = []
@@ -126,6 +128,12 @@ class AdvancedWindow(QDialog, Ui_Advanced):
     def update_ui_state(self):
         enabled = len(self.brick_infos) > 0
 
-        self.combo_brick.setEnabled(enabled)
-        self.check_enable_calibration.setEnabled(enabled and self.combo_port.count() > 0)
-        self.button_calibrate.setEnabled(enabled and self.combo_port.count() > 0 and self.check_enable_calibration.isChecked())
+        self.combo_brick.setEnabled(enabled and self.ipcon_available)
+        self.combo_port.setEnabled(enabled and self.ipcon_available)
+        self.check_enable_calibration.setEnabled(enabled and self.ipcon_available and self.combo_port.count() > 0)
+        self.button_calibrate.setEnabled(enabled and self.ipcon_available and self.combo_port.count() > 0 and self.check_enable_calibration.isChecked())
+
+    def set_ipcon_available(self, ipcon_available):
+        self.ipcon_available = ipcon_available
+
+        self.update_ui_state()
