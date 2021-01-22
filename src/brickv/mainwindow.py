@@ -481,13 +481,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return True
 
-    def flashing_clicked(self):
+    def prepare_flashing_window(self):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
         else:
             self.flashing_window.refresh_update_tree_view()
 
         self.flashing_window.set_ipcon_available(self.ipcon_available)
+
+    def flashing_clicked(self):
+        self.prepare_flashing_window()
         self.flashing_window.show()
         self.flashing_window.tab_widget.setCurrentWidget(self.flashing_window.tab_updates)
 
@@ -538,27 +541,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 plugin.show_extension(extension_index)
 
     def show_brick_update(self, url_part):
-        if self.flashing_window is None:
-            self.flashing_window = FlashingWindow(self)
-
+        self.prepare_flashing_window()
         self.flashing_window.show()
-        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_brick_update(url_part)
 
     def show_bricklet_update(self, parent_uid, port):
-        if self.flashing_window is None:
-            self.flashing_window = FlashingWindow(self)
-
+        self.prepare_flashing_window()
         self.flashing_window.show()
-        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_bricklet_update(parent_uid, port)
 
     def show_extension_update(self, master_uid):
-        if self.flashing_window is None:
-            self.flashing_window = FlashingWindow(self)
-
+        self.prepare_flashing_window()
         self.flashing_window.show()
-        self.flashing_window.refresh_update_tree_view()
         self.flashing_window.show_extension_update(master_uid)
 
     def show_red_brick_update(self):
