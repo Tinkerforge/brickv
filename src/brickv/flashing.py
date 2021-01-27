@@ -40,7 +40,7 @@ from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
-from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QFileDialog, QProgressBar
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QProgressBar
 
 from brickv import config
 from brickv.ui_flashing import Ui_Flashing
@@ -55,7 +55,7 @@ from brickv.utils import get_home_path, get_open_file_name, \
 from brickv.esp_flash import ESPFlash, FatalError
 from brickv.infos import BrickREDInfo, DeviceInfo, inventory
 from brickv.firmware_fetch import ERROR_DOWNLOAD
-from brickv.utils import get_main_window
+from brickv.utils import get_main_window, get_save_file_name
 from brickv.devicesproxymodel import DevicesProxyModel
 from brickv.urlopen import urlopen
 
@@ -418,7 +418,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url, version = self.get_brickv_download_url(latest_version)
             default_filename = url.split('/')[-1]
 
-            filename, _selected_filter = QFileDialog.getSaveFileName(self, "Save Brick Viewer Update", default_filename)
+            filename = get_save_file_name(self, "Save Brick Viewer Update", default_filename)
             if len(filename) == 0:
                 return
 
