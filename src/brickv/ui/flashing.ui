@@ -28,9 +28,6 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
           <widget class="QTreeView" name="update_tree_view">
-           <property name="autoExpandDelay">
-            <number>-1</number>
-           </property>
            <property name="indentation">
             <number>10</number>
            </property>
