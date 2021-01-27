@@ -42,6 +42,7 @@ from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
+from brickv.healthmonitor import HealthMonitorWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
@@ -142,6 +143,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.flashing_window = None
         self.advanced_window = None
         self.data_logger_window = None
+        self.health_monitor_window = None
         self.delayed_refresh_updates_timer = QTimer(self)
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(100)
@@ -165,6 +167,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_flashing.clicked.connect(self.flashing_clicked)
         self.button_advanced.clicked.connect(self.advanced_clicked)
         self.button_data_logger.clicked.connect(self.data_logger_clicked)
+        self.button_health_monitor.clicked.connect(self.health_monitor_clicked)
         self.plugin_manager = PluginManager()
 
         # host info
@@ -506,6 +509,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.data_logger_window = DataLoggerWindow(self, self.host_infos)
 
         self.data_logger_window.show()
+
+    def health_monitor_clicked(self):
+        if self.health_monitor_window is None:
+            self.health_monitor_window = HealthMonitorWindow(self)
+        else:
+            self.health_monitor_window.refresh_tree_view()
+
+        self.health_monitor_window.set_ipcon_available(self.ipcon_available)
+        self.health_monitor_window.show()
 
     def connect_error(self, error):
         self.setDisabled(False)

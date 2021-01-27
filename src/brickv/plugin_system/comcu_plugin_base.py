@@ -103,3 +103,18 @@ class COMCUPluginBase(PluginBase):
     def stop_comcu(self):
         self.cbe_bootloader_mode.set_period(0)
         self.stop()
+
+    def get_health_metric_names(self):
+        return ['Chip Temperature', 'SPITFP ACK Checksum Errors', 'SPITFP Message Checksum Errors', 'SPITFP Frame Errors', 'SPITFP Overflow Errors']
+
+    def get_health_metric_values(self):
+        chip_temperature = self.device.get_chip_temperature()
+        spitfp_error_count = self.device.get_spitfp_error_count()
+
+        return {
+            'Chip Temperature': '{0} °C'.format(chip_temperature),
+            'SPITFP ACK Checksum Errors': spitfp_error_count.error_count_ack_checksum,
+            'SPITFP Message Checksum Errors': spitfp_error_count.error_count_message_checksum,
+            'SPITFP Frame Errors': spitfp_error_count.error_count_frame,
+            'SPITFP Overflow Errors': spitfp_error_count.error_count_overflow
+        }

@@ -283,7 +283,17 @@ class PluginBase(QWidget):
     def get_actions(self):
         return self.actions
 
-    # To be overridden by inheriting class
+    def get_url_part(self):
+        if self.device_class != None:
+            return self.device_class.DEVICE_URL_PART
+
+        return 'unknown'
+
+    @staticmethod
+    def has_device_identifier(_device_identifier):
+        return False
+
+    # All below to be overridden by inheriting class
     def stop(self):
         pass
 
@@ -299,12 +309,34 @@ class PluginBase(QWidget):
     def is_hardware_version_relevant(self):
         return False
 
-    def get_url_part(self):
-        if self.device_class != None:
-            return self.device_class.DEVICE_URL_PART
+    def get_health_metric_names(self):
+        if self.device_info.kind == 'brick':
+            return ['Chip Temperature', 'SPITFP ACK Checksum Errors', 'SPITFP Message Checksum Errors', 'SPITFP Frame Errors', 'SPITFP Overflow Errors']
 
-        return 'unknown'
+        return []
 
-    @staticmethod
-    def has_device_identifier(_device_identifier):
-        return False
+    def get_health_metric_values(self):
+        if self.device_info.kind == 'brick':
+            chip_temperature = self.device.get_chip_temperature()
+            spitfp_ack_checksum_errors = []
+            spitfp_message_checksum_errors = []
+            spitfp_frame_errors = []
+            spitfp_overflow_errors = []
+
+            for bricklet_port in self.device_info.bricklet_ports:
+                spitfp_error_count = self.device.get_spitfp_error_count(bricklet_port)
+
+                spitfp_ack_checksum_errors.append('{0}: {1}'.format(bricklet_port.upper(), spitfp_error_count.error_count_ack_checksum))
+                spitfp_message_checksum_errors.append('{0}: {1}'.format(bricklet_port.upper(), spitfp_error_count.error_count_message_checksum))
+                spitfp_frame_errors.append('{0}: {1}'.format(bricklet_port.upper(), spitfp_error_count.error_count_frame))
+                spitfp_overflow_errors.append('{0}: {1}'.format(bricklet_port.upper(), spitfp_error_count.error_count_overflow))
+
+            return {
+                'Chip Temperature': '{0:.1f} °C'.format(chip_temperature / 10),
+                'SPITFP ACK Checksum Errors': ', '.join(spitfp_ack_checksum_errors),
+                'SPITFP Message Checksum Errors': ', '.join(spitfp_message_checksum_errors),
+                'SPITFP Frame Errors': ', '.join(spitfp_frame_errors),
+                'SPITFP Overflow Errors': ', '.join(spitfp_overflow_errors)
+            }
+
+        return {}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HealthMonitor</class>
+ <widget class="QDialog" name="HealthMonitor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Health Monitor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeView" name="tree_view">
+     <property name="indentation">
+      <number>10</number>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="button_save_report_to_csv_file">
+       <property name="text">
+        <string>Save Report To CSV File</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_close">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
