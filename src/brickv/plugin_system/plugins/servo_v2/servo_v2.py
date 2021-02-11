@@ -324,28 +324,24 @@ class ServoV2(COMCUPluginBase, Ui_ServoV2):
 
     def enable_state_changed(self, state):
         try:
-            print("set_enable", self.selected_servo(), state == Qt.Checked)
             self.servo.set_enable(self.selected_servo(), state == Qt.Checked)
         except ip_connection.Error:
             return
 
     def position_changed(self, value):
         try: 
-            print("set_position", self.selected_servo(), value)
             self.servo.set_position(self.selected_servo(), value)
         except ip_connection.Error:
             return
 
     def motion_changed(self, _):
         try:
-            print("set_motion_configuration", self.selected_servo(), self.velocity_spin.value(), self.acceleration_spin.value(), self.deceleration_spin.value())
             self.servo.set_motion_configuration(self.selected_servo(), self.velocity_spin.value(), self.acceleration_spin.value(), self.deceleration_spin.value())
         except ip_connection.Error:
             return
 
     def period_changed(self, value):
         try:
-            print("set_period", self.selected_servo(), value)
             self.servo.set_period(self.selected_servo(), value)
         except ip_connection.Error:
             return
