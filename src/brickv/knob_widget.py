@@ -286,6 +286,14 @@ class KnobWidget(QWidget):
     def set_range(self, minimum_value, maximum_value):
         self.minimum_value = minimum_value
         self.maximum_value = maximum_value
+
+        # Don't allow min=max value, otherwise we have a value_range of 0 which 
+        # results in division by zero in some parts of the code
+        if maximum_value == minimum_value:
+            self.maximum_value = maximum_value + 1
+        else:
+            self.maximum_value = maximum_value
+
         self.value_range = self.maximum_value - self.minimum_value
 
         self.recalculate_size()
