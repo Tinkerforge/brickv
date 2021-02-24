@@ -46,18 +46,18 @@ class AmbientLightV3(COMCUPluginBase):
 
         self.alf = ColorFrame(25, 25, QColor(128, 128, 128))
         self.out_of_range_label = QLabel('Illuminance is out-of-range')
-        self.saturated_label = QLabel('Sensor is saturated')
+        self.invalid_label = QLabel('Illuminance is invalid')
 
         self.out_of_range_label.hide()
         self.out_of_range_label.setStyleSheet('QLabel { color: red }')
-        self.saturated_label.hide()
-        self.saturated_label.setStyleSheet('QLabel { color: magenta }')
+        self.invalid_label.hide()
+        self.invalid_label.setStyleSheet('QLabel { color: magenta }')
 
         self.current_illuminance = CurveValueWrapper() # float, lx
 
         plots = [('Illuminance', Qt.red, self.current_illuminance, '{:.2f} lx (Lux)'.format)]
         self.plot_widget = PlotWidget('Illuminance [lx]', plots,
-                                      extra_key_widgets=[self.out_of_range_label, self.saturated_label, self.alf],
+                                      extra_key_widgets=[self.out_of_range_label, self.invalid_label, self.alf],
                                       y_resolution=0.001)
 
         self.range_label = QLabel('Illuminance Range:')
@@ -153,15 +153,15 @@ class AmbientLightV3(COMCUPluginBase):
         if illuminance == 0:
             self.plot_widget.get_key_item(0).setStyleSheet('QLabel { color: magenta }')
             self.out_of_range_label.hide()
-            self.saturated_label.show()
+            self.invalid_label.show()
         elif illuminance >= max_illuminance:
             self.plot_widget.get_key_item(0).setStyleSheet('QLabel { color: red }')
             self.out_of_range_label.show()
-            self.saturated_label.hide()
+            self.invalid_label.hide()
         else:
             self.plot_widget.get_key_item(0).setStyleSheet('')
             self.out_of_range_label.hide()
-            self.saturated_label.hide()
+            self.invalid_label.hide()
 
         value = min(max(illuminance * 255 // max_illuminance, 0), 255)
         self.alf.set_color(QColor(value, value, value))
