@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QMessageBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.callback_emulator import CallbackEmulator
@@ -60,7 +60,10 @@ class COMCUPluginBase(PluginBase):
 
     def remove_and_reset(self):
         get_main_window().remove_device_tab(self.uid)
-        self.device.reset()
+
+        async_call(self.device.reset, None, None, lambda: QMessageBox.critical(get_main_window(), 'Reset',
+                                                                               'Could not trigger device reset via software. Please try hardware reset.',
+                                                                               QMessageBox.Ok))
 
     # overrides PluginBase.get_configs
     def get_configs(self):
