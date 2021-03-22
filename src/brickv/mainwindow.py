@@ -1056,7 +1056,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.monotonic() + 1:
             self.disconnect_times = []
             self.ipcon.set_auto_reconnect(False)
-            self.update_ui_state()
+            self.update_ui_state(IPConnection.CONNECTION_STATE_DISCONNECTED)
             self.reset_view()
 
             QMessageBox.critical(self, 'Connection',
