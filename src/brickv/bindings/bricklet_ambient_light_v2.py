@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-02-25.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -96,8 +96,11 @@ class BrickletAmbientLightV2(Device):
         up to about 100000lux, but above 64000lux the precision starts to drop.
 
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
-          An illuminance of 0lux indicates that the sensor is saturated and the
-          configuration should be modified, see :func:`Set Configuration`.
+          An illuminance of 0lux indicates an error condition where the sensor cannot
+          perform a reasonable measurement. This can happen with very dim or very bright
+          light conditions. In bright light conditions this might indicate that the sensor
+          is saturated and the configuration should be modified (:func:`Set Configuration`)
+          to better match the light conditions.
 
         If you want to get the illuminance periodically, it is recommended to use the
         :cb:`Illuminance` callback and set the period with

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-02-25.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletPerformanceDC(Device):
     CALLBACK_EMERGENCY_SHUTDOWN = 35
     CALLBACK_VELOCITY_REACHED = 36
     CALLBACK_CURRENT_VELOCITY = 37
+    CALLBACK_GPIO_STATE = 38
 
 
     FUNCTION_SET_ENABLED = 1
@@ -135,7 +136,7 @@ class BrickletPerformanceDC(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletPerformanceDC.DEVICE_IDENTIFIER, BrickletPerformanceDC.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletPerformanceDC.FUNCTION_SET_ENABLED] = BrickletPerformanceDC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletPerformanceDC.FUNCTION_GET_ENABLED] = BrickletPerformanceDC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -187,6 +188,7 @@ class BrickletPerformanceDC(Device):
         self.callback_formats[BrickletPerformanceDC.CALLBACK_EMERGENCY_SHUTDOWN] = (8, '')
         self.callback_formats[BrickletPerformanceDC.CALLBACK_VELOCITY_REACHED] = (10, 'h')
         self.callback_formats[BrickletPerformanceDC.CALLBACK_CURRENT_VELOCITY] = (10, 'h')
+        self.callback_formats[BrickletPerformanceDC.CALLBACK_GPIO_STATE] = (9, '2!')
 
         ipcon.add_device(self)
 

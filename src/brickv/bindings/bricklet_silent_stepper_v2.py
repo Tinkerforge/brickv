@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-02-25.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -44,6 +44,7 @@ class BrickletSilentStepperV2(Device):
     CALLBACK_POSITION_REACHED = 42
     CALLBACK_ALL_DATA = 53
     CALLBACK_NEW_STATE = 54
+    CALLBACK_GPIO_STATE = 55
 
 
     FUNCTION_SET_MAX_VELOCITY = 1
@@ -252,6 +253,7 @@ class BrickletSilentStepperV2(Device):
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_POSITION_REACHED] = (12, 'i')
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_ALL_DATA] = (22, 'H i i H H')
         self.callback_formats[BrickletSilentStepperV2.CALLBACK_NEW_STATE] = (10, 'B B')
+        self.callback_formats[BrickletSilentStepperV2.CALLBACK_GPIO_STATE] = (9, '2!')
 
         ipcon.add_device(self)
 

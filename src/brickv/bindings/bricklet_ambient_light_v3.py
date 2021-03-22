@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-03-22.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -125,8 +125,11 @@ class BrickletAmbientLightV3(Device):
         The illuminance is given in lux/100, i.e. a value of 450000 means that an
         illuminance of 4500lux is measured.
 
-        An illuminance of 0lux indicates that the sensor is saturated and the
-        configuration should be modified, see :func:`Set Configuration`.
+        An illuminance of 0lux indicates an error condition where the sensor cannot
+        perform a reasonable measurement. This can happen with very dim or very bright
+        light conditions. In bright light conditions this might indicate that the sensor
+        is saturated and the configuration should be modified (:func:`Set Configuration`)
+        to better match the conditions.
 
 
         If you want to get the value periodically, it is recommended to use the

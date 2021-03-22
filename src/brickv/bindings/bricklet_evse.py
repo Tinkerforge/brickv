@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-03-22.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -18,7 +18,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
-GetState = namedtuple('State', ['iec61851_state', 'vehicle_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'lock_state', 'time_since_state_change', 'uptime'])
+GetState = namedtuple('State', ['iec61851_state', 'vehicle_state', 'contactor_state', 'contactor_error', 'charge_release', 'allowed_charging_current', 'error_state', 'lock_state', 'time_since_state_change', 'uptime'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch'])
 GetLowLevelState = namedtuple('LowLevelState', ['low_level_mode_enabled', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio'])
 GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable'])
@@ -83,6 +83,11 @@ class BrickletEVSE(Device):
     LOCK_STATE_CLOSE = 3
     LOCK_STATE_OPENING = 4
     LOCK_STATE_ERROR = 5
+    ERROR_STATE_OK = 0
+    ERROR_STATE_SWITCH = 2
+    ERROR_STATE_CALIBRATION = 3
+    ERROR_STATE_CONTACTOR = 4
+    ERROR_STATE_COMMUNICATION = 5
     JUMPER_CONFIGURATION_6A = 0
     JUMPER_CONFIGURATION_10A = 1
     JUMPER_CONFIGURATION_13A = 2
@@ -92,6 +97,9 @@ class BrickletEVSE(Device):
     JUMPER_CONFIGURATION_32A = 6
     JUMPER_CONFIGURATION_SOFTWARE = 7
     JUMPER_CONFIGURATION_UNCONFIGURED = 8
+    CHARGE_RELEASE_AUTOMATIC = 0
+    CHARGE_RELEASE_MANUAL = 1
+    CHARGE_RELEASE_DEACTIVATED = 2
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -149,7 +157,7 @@ class BrickletEVSE(Device):
         """
         self.check_validity()
 
-        return GetState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_STATE, (), '', 23, 'B B B B H B I I'))
+        return GetState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_STATE, (), '', 25, 'B B B B B H B B I I'))
 
     def get_hardware_configuration(self):
         """
