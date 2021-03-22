@@ -573,12 +573,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMessageBox.information(self, "RED Brick Update", text)
 
     def create_tab_window(self, device_info, ipcon):
-        tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
+        tab_window = TabWindow(self.tab_widget, device_info.name)
         tab_window._info = device_info
-        tab_window.add_callback_on_tab(lambda index:
-                                       self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
-                                       self.tab_widget.setTabEnabled(index, False),
-                                       'main_window_disable_tab_if_connection_pending')
+        tab_window.add_callback_post_tab(lambda tab_window, tab_index:
+                                         self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
+                                         self.tab_widget.setTabEnabled(tab_index, False),
+                                         'main_window_disable_tab_if_connection_pending')
 
         layout = QVBoxLayout(tab_window)
         info_bars = [QHBoxLayout(), QHBoxLayout()]
@@ -760,12 +760,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QApplication.restoreOverrideCursor()
 
         return False
-
-    def untab(self, tab_index):
-        tab = self.tab_widget.widget(tab_index)
-        tab.untab()
-        tab._info.plugin.start_plugin()
-        self.tab_widget.setCurrentIndex(0)
 
     def connect_on_return(self, event):
         if event.type() == QEvent.KeyPress and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):

@@ -269,10 +269,10 @@ class IMUV2(PluginBase, Ui_IMUV2):
         if not self.alive:
             return
 
-        self.parent().add_callback_on_untab(lambda x: self.cleanup_gl(), 'imu_v2_cleanup_on_untab')
-        self.parent().add_callback_post_untab(lambda x: self.restart_gl(), 'imu_v2_restart_post_untab')
-        self.parent().add_callback_on_tab(lambda x: self.cleanup_gl(), 'imu_v2_cleanup_on_tab')
-        self.parent().add_callback_post_tab(lambda x: self.restart_gl(), 'imu_v2_restart_post_tab')
+        self.parent().add_callback_pre_tab(lambda tab_window: self.cleanup_gl(), 'imu_v2_cleanup_pre_tab')
+        self.parent().add_callback_post_tab(lambda tab_window, tab_index: self.restart_gl(), 'imu_v2_restart_post_tab')
+        self.parent().add_callback_pre_untab(lambda tab_window, tab_index: self.cleanup_gl(), 'imu_v2_cleanup_pre_untab')
+        self.parent().add_callback_post_untab(lambda tab_window: self.restart_gl(), 'imu_v2_restart_post_untab')
 
         self.gl_layout.activate()
 

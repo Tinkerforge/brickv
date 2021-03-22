@@ -77,24 +77,22 @@ class ToplevelWindow(QWidget):
 
 class TabWindow(QWidget):
     """Detachable widget usable in a QTabWidget. The widget can be detached
-    from the QTabWidget by calling untab(), added to it by calling tab(). If tabbed,
-    it has a clickable icon visualizing mouseOver events; on click the button_handler
-    of this class is called with the current index in the QTabWidget.
+    from the QTabWidget by calling untab(), added to it by calling tab().
+    If tabbed, it has a clickable icon visualizing mouseOver events.
     Callbacks called after the tabbing and before the  untabbing events
     can be registered."""
 
-    def __init__(self, tab_widget, name, button_handler, parent=None):
+    def __init__(self, tab_widget, name, parent=None):
         super().__init__(parent)
 
         self.tab_widget = tab_widget
         self.name = name
-        self.button = None # see tab()
-        self.button_handler = button_handler
-        self.button_icon_normal = QIcon(load_pixmap('untab-icon-normal.png'))
-        self.button_icon_hover = QIcon(load_pixmap('untab-icon-hover.png'))
-        self.cb_on_tab = {}
-        self.cb_on_untab = {}
+        self.untab_button = None # see tab()
+        self.untab_button_icon_normal = QIcon(load_pixmap('untab-icon-normal.png'))
+        self.untab_button_icon_hover = QIcon(load_pixmap('untab-icon-hover.png'))
+        self.cb_pre_tab = {}
         self.cb_post_tab = {}
+        self.cb_pre_untab = {}
         self.cb_post_untab = {}
         self.toplevel_window = None
         self.update_button = None
@@ -102,53 +100,68 @@ class TabWindow(QWidget):
 
     def untab(self):
         index = self.tab_widget.indexOf(self)
-        if index > -1:
-            for cb in self.cb_on_untab.values():
-                cb(index)
 
-            self.tabbed = False
-            self.tab_widget.removeTab(index)
+        if index < 0:
+            return
 
-            self.toplevel_window = ToplevelWindow(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
-            layout = QVBoxLayout(self.toplevel_window)
-            layout.addWidget(self)
-            layout.setContentsMargins(0, 0, 0, 0)
+        for cb in self.cb_pre_untab.values():
+            cb(self, index)
 
-            self.toplevel_window.show()
-            self.show()
+        self.tabbed = False
 
-            for cb in self.cb_post_untab.values():
-                cb(index)
+        # select setup tab before removal to avoid temporarily selecting tab at index - 1
+        self.tab_widget.setCurrentIndex(0)
+
+        # this stops the plugin as a side effect
+        self.tab_widget.removeTab(index)
+
+        self.toplevel_window = ToplevelWindow(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
+
+        layout = QVBoxLayout(self.toplevel_window)
+        layout.addWidget(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.toplevel_window.show()
+        self.show()
+
+        # start the plugin again after stopping it as a side effect of removing it from the QTabWidget
+        self._info.plugin.start_plugin()
+
+        for cb in self.cb_post_untab.values():
+            cb(self)
 
     def tab(self):
+        for cb in self.cb_pre_tab.values():
+            cb(self)
+
+        self._info.plugin.stop_plugin()
+
         index = self.tab_widget.addTab(self, self.name)
-        for cb in self.cb_on_tab.values():
-            cb(index)
 
         self.tabbed = True
 
         # (re-)instantiating button here because the TabBar takes ownership and
         # destroys it when this TabWindow is untabbed
-        self.button = IconButton(self.button_icon_normal, self.button_icon_hover, parent=self)
-        self.button.setToolTip('Detach Tab from Brick Viewer')
-        self.button.clicked.connect(lambda: self.button_handler(self.tab_widget.indexOf(self)))
+        self.untab_button = IconButton(self.untab_button_icon_normal, self.untab_button_icon_hover, parent=self)
+        self.untab_button.setToolTip('Detach Tab from Brick Viewer')
+        self.untab_button.clicked.connect(self.untab)
 
-        self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.button)
+        self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.untab_button)
 
         for cb in self.cb_post_tab.values():
-            cb(index)
+            cb(self, index)
 
-    def add_callback_on_tab(self, callback, key):
-        self.cb_on_tab[key] = callback
+    def add_callback_pre_tab(self, callback, key): # callback(tab_window)
+        self.cb_pre_tab[key] = callback
 
-    def add_callback_on_untab(self, callback, key):
-        self.cb_on_untab[key] = callback
-
-    def add_callback_post_untab(self, callback, key):
-        self.cb_post_untab[key] = callback
-
-    def add_callback_post_tab(self, callback, key):
+    def add_callback_post_tab(self, callback, key): # callback(tab_window, tab_index)
         self.cb_post_tab[key] = callback
+
+    def add_callback_pre_untab(self, callback, key): # callback(tab_window, tab_index)
+        self.cb_pre_untab[key] = callback
+
+    def add_callback_post_untab(self, callback, key): # callback(tab_window)
+        self.cb_post_untab[key] = callback
 
     def show_update_tab_button(self, tool_tip, clicked_fn):
         if not self.tabbed:
@@ -168,6 +181,7 @@ class TabWindow(QWidget):
 
         tab_idx = self.tab_widget.indexOf(self)
         tab_button = self.tab_widget.tabBar().tabButton(tab_idx, QTabBar.RightSide)
+
         if tab_button is None:
             return
 

@@ -32,7 +32,8 @@ class COMCUPluginBase(PluginBase):
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
         super().__init__(device_class, ipcon, device_info, override_base_name)
 
-        self.start_called = False
+        self.actual_start_stop_state = 'stop'
+        self.expected_start_stop_state = 'stop'
         self.has_comcu = True
         self.cbe_bootloader_mode = CallbackEmulator(self.device.get_bootloader_mode,
                                                     None,
@@ -84,28 +85,35 @@ class COMCUPluginBase(PluginBase):
             self.status_led_show_status_action.trigger()
 
     def cb_bootloader_mode(self, mode):
-        if not self.start_called and mode == self.device.BOOTLOADER_MODE_FIRMWARE and self.isVisible():
-            async_call(self.device.get_status_led_config, None, self.get_status_led_config_async, self.increase_error_count)
-            self.start_called = True
-            self.start()
-        elif mode == self.device.BOOTLOADER_MODE_BOOTLOADER and self.isVisible():
-            self.stop()
-            self.hide()
-            self.widget_bootloader.show()
-        elif mode == self.device.BOOTLOADER_MODE_FIRMWARE and not self.isVisible():
-            self.widget_bootloader.hide()
-            self.show()
-            async_call(self.device.get_status_led_config, None, self.get_status_led_config_async, self.increase_error_count)
-            self.start_called = True
-            self.start()
+        if mode == self.device.BOOTLOADER_MODE_FIRMWARE:
+            if self.actual_start_stop_state == 'stop' and self.expected_start_stop_state == 'start':
+                async_call(self.device.get_status_led_config, None, self.get_status_led_config_async, self.increase_error_count)
+                self.actual_start_stop_state = 'start'
+                self.start()
+
+            if not self.isVisible():
+                self.widget_bootloader.hide()
+                self.show()
+        elif mode == self.device.BOOTLOADER_MODE_BOOTLOADER:
+            if self.actual_start_stop_state == 'start':
+                self.actual_start_stop_state = 'stop'
+                self.stop()
+
+            if self.isVisible():
+                self.hide()
+                self.widget_bootloader.show()
 
     def start_comcu(self):
-        self.start_called = False
+        self.expected_start_stop_state = 'start'
         self.cbe_bootloader_mode.set_period(1000)
 
     def stop_comcu(self):
+        self.expected_start_stop_state = 'stop'
         self.cbe_bootloader_mode.set_period(0)
-        self.stop()
+
+        if self.actual_start_stop_state == 'start':
+            self.actual_start_stop_state = 'stop'
+            self.stop()
 
     def get_health_metric_names(self):
         return ['Chip Temperature', 'SPITFP ACK Checksum Errors', 'SPITFP Message Checksum Errors', 'SPITFP Frame Errors', 'SPITFP Overflow Errors']
