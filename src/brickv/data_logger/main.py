@@ -88,11 +88,11 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
     if override_log_file_name != None:
         config['debug']['log']['file_name'] = override_log_file_name
 
-    if config['debug']['log']['enabled']:
-        EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
-                                          config['debug']['log']['file_name']))
-
     try:
+        if config['debug']['log']['enabled']:
+            EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
+                                              config['debug']['log']['file_name']))
+
         data_logger = DataLogger(config, gui_job)
 
         if data_logger.ipcon is not None:
