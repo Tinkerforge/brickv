@@ -4,7 +4,7 @@ brickv (Brick Viewer)
 Copyright (C) 2011-2015, 2018 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012-2017 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020-2021 Erik Fleckstein <erik@tinkerforge.com>
 
 flashing.py: GUI for flashing features
 
@@ -38,7 +38,7 @@ from threading import Thread
 from distutils.version import StrictVersion
 from io import BytesIO as FileLike
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QStandardPaths
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
 from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QProgressBar
 
@@ -418,7 +418,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             url, version = self.get_brickv_download_url(latest_version)
             default_filename = url.split('/')[-1]
 
-            filename = get_save_file_name(self, "Save Brick Viewer Update", default_filename)
+            filename = get_save_file_name(self, "Save Brick Viewer Update", os.path.join(QStandardPaths.writableLocation(QStandardPaths.DownloadLocation), default_filename))
             if len(filename) == 0:
                 return
 
