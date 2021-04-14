@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>262</width>
-    <height>596</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,21 +23,21 @@
        </property>
       </widget>
      </item>
-     <item row="21" column="0">
+     <item row="22" column="0">
       <widget class="QLabel" name="label1">
        <property name="text">
         <string>Time Since State Change</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
+     <item row="11" column="1">
       <widget class="QLabel" name="label_contactor">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
+     <item row="6" column="2">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -50,77 +50,77 @@
        </property>
       </spacer>
      </item>
-     <item row="10" column="0">
+     <item row="11" column="0">
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>Contactor</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>LED State</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Resistance CP/PE</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Resistance PP/PE</string>
        </property>
       </widget>
      </item>
-     <item row="14" column="0">
+     <item row="15" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>GPIO Enable</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
+     <item row="19" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
         <string>Lock State</string>
        </property>
       </widget>
      </item>
-     <item row="15" column="0">
+     <item row="16" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>GPIO LED</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="12" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Contactor Check Input</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="0">
+     <item row="14" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Contactor Check Error</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>CP PWM Duty Cycle</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="0">
+     <item row="21" column="0">
       <widget class="QLabel" name="label_13">
        <property name="text">
         <string>Lock Switch</string>
@@ -134,260 +134,274 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1">
       <widget class="QLabel" name="label_resistance_cp_pe">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_17">
-       <property name="text">
-        <string>Voltage CP/PE</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_led_state">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>GPIO Motor Switch</string>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Jumper Configuration</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QLabel" name="label_resistance_pp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QLabel" name="label_cp_pwm_duty_cycle">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1">
-      <widget class="QLabel" name="label_contactor_input">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="1">
-      <widget class="QLabel" name="label_contactor_error">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="14" column="1">
-      <widget class="QLabel" name="label_gpio_enable">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="1">
-      <widget class="QLabel" name="label_gpio_led">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="1">
-      <widget class="QLabel" name="label_gpio_motor_switch">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="1">
-      <widget class="QLabel" name="label_lock_state">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="1">
-      <widget class="QLabel" name="label_jumper_configuration">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="20" column="1">
-      <widget class="QLabel" name="label_lock_switch">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
-      <widget class="QLabel" name="label_15">
-       <property name="text">
-        <string>Contactor Check Output</string>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLabel" name="label_contactor_output">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="22" column="0">
-      <widget class="QLabel" name="label_16">
-       <property name="text">
-        <string>Uptime</string>
-       </property>
-      </widget>
-     </item>
-     <item row="22" column="1">
-      <widget class="QLabel" name="label_uptime">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_18">
-       <property name="text">
-        <string>ADC Value CP/PE</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_adc_value_cp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_19">
        <property name="text">
         <string>Voltage Peak CP/PE</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_20">
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_17">
        <property name="text">
-        <string>ADC Value PP/PE</string>
+        <string>Voltage CP/PE</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_21">
-       <property name="text">
-        <string>Voltage PP/PE</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="label_voltage_cp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="label_voltage_peak_cp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="label_adc_value_pp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLabel" name="label_voltage_pp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="1">
-      <widget class="QLabel" name="label_time_since_state_change">
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_led_state">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="17" column="0">
-      <widget class="QLabel" name="label_22">
+      <widget class="QLabel" name="label_11">
        <property name="text">
-        <string>GPIO Motor Fault</string>
+        <string>GPIO Motor Switch</string>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="text">
+        <string>Jumper Configuration</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLabel" name="label_resistance_pp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QLabel" name="label_cp_pwm_duty_cycle">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QLabel" name="label_contactor_input">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QLabel" name="label_contactor_error">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="QLabel" name="label_gpio_enable">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
+      <widget class="QLabel" name="label_gpio_led">
+       <property name="text">
+        <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="17" column="1">
-      <widget class="QLabel" name="label_gpio_motor_fault">
+      <widget class="QLabel" name="label_gpio_motor_switch">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="19" column="1">
+      <widget class="QLabel" name="label_lock_state">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="1">
+      <widget class="QLabel" name="label_jumper_configuration">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="21" column="1">
+      <widget class="QLabel" name="label_lock_switch">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Contactor Check Output</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <widget class="QLabel" name="label_contactor_output">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
      <item row="23" column="0">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>Uptime</string>
+       </property>
+      </widget>
+     </item>
+     <item row="23" column="1">
+      <widget class="QLabel" name="label_uptime">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>ADC Value CP/PE</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_adc_value_cp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>ADC Value PP/PE</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Voltage PP/PE</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_voltage_cp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="label_voltage_peak_cp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="label_adc_value_pp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="label_voltage_pp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="22" column="1">
+      <widget class="QLabel" name="label_time_since_state_change">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QLabel" name="label_22">
+       <property name="text">
+        <string>GPIO Motor Fault</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1">
+      <widget class="QLabel" name="label_gpio_motor_fault">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="24" column="0">
       <widget class="QLabel" name="label_23">
        <property name="text">
         <string>Max Current Configured</string>
        </property>
       </widget>
      </item>
-     <item row="24" column="0">
+     <item row="25" column="0">
       <widget class="QLabel" name="label_24">
        <property name="text">
         <string>Max Current Incoming Cable</string>
        </property>
       </widget>
      </item>
-     <item row="25" column="0">
+     <item row="26" column="0">
       <widget class="QLabel" name="label_25">
        <property name="text">
         <string>Max Current Outgoing Cable</string>
        </property>
       </widget>
      </item>
-     <item row="23" column="1">
+     <item row="24" column="1">
       <widget class="QLabel" name="label_max_current_configured">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="24" column="1">
+     <item row="25" column="1">
       <widget class="QLabel" name="label_max_current_incoming_cable">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="25" column="1">
+     <item row="26" column="1">
       <widget class="QLabel" name="label_max_current_outgoing_cable">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_26">
+       <property name="text">
+        <string>Vehicle State</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_vehicle_state">
        <property name="text">
         <string>TBD</string>
        </property>

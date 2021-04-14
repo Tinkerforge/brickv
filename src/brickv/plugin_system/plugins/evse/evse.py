@@ -33,6 +33,7 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.slider_spin_syncer import SliderSpinSyncer
 
 IEC61851_STATE = ['A', 'B', 'C', 'D', 'EF']
+VEHICLE_STATE = ['Not Connected', 'Connected', 'Charging', 'Error']
 LED_STATE = ['Off', 'On', 'Blinking', 'Flicker', 'Breathing']
 CONTACTOR_STATE = ['Not Live', 'Live']
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
@@ -56,6 +57,7 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
     
     def state_cb(self, state):
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
+        self.label_vehicle_state.setText(VEHICLE_STATE[state.vehicle_state])
         self.label_contactor_input.setText(CONTACTOR_STATE[state.contactor_state in (1, 3)])
         self.label_contactor_output.setText(CONTACTOR_STATE[state.contactor_state in (2, 3)])
         self.label_contactor_error.setText(str(state.contactor_error))
