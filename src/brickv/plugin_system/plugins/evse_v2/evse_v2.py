@@ -76,7 +76,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.evse.stop_charging()
 
     def dc_fault_reset_clicked(self):
-        self.evse.reset_dc_fault_current()
+        self.evse.reset_dc_fault_current(0xDC42FA23)
 
     def energy_meter_reset_clicked(self):
         self.evse.reset_energy_meter()

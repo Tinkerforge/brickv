@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-04-14.      #
+# This file was automatically generated on 2021-04-15.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -109,6 +109,11 @@ class BrickletEVSEV2(Device):
     CHARGE_RELEASE_AUTOMATIC = 0
     CHARGE_RELEASE_MANUAL = 1
     CHARGE_RELEASE_DEACTIVATED = 2
+    DC_FAULT_CURRENT_STATE_NORMAL_CONDITION = 0
+    DC_FAULT_CURRENT_STATE_6_MA = 1
+    DC_FAULT_CURRENT_STATE_SYSTEM = 2
+    DC_FAULT_CURRENT_STATE_UNKNOWN = 3
+    DC_FAULT_CURRENT_STATE_CALIBRATION = 4
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -278,13 +283,15 @@ class BrickletEVSEV2(Device):
 
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_DC_FAULT_CURRENT_STATE, (), '', 9, 'B')
 
-    def reset_dc_fault_current(self):
+    def reset_dc_fault_current(self, password):
         """
         TODO
         """
         self.check_validity()
 
-        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET_DC_FAULT_CURRENT, (), '', 0, '')
+        password = int(password)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET_DC_FAULT_CURRENT, (password,), 'I', 0, '')
 
     def set_gpio_configuration(self, input_configuration, output_configuration):
         """
