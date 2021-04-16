@@ -114,7 +114,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.button_p2p_discover.clicked.connect(self.button_p2p_discover_clicked)
         self.combo_reader_tag_type.currentIndexChanged.connect(self.reader_tag_type_changed)
         self.combo_p2p_operation.currentIndexChanged.connect(self.combo_p2p_operation_changed)
-        self.button_cardemu_start_discovery.clicked.connect(self.button_cardemu_start_discovery_clicked)
+        self.button_cardemu_start_discovery.clicked.connect(lambda: self.button_cardemu_start_discovery_clicked(True))
         self.combo_cardemu_record_type.currentIndexChanged.connect(self.combo_cardemu_record_type_changed)
         self.combo_p2p_write_record_type.currentIndexChanged.connect(self.combo_p2p_write_record_type_changed)
 
@@ -454,36 +454,51 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.frame_p2p_read.hide()
             self.frame_p2p_write.show()
 
-    def button_cardemu_start_discovery_clicked(self):
+    def button_cardemu_start_discovery_clicked(self, message_box_allowed):
         self.cardemu_start_discovery_clicked = True
 
         if self.combo_cardemu_record_type.currentIndex() == 0:
             text_raw = self.lineedit_cardemu_record_text_data.text()
 
             if text_raw == '':
-                self.cardemu_record_text_start_discovery_clicked = False
-                QMessageBox.critical(get_main_window(),
-                                     self.base_name + ' | Error',
-                                     'Input is empty. Please provide text input.')
+                if message_box_allowed:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Input is empty. Please provide text input.')
 
                 return
 
-            self.nfc.cardemu_write_ndef(self.pack_ndef_record_text(text_raw))
-            self.nfc.cardemu_start_discovery()
+            try:
+                self.nfc.cardemu_write_ndef(self.pack_ndef_record_text(text_raw))
+                self.nfc.cardemu_start_discovery()
+            except:
+                if message_box_allowed:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Bricklet not in correct state to start discovery.')
+
+                return
         elif self.combo_cardemu_record_type.currentIndex() == 1:
             uri_raw = self.lineedit_cardemu_record_uri_data.text()
 
             if uri_raw == '':
-                self.cardemu_record_uri_start_discovery_clicked = False
-                QMessageBox.critical(get_main_window(),
-                                     self.base_name + ' | Error',
-                                     'Input is empty. Please provide URI.')
+                if message_box_allowed:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Input is empty. Please provide URI.')
 
                 return
 
-            self.nfc.cardemu_write_ndef(self.pack_ndef_record_uri(uri_raw,
-                                                                  self.combo_cardemu_record_uri_prefix.currentIndex()))
-            self.nfc.cardemu_start_discovery()
+            try:
+                self.nfc.cardemu_write_ndef(self.pack_ndef_record_uri(uri_raw, self.combo_cardemu_record_uri_prefix.currentIndex()))
+                self.nfc.cardemu_start_discovery()
+            except:
+                if message_box_allowed:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Bricklet not in correct state to start discovery.')
+
+                return
 
     def combo_cardemu_record_type_changed(self, index):
         if index == 0:
@@ -513,7 +528,14 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
                     return
 
-                self.nfc.p2p_write_ndef(self.pack_ndef_record_text(text_raw))
+                try:
+                    self.nfc.p2p_write_ndef(self.pack_ndef_record_text(text_raw))
+                except:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Bricklet not in correct state to start discovery.')
+
+                    return
             elif self.combo_p2p_write_record_type.currentIndex() == 1:
                 uri_raw = self.lineedit_p2p_write_data_uri.text()
 
@@ -524,10 +546,21 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
                     return
 
-                self.nfc.p2p_write_ndef(self.pack_ndef_record_uri(uri_raw,
-                                                                  self.combo_p2p_write_uri_prefix.currentIndex()))
+                try:
+                    self.nfc.p2p_write_ndef(self.pack_ndef_record_uri(uri_raw, self.combo_p2p_write_uri_prefix.currentIndex()))
+                except:
+                    QMessageBox.critical(get_main_window(),
+                                         self.base_name + ' | Error',
+                                         'Bricklet not in correct state to start discovery.')
 
-        self.nfc.p2p_start_discovery()
+                    return
+
+        try:
+            self.nfc.p2p_start_discovery()
+        except:
+            QMessageBox.critical(get_main_window(),
+                                 self.base_name + ' | Error',
+                                 'Bricklet not in correct state to start discovery.')
 
     def cb_state_changed_cardemu(self, state, idle):
         if self.combo_box_mode.currentIndex() == self.nfc.MODE_CARDEMU:
@@ -543,7 +576,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.label_status.setText('Card Emulator: Initialization')
         elif state == self.nfc.CARDEMU_STATE_IDLE:
             if self.cardemu_start_discovery_clicked:
-                self.button_cardemu_start_discovery_clicked()
+                self.button_cardemu_start_discovery_clicked(False)
             else:
                 self.frame_mode_cardemu.setEnabled(True)
 
