@@ -600,3 +600,12 @@
 
 2021-01-18: 2.4.17 (9e90f93)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
+
+2021-04-19: 2.4.18 (<unknown>)
+- Add minimal health monitor dialog
+- Fix state handling for untabbed plugins
+- Force correct UI state after aborting autoreconnect on error
+- Handle errors while opening Data Logger debug log file
+- Update download.tinkerforge.com certificate chain to fix update autodetection
+- Autoselect download directory for Brick Viewer downloads
+- Check if NFC Bricklet is in correct state to start cardemu discovery

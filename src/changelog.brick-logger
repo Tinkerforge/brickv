@@ -64,3 +64,6 @@
 
 2021-01-18: 2.1.5 (9e90f93)
 - Add support for Performance DC Bricklet and Servo Bricklet 2.0
+
+2021-04-19: 2.1.6 (<unknown>)
+- Handle errors while opening debug log file
