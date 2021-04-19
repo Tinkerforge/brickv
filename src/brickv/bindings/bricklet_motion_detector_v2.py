@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-04-19.      #
 #                                                           #
 # Python Bindings Version 2.1.28                            #
 #                                                           #
@@ -105,9 +105,6 @@ class BrickletMotionDetectorV2(Device):
         """
         Returns 1 if a motion was detected. It returns 1 approx. for 1.8 seconds
         until the sensor checks for a new movement.
-
-        There is also a blue LED on the Bricklet that is on as long as the Bricklet is
-        in the "motion detected" state.
         """
         self.check_validity()
 
