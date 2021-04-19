@@ -86,7 +86,7 @@ from brickv import config
 from brickv.async_call import ASYNC_EVENT, async_event_handler
 from brickv.load_pixmap import load_pixmap
 from brickv.ui_errorreporter import Ui_ErrorReporter
-from brickv.utils import get_save_file_name
+from brickv.utils import get_save_file_name, get_home_path
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
@@ -266,7 +266,7 @@ def error_report_main():
 
     def save():
         date = datetime.datetime.now().replace(microsecond=0).isoformat().replace('T', '_').replace(':', '-')
-        filename = get_save_file_name(window, 'Save Report To File', 'brickv_error_report_{}.txt'.format(date))
+        filename = get_save_file_name(window, 'Save Report To File', os.path.join(get_home_path(), 'brickv_error_report_{}.txt'.format(date)))
 
         if len(filename) == 0:
             return

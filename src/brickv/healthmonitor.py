@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
 import time
 import csv
 from datetime import datetime
@@ -31,7 +32,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 
 from brickv.ui_healthmonitor import Ui_HealthMonitor
 from brickv.async_call import async_call
-from brickv.utils import get_modeless_dialog_flags, get_save_file_name
+from brickv.utils import get_modeless_dialog_flags, get_save_file_name, get_home_path
 from brickv.devicesproxymodel import DevicesProxyModel
 from brickv.infos import DeviceInfo, inventory
 
@@ -275,7 +276,7 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
 
     def save_report_to_csv_file(self):
         date = datetime.now().replace(microsecond=0).isoformat().replace('T', '_').replace(':', '-')
-        filename = get_save_file_name(self, 'Save Report To CSV File', 'brickv_health_report_{0}.csv'.format(date))
+        filename = get_save_file_name(self, 'Save Report To CSV File', os.path.join(get_home_path(), 'brickv_health_report_{0}.csv'.format(date)))
 
         if len(filename) == 0:
             return
