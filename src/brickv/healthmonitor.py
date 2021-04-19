@@ -49,8 +49,10 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         self.button_save_report_to_csv_file.clicked.connect(self.save_report_to_csv_file)
         self.button_close.clicked.connect(self.hide)
 
-        self.fixed_column_names = ['Name', 'UID', 'Position']
+        self.fixed_column_names = ['Name', 'UID', 'Position', 'Metric Errors']
         self.dynamic_column_names = []
+        self.metric_errors = {} # by uid
+        self.old_values = {} # by uid, by metric name
 
         self.tree_view_model = QStandardItemModel(self)
 
@@ -99,7 +101,8 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
 
             row = [QStandardItem(info.name),
                    QStandardItem(info.uid),
-                   QStandardItem(info.position.title())]
+                   QStandardItem(info.position.title()),
+                   QStandardItem(str(self.metric_errors.get(info.uid, 0)))]
 
             for metric_name in metric_names:
                 try:
@@ -114,7 +117,18 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
                 while len(row) <= column_offset + i:
                     row.append(QStandardItem())
 
-                row[column_offset + i].setText('-')
+                item = row[column_offset + i]
+
+                old_timestamp, old_value = self.old_values.get(info.uid, {}).get(metric_name, (None, None))
+
+                item.setText(str(old_value if old_value != None else '-'))
+
+                if old_timestamp != None and old_timestamp + SETTLE_DURATION >= time.monotonic():
+                    font = item.font()
+
+                    if not font.bold():
+                        font.setBold(True)
+                        item.setFont(font)
 
             for item in row:
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
@@ -149,9 +163,6 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         self.tree_view.expandAll()
         self.tree_view.setAnimated(True)
 
-        self.tree_view.setColumnWidth(0, 280)
-        self.tree_view.setColumnWidth(1, 70)
-        self.tree_view.setColumnWidth(2, 90)
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(sis, sio)
         self.tree_view.header().setStretchLastSection(False)
@@ -159,13 +170,12 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
 
         self.update_metric_values()
 
-    def get_health_metric_values_async(self, index, metric_values):
+    def get_health_metric_values_async(self, uid, index, metric_values):
         if self.tree_view_model.itemFromIndex(index) == None:
             # FIXME: row was removed in the meantime?
             return
 
         column_offset = len(self.fixed_column_names)
-        new_timestamp = time.monotonic()
 
         for metric_name, metric_value in metric_values.items():
             try:
@@ -186,31 +196,51 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
                 # FIXME: item for this metric was removed in the meantime?
                 continue
 
-            old_text = item.text()
-            new_text = str(metric_value)
+            self.update_item_text(uid, item, metric_name, metric_value)
 
-            if new_text != old_text:
-                item.setText(new_text)
-                item.setData(new_timestamp, Qt.UserRole)
+        metric_name = 'Metric Errors'
+        sibling = index.sibling(index.row(), self.fixed_column_names.index(metric_name))
+        item = self.tree_view_model.itemFromIndex(sibling)
 
-                font = item.font()
+        self.update_item_text(uid, item, metric_name, self.metric_errors.get(uid, 0))
 
-                if not font.bold():
-                    font.setBold(True)
-                    item.setFont(font)
+    def update_item_text(self, uid, item, metric_name, new_value):
+        new_timestamp = time.monotonic()
+        old_timestamp, old_value = self.old_values.get(uid, {}).get(metric_name, (None, None))
+        new_value_str = str(new_value)
+
+        if item.text() != new_value_str:
+            item.setText(new_value_str)
+
+        if old_value != new_value:
+            if uid not in self.old_values:
+                self.old_values[uid] = {metric_name: (new_timestamp, new_value)}
             else:
-                old_timestamp = item.data(Qt.UserRole)
+                self.old_values[uid][metric_name] = (new_timestamp, new_value)
 
-                if old_timestamp + SETTLE_DURATION < new_timestamp:
-                    font = item.font()
+            font = item.font()
 
-                    if font.bold():
-                        font.setBold(False)
-                        item.setFont(font)
+            if not font.bold():
+                font.setBold(True)
+                item.setFont(font)
+        elif old_timestamp + SETTLE_DURATION < new_timestamp:
+            font = item.font()
 
-    def get_health_metric_values_error(self, index):
-        print('get_health_metric_values_error', index)
-        pass # FIXME
+            if font.bold():
+                font.setBold(False)
+                item.setFont(font)
+
+    def get_health_metric_values_error(self, uid, index):
+        if uid in self.metric_errors:
+            self.metric_errors[uid] += 1
+        else:
+            self.metric_errors[uid] = 1
+
+        metric_name = 'Metric Errors'
+        sibling = index.sibling(index.row(), self.fixed_column_names.index(metric_name))
+        item = self.tree_view_model.itemFromIndex(sibling)
+
+        self.update_item_text(uid, item, metric_name, self.metric_errors[uid])
 
     def update_metric_values(self, parent=None):
         if not self.isVisible():
@@ -221,10 +251,10 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         if parent == None:
             parent = self.tree_view_model.invisibleRootItem()
 
-        def make_async_call(info, index):
+        def make_async_call(info, uid, index):
             async_call(info.plugin.get_health_metric_values, None,
-                       lambda metric_values: self.get_health_metric_values_async(index, metric_values),
-                       lambda: self.get_health_metric_values_error(index))
+                       lambda metric_values: self.get_health_metric_values_async(uid, index, metric_values),
+                       lambda: self.get_health_metric_values_error(uid, index))
 
         # FIXME: avoid getter burst!
         for r in range(parent.rowCount()):
@@ -237,7 +267,7 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
                 # FIXME: unknown UID, remove row or mark it as broken?
                 continue
 
-            make_async_call(info, index)
+            make_async_call(info, uid, index)
 
             self.update_metric_values(parent=child)
 
