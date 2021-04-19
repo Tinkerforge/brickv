@@ -74,9 +74,13 @@ def by_name(name):
     return lambda full_name: os.path.basename(full_name) == name
 
 def win_sign(exe_path):
-    system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "sign", "/v",
-            "/tr", "http://rfc3161timestamp.globalsign.com/advanced",
+    system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe",
+            "sign",
+            "/v",
+            "/fd", "sha256",
+            "/tr", "http://tsa.starfieldtech.com",
             "/td", "sha256",
+            "/a",
             "/n", "Tinkerforge GmbH",
             exe_path])
     system(["C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe", "verify", "/v", "/pa", exe_path])
