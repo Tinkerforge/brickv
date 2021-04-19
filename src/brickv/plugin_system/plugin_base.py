@@ -311,13 +311,12 @@ class PluginBase(QWidget):
 
     def get_health_metric_names(self):
         if self.device_info.kind == 'brick':
-            return ['Chip Temperature', 'SPITFP ACK Checksum Errors', 'SPITFP Message Checksum Errors', 'SPITFP Frame Errors', 'SPITFP Overflow Errors']
+            return ['SPITFP ACK Checksum Errors', 'SPITFP Message Checksum Errors', 'SPITFP Frame Errors', 'SPITFP Overflow Errors']
 
         return []
 
     def get_health_metric_values(self):
         if self.device_info.kind == 'brick':
-            chip_temperature = self.device.get_chip_temperature()
             spitfp_ack_checksum_errors = []
             spitfp_message_checksum_errors = []
             spitfp_frame_errors = []
@@ -332,7 +331,6 @@ class PluginBase(QWidget):
                 spitfp_overflow_errors.append('{0}: {1}'.format(bricklet_port.upper(), spitfp_error_count.error_count_overflow))
 
             return {
-                'Chip Temperature': '{0:.1f} °C'.format(chip_temperature / 10),
                 'SPITFP ACK Checksum Errors': ', '.join(spitfp_ack_checksum_errors),
                 'SPITFP Message Checksum Errors': ', '.join(spitfp_message_checksum_errors),
                 'SPITFP Frame Errors': ', '.join(spitfp_frame_errors),

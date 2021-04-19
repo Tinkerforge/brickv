@@ -419,3 +419,9 @@ class RED(PluginBase, Ui_RED):
             self.dialog_update_tinkerforge_software = REDUpdateTinkerforgeSoftwareDialog(self, self.session, self.script_manager)
             self.dialog_update_tinkerforge_software.exec_()
             self.dialog_update_tinkerforge_software = None
+
+    def get_health_metric_names(self):
+        return []
+
+    def get_health_metric_values(self):
+        return {}
