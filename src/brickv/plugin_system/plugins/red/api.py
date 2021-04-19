@@ -28,7 +28,7 @@ import sys
 import threading
 import time
 
-from PyQt5.QtCore import pyqtSignal, Qt, QObject
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer
 
 from brickv.bindings.ip_connection import Error
 from brickv.bindings.brick_red import BrickRED
@@ -201,9 +201,11 @@ class REDSession(QObject):
 
         self._brick               = brick
         self._session_id          = None
-        self._keep_alive_timer    = None
+        self._keep_alive_timer    = QTimer(self)
         self._last_keep_alive     = 0
         self.increase_error_count = increase_error_count
+
+        self._keep_alive_timer.timeout.connect(self._keep_session_alive)
 
     def __del__(self):
         self.expire()
@@ -214,6 +216,7 @@ class REDSession(QObject):
     def _keep_session_alive(self):
         if self._session_id == None:
             # session is expired, don't keep it alive anymore longer
+            self._keep_alive_timer.stop()
             return
 
         try:
@@ -225,15 +228,13 @@ class REDSession(QObject):
 
         if self._session_id == None:
             # session got expired during the keep-alive call, don't keep it alive any longer
+            self._keep_alive_timer.stop()
             return
 
         if abs(time.monotonic() - self._last_keep_alive) > (REDSession.LIFETIME - REDSession.KEEP_ALIVE_INTERVAL * 2):
+            # could not keep sesion alive
+            self._keep_alive_timer.stop()
             self._qtcb_lost.emit(self._brick._uid_str)
-            return
-
-        self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
-                                                 self._keep_session_alive)
-        self._keep_alive_timer.start()
 
     def create(self):
         self.expire()
@@ -245,9 +246,7 @@ class REDSession(QObject):
 
         self._session_id = session_id
 
-        self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
-                                                 self._keep_session_alive)
-        self._keep_alive_timer.start()
+        self._keep_alive_timer.start(REDSession.KEEP_ALIVE_INTERVAL * 1000)
 
         return self
 
@@ -258,7 +257,7 @@ class REDSession(QObject):
             return
 
         if self._keep_alive_timer != None:
-            self._keep_alive_timer.cancel()
+            self._keep_alive_timer.stop()
 
         # ensure to remove references to REDObject via their added callback methods
         self._brick.remove_all_callbacks()

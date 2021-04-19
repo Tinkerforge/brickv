@@ -1108,7 +1108,7 @@ class SerialSession(QObject):
 
     def start(self):
         self.serial = serial.Serial(self.cmd, timeout=0.2, baudrate=115200)
-        self.thread = threading.Thread(target=self.read_loop)
+        self.thread = threading.Thread(target=self.read_loop, daemon=True)
         self.thread.start()
 
     def read_loop(self):
