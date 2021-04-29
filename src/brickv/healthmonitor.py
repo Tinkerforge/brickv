@@ -172,7 +172,7 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
 
     def get_health_metric_values_async(self, uid, index, metric_values):
         if self.tree_view_model.itemFromIndex(index) == None:
-            # FIXME: row was removed in the meantime?
+            # FIXME: item was removed in the meantime?
             return
 
         column_offset = len(self.fixed_column_names)
@@ -201,6 +201,10 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         metric_name = 'Metric Errors'
         sibling = index.sibling(index.row(), self.fixed_column_names.index(metric_name))
         item = self.tree_view_model.itemFromIndex(sibling)
+
+        if item == None:
+            # FIXME: item was removed in the meantime?
+            return
 
         self.update_item_text(uid, item, metric_name, self.metric_errors.get(uid, 0))
 
@@ -236,9 +240,17 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         else:
             self.metric_errors[uid] = 1
 
+        if self.tree_view_model.itemFromIndex(index) == None:
+            # FIXME: item was removed in the meantime?
+            return
+
         metric_name = 'Metric Errors'
         sibling = index.sibling(index.row(), self.fixed_column_names.index(metric_name))
         item = self.tree_view_model.itemFromIndex(sibling)
+
+        if item == None:
+            # FIXME: item was removed in the meantime?
+            return
 
         self.update_item_text(uid, item, metric_name, self.metric_errors[uid])
 
