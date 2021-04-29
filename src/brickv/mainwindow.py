@@ -1067,7 +1067,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_tree_view_defaults(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
+        self.tree_view.setAnimated(False)
         self.tree_view.expandAll()
+        self.tree_view.setAnimated(True)
         self.tree_view.setColumnWidth(0, 280)
         self.tree_view.setColumnWidth(1, 70)
         self.tree_view.setColumnWidth(2, 90)
