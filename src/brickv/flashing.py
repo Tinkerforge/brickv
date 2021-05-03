@@ -125,6 +125,7 @@ class ThreadWithReturnValue(Thread):
     def __init__(self, group=None, target=None, name=None,
                  args=(), kwargs={}, Verbose=None):
         Thread.__init__(self, group, target, name, args, kwargs)
+        self.daemon = True
         self._return = None
         self._exception = None
     def run(self):
