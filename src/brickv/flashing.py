@@ -629,7 +629,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setValue(0)
             progress.show()
 
-            ports = get_serial_ports()
+            ports = get_serial_ports(vid=0x03eb, pid=0x6124) # ATMEL AT91 USB bootloader
         except:
             progress.cancel()
             self.combo_serial_port.addItem(NO_BOOTLOADER)
@@ -637,10 +637,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
             for port in ports:
-                if len(port[1]) > 0 and port[0] != port[1]:
-                    self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
-                else:
-                    self.combo_serial_port.addItem(port[0], port[0])
+                self.combo_serial_port.addItem(port.description, port.path)
 
             if self.combo_serial_port.count() == 0:
                 self.combo_serial_port.addItem(NO_BOOTLOADER)

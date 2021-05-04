@@ -26,71 +26,49 @@ import sys
 import glob
 import struct
 import time
-from serial import Serial, SerialException
+import serial
+import serial.tools.list_ports
+import collections
 
-if sys.platform.startswith('linux'):
-    def get_serial_ports():
-        ports = []
-        for tty in glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyUSB*'):
-            ports.append((tty, tty, tty))
-        return ports
-elif sys.platform == 'darwin':
-    def get_serial_ports():
-        ports = []
-        for tty in glob.glob('/dev/tty.*'):
-            ports.append((tty, tty, tty))
-        return ports
-elif sys.platform == 'win32':
-    import win32com.client
-    import win32con
-    import winerror
-    import pywintypes
-    from win32file import CreateFile
-    from win32api import CloseHandle
+SerialPort = collections.namedtuple('SerialPort', 'path description')
 
-    wmi = None
+def get_serial_ports(vid=None, pid=None):
+    ports = []
 
-    def get_serial_ports():
-        success = False
-        ports = []
-        global wmi
+    for info in serial.tools.list_ports.comports():
+        if isinstance(info, tuple): # pySerial >= 2.6 and < 3.0
+            if not info[2].lower().startswith('usb '):
+                continue # ignore non-USB based serial ports
 
-        # try WMI first
-        try:
-            if wmi is None:
-                wmi = win32com.client.GetObject('winmgmts:')
+            # FIXME: filter by VID and PID
 
-            for port in wmi.InstancesOf('Win32_SerialPort'):
-                ports.append((port.DeviceID, port.Name, ''))
+            path = info[0]
+            description = info[0]
 
-            success = True
-        except:
-            pass
+            if info[1] != 'n/a' and info[1] != 'CDC Abstract Control Model (ACM)' and not info[0].endswith('/' + info[1]):
+                description += ' - ' + info[1]
+        else: # pySerial >= 3.0
+            if info.vid == None or info.pid == None:
+                continue # ignore non-USB based serial ports
 
-        if success:
-            return ports
+            if vid != None and info.vid != vid:
+                continue # no VID match
 
-        ports = []
+            if pid != None and info.pid != pid:
+                continue # no PID match
 
-        # fallback to simple filename probing, if WMI fails
-        for i in range(1, 256):
-            # FIXME: get friendly names
-            name = 'COM%u' % i
-            try:
-                hFile = CreateFile('\\\\.\\' + name, win32con.GENERIC_READ | win32con.GENERIC_WRITE,
-                                   0, None, win32con.OPEN_EXISTING, 0, None)
-                CloseHandle(hFile)
-                ports.append((name, name, name))
-            except pywintypes.error as e:
-                if e[0] in [winerror.ERROR_ACCESS_DENIED, winerror.ERROR_GEN_FAILURE,
-                            winerror.ERROR_SHARING_VIOLATION, winerror.ERROR_SEM_TIMEOUT]:
-                    ports.append((name, name, name))
+            path = info.device
+            description = info.device
 
-        return ports
+            if info.description != 'n/a' and info.description != info.name:
+                if info.description == 'RED Brick - CDC Abstract Control Model (ACM)':
+                    description += ' - RED Brick (ACM)'
+                else:
+                    description += ' - ' + info.description
 
-else:
-    def get_serial_ports():
-        return []
+        ports.append(SerialPort(path, description))
+
+    return ports
 
 #### skip here for brick-flash ####
 
@@ -181,8 +159,8 @@ class SAMBA:
         self.progress = progress
 
         try:
-            self.port = Serial(port_name, 115200, timeout=5)
-        except SerialException as e:
+            self.port = serial.Serial(port_name, 115200, timeout=5)
+        except serial.SerialException as e:
             str_e = str(e)
 
             if '[Errno 13]' in str_e or 'Zugriff verweigert' in str_e:

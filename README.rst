@@ -43,13 +43,9 @@ The following libraries are required:
 
 * Python >= 3.5
 * PyQt >= 5.5 with QtOpenGL
-* pySerial
+* pySerial >= 2.6
 * pytz
 * tzlocal
-
-On Windows you will also need:
-
-* pypiwin32
 
 On Debian based Linux distributions try::
 

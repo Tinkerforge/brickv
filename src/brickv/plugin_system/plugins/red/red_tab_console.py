@@ -70,15 +70,12 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
         current_text = self.combo_serial_port.currentText()
         self.combo_serial_port.clear()
         try:
-            ports = get_serial_ports()
+            ports = get_serial_ports(vid=0x16d0, pid=0x09e5) # RED Brick serial console
         except:
             ports = []
 
         for port in ports:
-            if len(port[1]) > 0 and port[0] != port[1]:
-                self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
-            else:
-                self.combo_serial_port.addItem(port[0], port[0])
+            self.combo_serial_port.addItem(port.description, port.path)
 
         self.combo_serial_port.setEnabled(self.combo_serial_port.count() > 0)
 

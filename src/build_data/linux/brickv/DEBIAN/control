@@ -5,7 +5,7 @@ Maintainer: Olaf Lüke <olaf@tinkerforge.com>
 Architecture: all
 Priority: optional
 Installed-Size: <<INSTALLED_SIZE>>
-Depends: python3 (>= 3.5), python3-pyqt5 (>= 5.5), python3-pyqt5.qtopengl, python3-serial, python3-tz, python3-tzlocal
+Depends: python3 (>= 3.5), python3-pyqt5 (>= 5.5), python3-pyqt5.qtopengl, python3-serial (>= 2.6), python3-tz, python3-tzlocal
 Description: Tinkerforge Brick Viewer
  The Brick Viewer program is part of the Tinkerforge software infrastructure.
  It is a small Qt GUI to control and test Bricks and Bricklets from Tinkerforge.

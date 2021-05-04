@@ -1,7 +1,6 @@
 PyInstaller >= 3.5
 PyQt5 == 5.11.3
-pyserial
+pyserial >= 2.6
 pytz
 setuptools
 tzlocal
-pypiwin32; platform_system == "Windows"
