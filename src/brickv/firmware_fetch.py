@@ -75,7 +75,7 @@ def refresh_plugin_info(url_part, latest_version):
     elif name.endswith('_v3'):
         name = name.replace('_v3', '_3.0')
 
-    if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc', 'hat']:
+    if name in ['gps', 'gps_2.0', 'ptc', 'ptc_2.0', 'rs232', 'rs232_2.0', 'rs485', 'co2', 'can', 'can_2.0', 'rgb_led', 'dmx', 'nfc', 'hat', 'dc_2.0', 'evse']:
         name = name.upper()
     elif name.startswith('lcd_'):
         name = name.replace('lcd_', 'LCD_')
@@ -86,12 +86,12 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('io', 'IO-')
     elif name.endswith('_ir'):
         name = name.replace('_ir', '_IR')
-    elif name.endswith('_ir_2.0'):
-        name = name.replace('_ir_2.0', '_IR_2.0')
+    elif '_ir_' in name:
+        name = name.replace('_ir_', '_IR_')
     elif name.endswith('_us'):
         name = name.replace('_us', '_US')
-    elif name.endswith('_us_2.0'):
-        name = name.replace('_us_2.0', '_US_2.0')
+    elif '_us_' in name:
+        name = name.replace('_us_', '_US_')
     elif name.startswith('led_'):
         name = name.replace('led_', 'LED_')
     elif name.startswith('oled_'):
@@ -112,6 +112,14 @@ def refresh_plugin_info(url_part, latest_version):
         name = name.replace('xmc1400_', 'XMC1400_')
     elif name.endswith('_dc'):
         name = name.replace('_dc', '_DC')
+    elif name.endswith('_ptc'):
+        name = name.replace('_ptc', '_PTC')
+    elif name.startswith('imu_'):
+        name = name.replace('imu_', 'IMU_')
+    elif name.startswith('evse_'):
+        name = name.replace('evse_', 'EVSE_')
+    elif '_ac_' in name:
+        name = name.replace('_ac_', '_AC_')
 
     words = name.split('_')
     parts = []
