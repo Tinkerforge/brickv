@@ -327,6 +327,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletIndustrialDualRelay_found = False
     try:
+        from brickv.bindings.bricklet_industrial_ptc import BrickletIndustrialPTC
+        BrickletIndustrialPTC_found = True
+    except ImportError:
+        BrickletIndustrialPTC_found = False
+    try:
         from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
         BrickletIndustrialQuadRelay_found = True
     except ImportError:
@@ -926,6 +931,11 @@ else:
         BrickletIndustrialDualRelay_found = True
     except ImportError:
         BrickletIndustrialDualRelay_found = False
+    try:
+        from tinkerforge.bricklet_industrial_ptc import BrickletIndustrialPTC
+        BrickletIndustrialPTC_found = True
+    except ImportError:
+        BrickletIndustrialPTC_found = False
     try:
         from tinkerforge.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
         BrickletIndustrialQuadRelay_found = True
@@ -3389,6 +3399,44 @@ if BrickletIndustrialQuadRelay_found:
         ],
         'options_setter': None,
         'options': None
+    }
+if BrickletIndustrialPTC_found:
+    device_specs[BrickletIndustrialPTC.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletIndustrialPTC,
+        'values': [
+            {
+                'name': 'Temperature',
+                'getter': special_get_ptc_temperature,
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Resistance',
+                'getter': special_get_ptc_resistance,
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, wire_mode: device.set_wire_mode(wire_mode),
+        'options': [
+            {
+                'name': 'Wire Mode',
+                'type': 'choice',
+                'values': [('2-Wire', BrickletIndustrialPTC.WIRE_MODE_2),
+                           ('3-Wire', BrickletIndustrialPTC.WIRE_MODE_3),
+                           ('4-Wire', BrickletIndustrialPTC.WIRE_MODE_4)],
+                'default': '2-Wire'
+            }
+        ]
     }
 if BrickletIndustrialQuadRelayV2_found:
     device_specs[BrickletIndustrialQuadRelayV2.DEVICE_DISPLAY_NAME] = {
