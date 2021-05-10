@@ -1254,157 +1254,152 @@ def value_to_bits(value, length):
 # If the GPS Bricklet does not have a fix, then the function will return an Error
 # instead of the specified return values.
 
-if BrickletColor_found:
-    # BrickletColor
-    def special_get_color_illuminance(device):
-        gain, integration_time = device.get_config()
+# BrickletColor
+def special_get_color_illuminance(device):
+    gain, integration_time = device.get_config()
 
-        if gain == BrickletColor.GAIN_1X:
-            gain_factor = 1
-        elif gain == BrickletColor.GAIN_4X:
-            gain_factor = 4
-        elif gain == BrickletColor.GAIN_16X:
-            gain_factor = 16
-        elif gain == BrickletColor.GAIN_60X:
-            gain_factor = 60
+    if gain == device.GAIN_1X:
+        gain_factor = 1
+    elif gain == device.GAIN_4X:
+        gain_factor = 4
+    elif gain == device.GAIN_16X:
+        gain_factor = 16
+    elif gain == device.GAIN_60X:
+        gain_factor = 60
 
-        if integration_time == BrickletColor.INTEGRATION_TIME_2MS:
-            integration_time_factor = 2.4
-        elif integration_time == BrickletColor.INTEGRATION_TIME_24MS:
-            integration_time_factor = 24
-        elif integration_time == BrickletColor.INTEGRATION_TIME_101MS:
-            integration_time_factor = 101
-        elif integration_time == BrickletColor.INTEGRATION_TIME_154MS:
-            integration_time_factor = 154
-        elif integration_time == BrickletColor.INTEGRATION_TIME_700MS:
-            integration_time_factor = 700
+    if integration_time == device.INTEGRATION_TIME_2MS:
+        integration_time_factor = 2.4
+    elif integration_time == device.INTEGRATION_TIME_24MS:
+        integration_time_factor = 24
+    elif integration_time == device.INTEGRATION_TIME_101MS:
+        integration_time_factor = 101
+    elif integration_time == device.INTEGRATION_TIME_154MS:
+        integration_time_factor = 154
+    elif integration_time == device.INTEGRATION_TIME_700MS:
+        integration_time_factor = 700
 
-        illuminance = device.get_illuminance()
+    illuminance = device.get_illuminance()
 
-        return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
+    return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
 
-if BrickletColorV2_found:
-    # BrickletColorV2
-    def special_get_color_v2_illuminance(device):
-        gain, integration_time = device.get_configuration()
+# BrickletColorV2
+def special_get_color_v2_illuminance(device):
+    gain, integration_time = device.get_configuration()
 
-        if gain == BrickletColorV2.GAIN_1X:
-            gain_factor = 1
-        elif gain == BrickletColorV2.GAIN_4X:
-            gain_factor = 4
-        elif gain == BrickletColorV2.GAIN_16X:
-            gain_factor = 16
-        elif gain == BrickletColorV2.GAIN_60X:
-            gain_factor = 60
+    if gain == device.GAIN_1X:
+        gain_factor = 1
+    elif gain == device.GAIN_4X:
+        gain_factor = 4
+    elif gain == device.GAIN_16X:
+        gain_factor = 16
+    elif gain == device.GAIN_60X:
+        gain_factor = 60
 
-        if integration_time == BrickletColorV2.INTEGRATION_TIME_2MS:
-            integration_time_factor = 2.4
-        elif integration_time == BrickletColorV2.INTEGRATION_TIME_24MS:
-            integration_time_factor = 24
-        elif integration_time == BrickletColorV2.INTEGRATION_TIME_101MS:
-            integration_time_factor = 101
-        elif integration_time == BrickletColorV2.INTEGRATION_TIME_154MS:
-            integration_time_factor = 154
-        elif integration_time == BrickletColorV2.INTEGRATION_TIME_700MS:
-            integration_time_factor = 700
+    if integration_time == device.INTEGRATION_TIME_2MS:
+        integration_time_factor = 2.4
+    elif integration_time == device.INTEGRATION_TIME_24MS:
+        integration_time_factor = 24
+    elif integration_time == device.INTEGRATION_TIME_101MS:
+        integration_time_factor = 101
+    elif integration_time == device.INTEGRATION_TIME_154MS:
+        integration_time_factor = 154
+    elif integration_time == device.INTEGRATION_TIME_700MS:
+        integration_time_factor = 700
 
-        illuminance = device.get_illuminance()
+    illuminance = device.get_illuminance()
 
-        return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
+    return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
 
-if BrickletGPS_found:
-    # BrickletGPS
-    def special_get_gps_coordinates(device):
-        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_coordinates()
+# BrickletGPS
+def special_get_gps_coordinates(device):
+    if device.get_status()[0] == device.FIX_NO_FIX:
+        raise Exception('No fix')
 
-    def special_get_gps_altitude(device):
-        if device.get_status()[0] != BrickletGPS.FIX_3D_FIX:
-            raise Exception('No 3D fix')
-        else:
-            return device.get_altitude()
+    return device.get_coordinates()
 
-    def special_get_gps_motion(device):
-        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_motion()
+def special_get_gps_altitude(device):
+    if device.get_status()[0] != device.FIX_3D_FIX:
+        raise Exception('No 3D fix')
 
-if BrickletGPSV2_found:
-    # BrickletGPSV2
-    def special_get_gps_v2_coordinates(device):
-        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_coordinates()
+    return device.get_altitude()
 
-    def special_get_gps_v2_altitude(device):
-        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix != BrickletGPSV2.FIX_3D_FIX:
-            raise Exception('No 3D fix')
-        else:
-            return device.get_altitude()
+def special_get_gps_motion(device):
+    if device.get_status()[0] == device.FIX_NO_FIX:
+        raise Exception('No fix')
 
-    def special_get_gps_v2_motion(device):
-        if device.get_satellite_system_status(BrickletGPSV2.SATELLITE_SYSTEM_GPS).fix == BrickletGPSV2.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_motion()
+    return device.get_motion()
 
-if BrickletMultiTouch_found:
-    # BrickletMultiTouch
-    def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, electrode3,
-                                        electrode4, electrode5, electrode6, electrode7,
-                                        electrode8, electrode9, electrode10, electrode11,
-                                        proximity, electrode_sensitivity):
-        electrode_config = 0
+# BrickletGPSV2
+def special_get_gps_v2_coordinates(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix == device.FIX_NO_FIX:
+        raise Exception('No fix')
 
-        if electrode0:
-            electrode_config |= 1 << 0
+    return device.get_coordinates()
 
-        if electrode1:
-            electrode_config |= 1 << 1
+def special_get_gps_v2_altitude(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix != device.FIX_3D_FIX:
+        raise Exception('No 3D fix')
 
-        if electrode2:
-            electrode_config |= 1 << 2
+    return device.get_altitude()
 
-        if electrode3:
-            electrode_config |= 1 << 3
+def special_get_gps_v2_motion(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix == device.FIX_NO_FIX:
+        raise Exception('No fix')
 
-        if electrode4:
-            electrode_config |= 1 << 4
+    return device.get_motion()
 
-        if electrode5:
-            electrode_config |= 1 << 5
+# BrickletMultiTouch
+def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, electrode3,
+                                    electrode4, electrode5, electrode6, electrode7,
+                                    electrode8, electrode9, electrode10, electrode11,
+                                    proximity, electrode_sensitivity):
+    electrode_config = 0
 
-        if electrode6:
-            electrode_config |= 1 << 6
+    if electrode0:
+        electrode_config |= 1 << 0
 
-        if electrode7:
-            electrode_config |= 1 << 7
+    if electrode1:
+        electrode_config |= 1 << 1
 
-        if electrode8:
-            electrode_config |= 1 << 8
+    if electrode2:
+        electrode_config |= 1 << 2
 
-        if electrode9:
-            electrode_config |= 1 << 9
+    if electrode3:
+        electrode_config |= 1 << 3
 
-        if electrode10:
-            electrode_config |= 1 << 10
+    if electrode4:
+        electrode_config |= 1 << 4
 
-        if electrode11:
-            electrode_config |= 1 << 11
+    if electrode5:
+        electrode_config |= 1 << 5
 
-        if proximity:
-            electrode_config |= 1 << 12
+    if electrode6:
+        electrode_config |= 1 << 6
 
-        device.set_electrode_config(electrode_config)
-        device.set_electrode_sensitivity(electrode_sensitivity)
+    if electrode7:
+        electrode_config |= 1 << 7
+
+    if electrode8:
+        electrode_config |= 1 << 8
+
+    if electrode9:
+        electrode_config |= 1 << 9
+
+    if electrode10:
+        electrode_config |= 1 << 10
+
+    if electrode11:
+        electrode_config |= 1 << 11
+
+    if proximity:
+        electrode_config |= 1 << 12
+
+    device.set_electrode_config(electrode_config)
+    device.set_electrode_sensitivity(electrode_sensitivity)
 
 if BrickletOutdoorWeather_found:
     # BrickletOutdoorWeather
-    wind_direction_names = {
+    outdoor_weather_wind_direction_names = {
         BrickletOutdoorWeather.WIND_DIRECTION_N: 'N',
         BrickletOutdoorWeather.WIND_DIRECTION_NNE: 'NNE',
         BrickletOutdoorWeather.WIND_DIRECTION_NE: 'NE',
@@ -1424,17 +1419,17 @@ if BrickletOutdoorWeather_found:
         BrickletOutdoorWeather.WIND_DIRECTION_ERROR: 'Wind Direction Error',
     }
 
-    GetStationData = namedtuple('StationData',
-                                ['temperature',
-                                 'humidity',
-                                 'wind_speed',
-                                 'gust_speed',
-                                 'rain',
-                                 'wind_direction',
-                                 'battery_low',
-                                 'last_change'])
+    OutdoorWeatherGetStationData = namedtuple('StationData',
+                                              ['temperature',
+                                               'humidity',
+                                               'wind_speed',
+                                               'gust_speed',
+                                               'rain',
+                                               'wind_direction',
+                                               'battery_low',
+                                               'last_change'])
 
-    def special_get_station_data(device):
+    def special_get_outdoor_weather_station_data(device):
         station_ids = device.get_station_identifiers()
 
         if len(station_ids) < 1:
@@ -1445,18 +1440,18 @@ if BrickletOutdoorWeather_found:
         for station_id in station_ids:
             station_data = device.get_station_data(station_id)
 
-            keyed_station_data[str(station_id)] = GetStationData(temperature=station_data.temperature,
-                                                                 humidity=station_data.humidity,
-                                                                 wind_speed=station_data.wind_speed,
-                                                                 gust_speed=station_data.gust_speed,
-                                                                 rain=station_data.rain,
-                                                                 wind_direction=wind_direction_names[station_data.wind_direction],
-                                                                 battery_low=station_data.battery_low,
-                                                                 last_change=station_data.last_change)
+            keyed_station_data[str(station_id)] = OutdoorWeatherGetStationData(temperature=station_data.temperature,
+                                                                               humidity=station_data.humidity,
+                                                                               wind_speed=station_data.wind_speed,
+                                                                               gust_speed=station_data.gust_speed,
+                                                                               rain=station_data.rain,
+                                                                               wind_direction=outdoor_weather_wind_direction_names[station_data.wind_direction],
+                                                                               battery_low=station_data.battery_low,
+                                                                               last_change=station_data.last_change)
 
         return keyed_station_data
 
-    def special_get_sensor_data(device):
+    def special_get_outdoor_weather_sensor_data(device):
         sensor_ids = device.get_sensor_identifiers()
 
         if len(sensor_ids) < 1:
@@ -1469,63 +1464,61 @@ if BrickletOutdoorWeather_found:
 
         return keyed_sensor_data
 
-if BrickletPTC_found:
-    # BrickletPTC
-    def special_get_ptc_resistance(device):
-        if not device.is_sensor_connected():
-            raise Exception('No sensor')
+# Bricklet(Industrial)PTC(V2)
+def special_get_ptc_resistance(device):
+    if not device.is_sensor_connected():
+        raise Exception('No sensor')
+
+    return device.get_resistance()
+
+# Bricklet(Industrial)PTC(V2)
+def special_get_ptc_temperature(device):
+    if not device.is_sensor_connected():
+        raise Exception('No sensor')
+
+    return device.get_temperature()
+
+# BrickletLaserRangeFinderV2
+def special_set_laser_range_finder_v2_configuration(device, enable, acquisition_count, enable_quick_termination, threshold_value, enable_auto_freq, measurement_frequency):
+    device.set_enable(enable)
+    device.set_configuration(acquisition_count, enable_quick_termination, threshold_value, measurement_frequency if not enable_auto_freq else 0)
+
+# BrickletRS232V2
+rs232_v2_read_buffers = {}
+
+def rs232_v2_to_ascii(s):
+    ascii_ = ''
+
+    for c in s:
+        if (ord(c) < 32 or ord(c) > 126) and ord(c) not in (10, 13):
+            ascii_ += '.'
         else:
-            return device.get_resistance()
+            ascii_ += c
+    return ascii_.replace('\\', '\\\\').replace('\n', '\\n').replace('\r', '\\r')
 
-    def special_get_ptc_temperature(device):
-        if not device.is_sensor_connected():
-            raise Exception('No sensor')
-        else:
-            return device.get_temperature()
+def rs232_v2_to_hextext(s):
+    return ' '.join('{:02X}'.format(ord(c)) for c in s) + ' '
 
-if BrickSilentStepper_found:
-    # BrickSilentStepper
-    def special_get_silent_stepper_current_consumption(device):
-        return device.get_all_data().current_consumption
+def special_rs232_v2_initialize(device, baudrate, parity, stopbits, wordlength, flowcontrol, ascii_):
+    rs232_v2_read_buffers[device.uid] = Queue()
 
-if BrickletLaserRangeFinderV2_found:
-    def special_set_configuration(device, enable, acquisition_count, enable_quick_termination, threshold_value, enable_auto_freq, measurement_frequency):
-        device.set_enable(enable)
-        device.set_configuration(acquisition_count, enable_quick_termination, threshold_value, measurement_frequency if not enable_auto_freq else 0)
+    if ascii_:
+        device.register_callback(device.CALLBACK_READ, lambda message: rs232_v2_read_buffers[device.uid].put(rs232_v2_to_ascii(message)))
+    else:
+        device.register_callback(device.CALLBACK_READ, lambda message: rs232_v2_read_buffers[device.uid].put(rs232_v2_to_hextext(message)))
 
-if BrickletRS232V2_found:
-    rs232v2_read_buffers = {}
+    device.set_configuration(baudrate, parity, stopbits, wordlength, flowcontrol)
+    device.enable_read_callback()
 
-    def to_ascii(s):
-        ascii_ = ''
+def special_rs232_v2_get_input(device):
+    queue = rs232_v2_read_buffers[device.uid]
+    result = []
 
-        for c in s:
-            if (ord(c) < 32 or ord(c) > 126) and ord(c) not in (10, 13):
-                ascii_ += '.'
-            else:
-                ascii_ += c
-        return ascii_.replace('\\', '\\\\').replace('\n', '\\n').replace('\r', '\\r')
-
-    def to_hextext(s):
-        return ' '.join('{:02X}'.format(ord(c)) for c in s) + ' '
-
-    def special_rs232v2_initialize(device, baudrate, parity, stopbits, wordlength, flowcontrol, ascii_):
-        rs232v2_read_buffers[device.uid] = Queue()
-        if ascii_:
-            device.register_callback(device.CALLBACK_READ, lambda message: rs232v2_read_buffers[device.uid].put(to_ascii(message)))
-        else:
-            device.register_callback(device.CALLBACK_READ, lambda message: rs232v2_read_buffers[device.uid].put(to_hextext(message)))
-        device.set_configuration(baudrate, parity, stopbits, wordlength, flowcontrol)
-        device.enable_read_callback()
-
-    def special_rs232v2_get_input(device):
-        queue = rs232v2_read_buffers[device.uid]
-        result = []
-        try:
-            while True:
-                result += queue.get_nowait()
-        except Empty:
-            return ''.join(result)
+    try:
+        while True:
+            result += queue.get_nowait()
+    except Empty:
+        return ''.join(result)
 
 device_specs = {}
 
@@ -2306,7 +2299,7 @@ if BrickletCompass_found:
                 'name': 'Magnetic Flux Density',
                 'getter': lambda device: device.get_magnetic_flux_density(),
                 'subvalues': ['X', 'Y', 'Z'],
-                'unit': ['mG/10', 'mG/10','mG/10'],
+                'unit': ['mG/10', 'mG/10', 'mG/10'],
                 'advanced': False
             }
         ],
@@ -2468,7 +2461,7 @@ if BrickletDistanceUSV2_found:
                 'advanced': False
             }
         ],
-        'options_setter': lambda device, update_rate : device.set_update_rate(update_rate),
+        'options_setter': lambda device, update_rate: device.set_update_rate(update_rate),
         'options': [
             {
                 'name': 'Update Rate',
@@ -5154,14 +5147,14 @@ if BrickletOutdoorWeather_found:
         'values': [
             {
                 'name': 'Station Data',
-                'getter': special_get_station_data,
+                'getter': special_get_outdoor_weather_station_data,
                 'subvalues': ['Temperature', 'Humidity', 'Wind Speed', 'Gust Speed', 'Rain', 'Wind Direction', 'Battery Low', 'Last Change'],
                 'unit': ['°C/10', '%RH', 'm/10s', 'm/10s', 'mm/10', None, None, 's'],
                 'advanced': False
             },
             {
                 'name': 'Sensor Data',
-                'getter': special_get_sensor_data,
+                'getter': special_get_outdoor_weather_sensor_data,
                 'subvalues': ['Temperature', 'Humidity', 'Last Change'],
                 'unit': ['°C/10', '%RH', 's'],
                 'advanced': False
@@ -5369,13 +5362,13 @@ if BrickletRS232V2_found:
         'values': [
             {
                 'name': 'Input',
-                'getter': lambda device: special_rs232v2_get_input(device),
+                'getter': special_rs232_v2_get_input,
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
             },
         ],
-        'options_setter': special_rs232v2_initialize,
+        'options_setter': special_rs232_v2_initialize,
         'options':  [
             {
                 'name': 'Baudrate',
@@ -6455,7 +6448,7 @@ if BrickSilentStepper_found:
             },
             {
                 'name': 'Current Consumption',
-                'getter': lambda device: special_get_silent_stepper_current_consumption(device),
+                'getter': lambda device: device.get_all_data().current_consumption,
                 'subvalues': None,
                 'unit': 'mA',
                 'advanced': True
@@ -6709,7 +6702,7 @@ if BrickletLaserRangeFinderV2_found:
                 'advanced': False
             }
         ],
-        'options_setter': special_set_configuration,
+        'options_setter': special_set_laser_range_finder_v2_configuration,
         'options': [
             {
                 'name': 'Enable Laser',
