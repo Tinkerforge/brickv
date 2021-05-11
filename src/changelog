@@ -614,10 +614,8 @@
 - Check if NFC Bricklet is in correct state to start cardemu discovery
 
 2021-05-11: 2.4.19 (<unknown>)
-- Add support for DC 2.0, Industrial Dual AC Relay Industrial PTC and Silent
-  Stepper Bricklet 2.0
-- Add Data Logger support for DC 2.0, Industrial Dual AC Relay Industrial PTC
-  and Silent Stepper Bricklet 2.0
+- Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
+- Add Data Logger support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
 - Fix Healthmonitor error handling
 - Filter Updates/Flashing and RED Brick Console serial port selection based on
   USB product- and vendor-ID
