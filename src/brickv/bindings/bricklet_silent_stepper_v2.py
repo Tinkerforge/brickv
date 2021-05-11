@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-02-25.      #
+# This file was automatically generated on 2021-05-11.      #
 #                                                           #
-# Python Bindings Version 2.1.28                            #
+# Python Bindings Version 2.1.29                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -33,7 +31,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletSilentStepperV2(Device):
     """
-    TBD
+    Silently drives one bipolar stepper motor with up to 46V and 1.6A per phase
     """
 
     DEVICE_IDENTIFIER = 2166
@@ -417,7 +415,7 @@ class BrickletSilentStepperV2(Device):
         """
         Sets the step resolution from full-step up to 1/256-step.
 
-        If interpolation is turned on, the Silent Stepper Brick will always interpolate
+        If interpolation is turned on, the Silent Stepper Bricklet 2.0 will always interpolate
         your step inputs as 1/256-step. If you use full-step mode with interpolation, each
         step will generate 256 1/256 steps.
 
@@ -474,7 +472,7 @@ class BrickletSilentStepperV2(Device):
     def get_input_voltage(self):
         """
         Returns the external input voltage. The external input voltage is
-        given via the black power input connector on the Silent Stepper Brick.
+        given via the black power input connector on the Silent Stepper Bricklet 2.0.
 
         If there is an external input voltage and a stack input voltage, the motor
         will be driven by the external input voltage. If there is only a stack
@@ -514,13 +512,8 @@ class BrickletSilentStepperV2(Device):
 
     def set_enabled(self, enabled):
         """
-        TODO
-
-        Enables the driver chip. The driver parameters can be configured (maximum velocity,
+        Enables/Disables the driver chip. The driver parameters can be configured (maximum velocity,
         acceleration, etc) before it is enabled.
-
-        Disables the driver chip. The configurations are kept (maximum velocity,
-        acceleration, etc) but the motor is not driven until it is enabled again.
 
         .. warning::
          Disabling the driver chip while the motor is still turning can damage the
@@ -538,7 +531,7 @@ class BrickletSilentStepperV2(Device):
 
     def get_enabled(self):
         """
-        TODO
+        Returns *true* if the stepper driver is enabled, *false* otherwise.
         """
         self.check_validity()
 
@@ -549,7 +542,7 @@ class BrickletSilentStepperV2(Device):
         Sets the basic configuration parameters for the different modes (Stealth, Coolstep, Classic).
 
         * Standstill Current: This value can be used to lower the current during stand still. This might
-          be reasonable to reduce the heating of the motor and the Brick. When the motor is in standstill
+          be reasonable to reduce the heating of the motor and the Bricklet 2.0. When the motor is in standstill
           the configured motor phase current will be driven until the configured
           Power Down Time is elapsed. After that the phase current will be reduced to the standstill
           current. The elapsed time for this reduction can be configured with the Standstill Delay Time.
@@ -799,14 +792,15 @@ class BrickletSilentStepperV2(Device):
 
     def set_error_led_config(self, config):
         """
-        Configures the touch LED to be either turned off, turned on, blink in
-        heartbeat mode or show TBD.
+        Configures the error LED to be either turned off, turned on, blink in
+        heartbeat mode or show an error.
 
-        TODO:
+        If the LED is configured to show errors it has three different states:
 
-        * one second interval blink: Input voltage too small
-        * 250ms interval blink: Overtemperature warning
-        * full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+        * Off: No error present.
+        * 250ms interval blink: Overtemperature warning.
+        * 1s interval blink: Input voltage too small.
+        * full red: motor disabled because of short to ground in phase a or b or because of overtemperature.
         """
         self.check_validity()
 
@@ -860,7 +854,7 @@ class BrickletSilentStepperV2(Device):
         """
         Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the Silent Stepper
-        Brick is 8V.
+        Bricklet 2.0 is 8V.
         You can use this function to detect the discharge of a battery that is used
         to drive the stepper motor. If you have a fixed power supply, you likely do
         not need this functionality.
@@ -882,7 +876,7 @@ class BrickletSilentStepperV2(Device):
     def set_time_base(self, time_base):
         """
         Sets the time base of the velocity and the acceleration of the Silent Stepper
-        Brick.
+        Bricklet 2.0.
 
         For example, if you want to make one step every 1.5 seconds, you can set
         the time base to 15 and the velocity to 10. Now the velocity is
@@ -943,7 +937,9 @@ class BrickletSilentStepperV2(Device):
 
     def set_gpio_configuration(self, channel, debounce, stop_deceleration):
         """
-        TBD
+        Sets the GPIO configuration for the given channel.
+        You can configure a debounce and the deceleration that is used if the action is
+        configured as ``normal stop``. See :func:`Set GPIO Action`.
         """
         self.check_validity()
 
@@ -955,7 +951,7 @@ class BrickletSilentStepperV2(Device):
 
     def get_gpio_configuration(self, channel):
         """
-        TBD
+        Returns the GPIO configuration for a channel as set by :func:`Set GPIO Configuration`.
         """
         self.check_validity()
 
@@ -965,7 +961,15 @@ class BrickletSilentStepperV2(Device):
 
     def set_gpio_action(self, channel, action):
         """
-        TBD
+        Sets the GPIO action for the given channel.
+
+        The action can be a normal stop, a full brake or a callback. Each for a rising
+        edge or falling edge. The actions are a bitmask they can be used at the same time.
+        You can for example trigger a full brake and a callback at the same time or for
+        rising and falling edge.
+
+        The deceleration speed for the normal stop can be configured with
+        :func:`Set GPIO Configuration`.
         """
         self.check_validity()
 
@@ -976,7 +980,7 @@ class BrickletSilentStepperV2(Device):
 
     def get_gpio_action(self, channel):
         """
-        TBD
+        Returns the GPIO action for a channel as set by :func:`Set GPIO Action`.
         """
         self.check_validity()
 
@@ -986,7 +990,8 @@ class BrickletSilentStepperV2(Device):
 
     def get_gpio_state(self):
         """
-        TBD
+        Returns the GPIO state for both channels. True if the state is ``high`` and
+        false if the state is ``low``.
         """
         self.check_validity()
 

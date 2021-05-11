@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-01-15.      #
+# This file was automatically generated on 2021-05-11.      #
 #                                                           #
-# Python Bindings Version 2.1.28                            #
+# Python Bindings Version 2.1.29                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 from collections import namedtuple
 
@@ -26,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletDCV2(Device):
     """
-    TBD
+    Drives one brushed DC motor with up to 28V and 5A (peak)
     """
 
     DEVICE_IDENTIFIER = 2165
@@ -145,7 +143,8 @@ class BrickletDCV2(Device):
 
     def set_enabled(self, enabled):
         """
-        TBD
+        Enables/Disables the driver chip. The driver parameters can be configured
+        (velocity, acceleration, etc) before it is enabled.
         """
         self.check_validity()
 
@@ -155,7 +154,7 @@ class BrickletDCV2(Device):
 
     def get_enabled(self):
         """
-        TBD
+        Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         self.check_validity()
 
@@ -165,13 +164,13 @@ class BrickletDCV2(Device):
         """
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
         0 is stop and 32767 is full speed forward. Depending on the
-        acceleration (see TBD), the motor is not immediately
+        acceleration (see :func:`Set Motion`), the motor is not immediately
         brought to the velocity but smoothly accelerated.
 
         The velocity describes the duty cycle of the PWM with which the motor is
         controlled, e.g. a velocity of 3277 sets a PWM with a 10% duty cycle.
         You can not only control the duty cycle of the PWM but also the frequency,
-        see TBD.
+        see :func:`Set PWM Frequency`.
         """
         self.check_validity()
 
@@ -199,16 +198,16 @@ class BrickletDCV2(Device):
 
     def set_motion(self, acceleration, deceleration):
         """
-        Sets the acceleration of the motor. It is given in *velocity/s*. An
-        acceleration of 10000 means, that every second the velocity is increased
+        Sets the acceleration and deceleration of the motor. It is given in *velocity/s*.
+        An acceleration of 10000 means, that every second the velocity is increased
         by 10000 (or about 30% duty cycle).
 
         For example: If the current velocity is 0 and you want to accelerate to a
         velocity of 16000 (about 50% duty cycle) in 10 seconds, you should set
         an acceleration of 1600.
 
-        If acceleration is set to 0, there is no speed ramping, i.e. a new velocity
-        is immediately given to the motor.
+        If acceleration and deceleration is set to 0, there is no speed ramping, i.e. a
+        new velocity is immediately given to the motor.
         """
         self.check_validity()
 
@@ -219,7 +218,7 @@ class BrickletDCV2(Device):
 
     def get_motion(self):
         """
-        Returns the acceleration as set by :func:`Set Motion`.
+        Returns the acceleration/deceleration as set by :func:`Set Motion`.
         """
         self.check_validity()
 
@@ -299,7 +298,7 @@ class BrickletDCV2(Device):
 
     def get_power_statistics(self):
         """
-        TBD
+        Returns input voltage and current usage of the driver.
         """
         self.check_validity()
 
@@ -307,14 +306,14 @@ class BrickletDCV2(Device):
 
     def set_error_led_config(self, config):
         """
-        Configures the touch LED to be either turned off, turned on, blink in
-        heartbeat mode or show TBD.
+        Configures the error LED to be either turned off, turned on, blink in
+        heartbeat mode or show an error.
 
-        TODO:
+        If the LED is configured to show errors it has three different states:
 
-        * one second interval blink: Input voltage too small
-        * 250ms interval blink: Overtemperature warning
-        * full red: motor disabled because of short to ground in phase a or b or because of overtemperature
+        * Off: No error present.
+        * 1s interval blinking: Input voltage too low (below 6V).
+        * 250ms interval blinking: Overtemperature or overcurrent.
         """
         self.check_validity()
 
