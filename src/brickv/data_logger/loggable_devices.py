@@ -197,6 +197,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletCurrent25_found = False
     try:
+        from brickv.bindings.bricklet_dc_v2 import BrickletDCV2
+        BrickletDCV2_found = True
+    except ImportError:
+        BrickletDCV2_found = False
+    try:
         from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
         BrickletDistanceIR_found = True
     except ImportError:
@@ -558,6 +563,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletServoV2_found = False
     try:
+        from brickv.bindings.bricklet_silent_stepper_v2 import BrickletSilentStepperV2
+        BrickletSilentStepperV2_found = True
+    except ImportError:
+        BrickletSilentStepperV2_found = False
+    try:
         from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
         BrickletSolidStateRelay_found = True
     except ImportError:
@@ -801,6 +811,11 @@ else:
         BrickletCurrent25_found = True
     except ImportError:
         BrickletCurrent25_found = False
+    try:
+        from tinkerforge.bricklet_dc_v2 import BrickletDCV2
+        BrickletDCV2_found = True
+    except ImportError:
+        BrickletDCV2_found = False
     try:
         from tinkerforge.bricklet_distance_ir import BrickletDistanceIR
         BrickletDistanceIR_found = True
@@ -1162,6 +1177,11 @@ else:
         BrickletServoV2_found = True
     except ImportError:
         BrickletServoV2_found = False
+    try:
+        from tinkerforge.bricklet_silent_stepper_v2 import BrickletSilentStepperV2
+        BrickletSilentStepperV2_found = True
+    except ImportError:
+        BrickletSilentStepperV2_found = False
     try:
         from tinkerforge.bricklet_solid_state_relay import BrickletSolidStateRelay
         BrickletSolidStateRelay_found = True
@@ -6930,6 +6950,71 @@ if BrickletPerformanceDC_found:
                 'subvalues': ['Voltage', 'Current', 'Temperature'],
                 'unit': ['mV', 'mA', '°C/10'],
                 'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickletDCV2_found:
+    device_specs[BrickletDCV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletDCV2,
+        'values': [
+            {
+                'name': 'Power Statistics',
+                'getter': lambda device: device.get_power_statistics(),
+                'subvalues': ['Voltage', 'Current'],
+                'unit': ['mV', 'mA'],
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickletSilentStepperV2_found:
+    device_specs[BrickletSilentStepperV2.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletSilentStepperV2,
+        'values': [
+            {
+                'name': 'Current Velocity',
+                'getter': lambda device: device.get_current_velocity(),
+                'subvalues': None,
+                'unit': 'steps/sec',
+                'advanced': False
+            },
+            {
+                'name': 'Current Position',
+                'getter': lambda device: device.get_current_position(),
+                'subvalues': None,
+                'unit': 'steps',
+                'advanced': True
+            },
+            {
+                'name': 'Input Voltage',
+                'getter': lambda device: device.get_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': True
+            },
+            {
+                'name': 'Current Consumption',
+                'getter': lambda device: device.get_all_data().current_consumption,
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': True
             },
             {
                 'name': 'Chip Temperature',
