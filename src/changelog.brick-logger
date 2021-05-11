@@ -67,3 +67,7 @@
 
 2021-04-19: 2.1.6 (a0eaefb)
 - Handle errors while opening debug log file
+
+2021-05-11: 2.1.7 (<unknown>)
+- Add support for DC 2.0, Industrial Dual AC Relay Industrial PTC and Silent
+  Stepper Bricklet 2.0
