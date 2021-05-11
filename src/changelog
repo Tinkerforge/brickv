@@ -613,7 +613,7 @@
 - Autoselect download directory for Brick Viewer downloads
 - Check if NFC Bricklet is in correct state to start cardemu discovery
 
-2021-05-11: 2.4.19 (<unknown>)
+2021-05-11: 2.4.19 (61e985c)
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
 - Add Data Logger support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
 - Fix Healthmonitor error handling
