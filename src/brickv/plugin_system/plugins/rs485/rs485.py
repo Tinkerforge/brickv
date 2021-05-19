@@ -893,10 +893,15 @@ class RS485(COMCUPluginBase, Ui_RS485):
             self.hextext.hide()
             self.text.show()
             self.rs485_input_combobox.setValidator(None)
+            self.rs485_input_line_ending_lineedit.show()
+            self.rs485_input_line_ending_combobox.show()
         else:
             self.text.hide()
             self.hextext.show()
             self.rs485_input_combobox.setValidator(HexValidator())
+            self.rs485_input_line_ending_lineedit.hide()
+            self.rs485_input_line_ending_combobox.hide()
+
         self.rs485_input_combobox.clearEditText()
         self.rs485_input_combobox.clear()
 
