@@ -51,8 +51,6 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
         self.led_strip = self.device
 
-        self.frame_read_callback_was_enabled = None
-
         self.qtcb_frame_started.connect(self.cb_frame_started)
 
         self.button_color.clicked.connect(self.color_clicked)
