@@ -970,7 +970,7 @@ class Plot(QWidget):
             d += 1
 
         # increase y-axis step-size until it divides y-diff in 8 or less parts
-        while y_diff / step_size > 8.0:
+        while y_diff / step_size > 8.0: # FIXME: this needs to be dynamically adjusted depending on widget height, see color bricklet
             step_subdivision_count = subdivisions[d % len(subdivisions)]
             d -= 1
             step_size *= divisors[d % len(divisors)]
@@ -980,6 +980,7 @@ class Plot(QWidget):
         y_max_scale = math.ceil(y_max / step_size) * step_size
 
         # fix rounding (?) errors from floor/ceil scaling
+        # FIXME: this resuĺts in sometime more than 8 parts?
         while fuzzy_leq(y_min_scale + step_size, y_min):
             y_min_scale += step_size
 
