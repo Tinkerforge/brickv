@@ -649,15 +649,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # configs
         configs = device_info.plugin.get_configs()
 
-        def config_changed(combobox):
-            i = combobox.currentIndex()
-
+        def config_changed(combobox, i):
             if i < 0:
                 return
 
             combobox.itemData(i).trigger()
 
         if len(configs) > 0:
+            def make_set_current_index_lambda(combobox, i):
+                return lambda *args: combobox.setCurrentIndex(i)
+
             for cfg in configs:
                 while len(info_bars) <= cfg[0]:
                     info_bars.append(QHBoxLayout())
@@ -668,7 +669,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     for i, item in enumerate(cfg[2]):
                         combobox.addItem(item.text(), item)
-                        item.triggered.connect(functools.partial(combobox.setCurrentIndex, i))
+                        item.triggered.connect(make_set_current_index_lambda(combobox, i))
 
                     combobox.currentIndexChanged.connect(functools.partial(config_changed, combobox))
 
