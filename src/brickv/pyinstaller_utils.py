@@ -78,7 +78,7 @@ def win_sign(exe_path):
             "sign",
             "/v",
             "/fd", "sha256",
-            "/tr", "http://tsa.starfieldtech.com",
+            "/tr", "http://rfc3161timestamp.globalsign.com/advanced",
             "/td", "sha256",
             "/a",
             "/n", "Tinkerforge GmbH",
