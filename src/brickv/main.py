@@ -206,7 +206,7 @@ class ExceptionReporter:
             traceback.print_exception(etype=exctype, value=value, tb=tb)
             print("")
 
-            report_message = prefix + '\n\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
+            report_message = prefix + '\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
