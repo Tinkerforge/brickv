@@ -4,7 +4,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020-2021 Erik Fleckstein <erik@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
@@ -236,7 +236,8 @@ class BrickViewer(QApplication):
         return QApplication.notify(self, receiver, event)
 
 class ErrorReporter(QMainWindow, Ui_ErrorReporter):
-    pass
+    def closeEvent(self, event):
+        QApplication.exit(int(self.check_show_again.isChecked()))
 
 def error_report_main():
     error_message = sys.stdin.read()
