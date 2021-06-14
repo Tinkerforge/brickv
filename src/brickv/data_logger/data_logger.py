@@ -220,9 +220,7 @@ class DataLogger(threading.Thread):
         """CLEANUP_AFTER_STOP """
         # check if all timers stopped
         for t in self.timers:
-            t.stop()
-        for t in self.timers:
-            t.join()
+            t.stop_and_join()
         EventLogger.debug("Get-Timers[" + str(len(self.timers)) + "] stopped.")
 
         # set THREAD_EXIT_FLAG for all work threads

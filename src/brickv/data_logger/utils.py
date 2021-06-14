@@ -29,7 +29,8 @@ from datetime import datetime  # CSV_Data
 import os  # CSV_Writer
 from shutil import copyfile
 import sys  # CSV_Writer
-from threading import Timer
+import threading
+import queue
 import time  # Writer Thread
 import math
 import locale
@@ -161,7 +162,6 @@ class LoggerTimer:
         interval -- the repeat interval in seconds
         func -- the function which will be called
         """
-        self.exit_flag = False
         if interval < 0:
             interval = 0
 
@@ -169,45 +169,57 @@ class LoggerTimer:
         self._func_name = func_name
         self._var_name = var_name
         self._device = device
-        self._was_started = False
-        self._t = Timer(self._interval, self._loop)
+        self._enable_ref = None
+        self._stop_queue = None
+        self._thread = None
 
-    def _loop(self):
-        """Runs the <self._func_name> function every <self._interval> seconds"""
-        start = time.time() # FIXME: use time.monotonic() in Python 3
-        getattr(self._device, self._func_name)(self._var_name)
-        elapsed = max(time.time() - start, 0) # FIXME: use time.monotonic() in Python 3
-        self.cancel()
-        if self.exit_flag:
-            return
-        self._t = Timer(max(self._interval - elapsed, 0), self._loop)
-        self.start()
+    def _loop(self, enable_ref, stop_queue):
+        monotonic_timestamp = time.monotonic()
+
+        while enable_ref[0]:
+            elapsed = time.monotonic() - monotonic_timestamp
+            remaining = max(self._interval - elapsed, 0)
+
+            try:
+                stop_queue.get(timeout=remaining)
+            except queue.Empty:
+                pass
+            else:
+                break
+
+            monotonic_timestamp = time.monotonic()
+
+            if not enable_ref[0]:
+                break
+
+            getattr(self._device, self._func_name)(self._var_name)
 
     def start(self):
-        """Starts the timer if <self._interval> is not 0 otherwise the
-           timer will be canceled
-        """
         if self._interval == 0:
-            self.cancel()
             return
 
-        self._t.start()
-        self._was_started = True
-
-    def stop(self):
-        self.exit_flag = True
-        self._was_started = False
-
-    def cancel(self):
-        self._t.cancel()
-
-    def join(self):
-        if self._interval == 0:  # quick fix for no timer.start()
+        if self._thread != None:
             return
 
-        if self._was_started:
-            self._t.join()
+        self._enable_ref = [True]
+        self._stop_queue = queue.Queue()
+        self._thread = threading.Thread(target=self._loop, args=(self._enable_ref, self._stop_queue), daemon=True)
+        self._thread.start()
 
+    def stop_and_join(self):
+        if self._interval == 0:
+            return
+
+        if self._thread == None:
+            return
+
+        self._enable_ref[0] = False
+        self._stop_queue.put(None)
+        self._thread.join(5)
+
+        self._enable_ref = None
+        self._stop_queue = None
+        self._thread = None
 
 """
 /*---------------------------------------------------------------------------
