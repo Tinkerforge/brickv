@@ -185,7 +185,7 @@ class ExceptionReporter:
                 label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however {}.{}.{} is available.</b> Please update and try again before reporting this error.'.format(config.BRICKV_FULL_VERSION, *brickv_version[1])
 
             runtime = str(datetime.timedelta(seconds=time.monotonic() - self.start_time))
-            prefix = 'Brick Viewer {} on\n{}\nPyQt {}\nQt {}\nPython {}\nSystem language: {}\n\nException raised at {}.\nBrick Viewer ran for {}'.format(
+            prefix = 'Brick Viewer {} on\n{}\nPyQt {}\nQt {}\nPython {}\nSystem language: {}\n\nException raised at {}\nBrick Viewer ran for {}\n'.format(
                 config.BRICKV_FULL_VERSION,
                 self.get_os_name(),
                 PYQT_VERSION_STR,
@@ -204,6 +204,7 @@ class ExceptionReporter:
             prefix = label_suffix + '!!!' + prefix
 
             traceback.print_exception(etype=exctype, value=value, tb=tb)
+            print("")
 
             report_message = prefix + '\n\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
 
