@@ -42,6 +42,7 @@ import subprocess
 from copy import deepcopy
 import platform
 import urllib.parse
+import time
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -97,6 +98,7 @@ brickv_version = [(0, 0, 0), (0, 0, 0)]
 class ExceptionReporter:
     def __init__(self, argv):
         self.argv = argv
+        self.start_time = time.monotonic()
         self.error_queue = queue.Queue()
         self.error_spawn = threading.Thread(target=self.error_spawner, daemon=True)
         self.error_spawn.start()
@@ -182,7 +184,8 @@ class ExceptionReporter:
             elif brickv_version[0] < brickv_version[1]:
                 label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however {}.{}.{} is available.</b> Please update and try again before reporting this error.'.format(config.BRICKV_FULL_VERSION, *brickv_version[1])
 
-            prefix = 'Brick Viewer {} on {} (PyQt {}, Qt {})\nException raised at {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), PYQT_VERSION_STR, QT_VERSION_STR, time_occured)
+            runtime = str(datetime.timedelta(seconds=time.monotonic() - self.start_time))
+            prefix = 'Brick Viewer {} on {} (PyQt {}, Qt {})\nException raised at {}.\nBrick Viewer ran for {}'.format(config.BRICKV_FULL_VERSION, self.get_os_name(), PYQT_VERSION_STR, QT_VERSION_STR, time_occured, runtime)
             if thread is not None:
                 prefix += ' by Thread {}'.format(thread.ident)
                 if thread.name is not None:
