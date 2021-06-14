@@ -185,12 +185,13 @@ class ExceptionReporter:
                 label_suffix += '<br/><br/><b>Your Brick Viewer version is {}, however {}.{}.{} is available.</b> Please update and try again before reporting this error.'.format(config.BRICKV_FULL_VERSION, *brickv_version[1])
 
             runtime = str(datetime.timedelta(seconds=time.monotonic() - self.start_time))
-            prefix = 'Brick Viewer {} on\n{}\nPyQt {}\nQt {}\nPython {}\n\nException raised at {}.\nBrick Viewer ran for {}'.format(
+            prefix = 'Brick Viewer {} on\n{}\nPyQt {}\nQt {}\nPython {}\nSystem language: {}\n\nException raised at {}.\nBrick Viewer ran for {}'.format(
                 config.BRICKV_FULL_VERSION,
                 self.get_os_name(),
                 PYQT_VERSION_STR,
                 QT_VERSION_STR,
                 sys.version.replace("\n", ""),
+                locale.getdefaultlocale()[0],
                 time_occured,
                 runtime)
 
