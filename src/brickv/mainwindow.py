@@ -30,12 +30,13 @@ import gc
 import functools
 
 from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QThread
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon, QBrush, QColor
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon, \
+                        QBrush, QColor, QKeySequence
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                             QPushButton, QHBoxLayout, QVBoxLayout, \
                             QLabel, QFrame, QSpacerItem, QSizePolicy, \
                             QToolButton, QLineEdit, QMenu, QTabBar, \
-                            QCheckBox, QComboBox
+                            QCheckBox, QComboBox, QShortcut
 
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
@@ -44,6 +45,7 @@ from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.healthmonitor import HealthMonitorWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
+from brickv.developer import DeveloperWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
@@ -144,6 +146,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.advanced_window = None
         self.data_logger_window = None
         self.health_monitor_window = None
+        self.developer_window = None
+        self.developer_shortcut = QShortcut(Qt.CTRL + Qt.SHIFT + Qt.Key_X, self)
         self.delayed_refresh_updates_timer = QTimer(self)
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(100)
@@ -168,6 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.clicked.connect(self.advanced_clicked)
         self.button_data_logger.clicked.connect(self.data_logger_clicked)
         self.button_health_monitor.clicked.connect(self.health_monitor_clicked)
+        self.developer_shortcut.activated.connect(self.developer_clicked)
         self.plugin_manager = PluginManager()
 
         # host info
@@ -518,6 +523,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.health_monitor_window.set_ipcon_available(self.ipcon_available)
         self.health_monitor_window.show()
+
+    def developer_clicked(self):
+        if self.developer_window is None:
+            self.developer_window = DeveloperWindow(self)
+
+        self.developer_window.set_ipcon_available(self.ipcon_available)
+        self.developer_window.show()
 
     def connect_error(self, error):
         self.setDisabled(False)
@@ -1143,6 +1155,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.advanced_window != None:
             self.advanced_window.set_ipcon_available(self.ipcon_available)
+
+        if self.developer_window != None:
+            self.developer_window.set_ipcon_available(self.ipcon_available)
 
         QApplication.processEvents()
 
