@@ -52,15 +52,15 @@ class DeveloperWindow(QDialog, Ui_Developer):
 
         self.label_gc_collections0.setText(str(stats[0]['collections']))
         self.label_gc_collections1.setText(str(stats[1]['collections']))
-        self.label_gc_collections2.setText(str(stats[1]['collections']))
+        self.label_gc_collections2.setText(str(stats[2]['collections']))
 
         self.label_gc_collected0.setText(str(stats[0]['collected']))
         self.label_gc_collected1.setText(str(stats[1]['collected']))
-        self.label_gc_collected2.setText(str(stats[1]['collected']))
+        self.label_gc_collected2.setText(str(stats[2]['collected']))
 
         self.label_gc_uncollectable0.setText(str(stats[0]['uncollectable']))
         self.label_gc_uncollectable1.setText(str(stats[1]['uncollectable']))
-        self.label_gc_uncollectable2.setText(str(stats[1]['uncollectable']))
+        self.label_gc_uncollectable2.setText(str(stats[2]['uncollectable']))
 
     def update_ui_state(self):
         pass
