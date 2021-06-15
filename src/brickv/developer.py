@@ -23,44 +23,54 @@ Boston, MA 02111-1307, USA.
 
 import gc
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QDialog
 
 from brickv.ui_developer import Ui_Developer
 from brickv.utils import get_modeless_dialog_flags
 
 class DeveloperWindow(QDialog, Ui_Developer):
+    gc_stats_changed = pyqtSignal(int, int)
+
     def __init__(self, parent):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 
         self.ipcon_available = False
+        self.gc_runs = 0
+        self.gc_collected = 0
+        self.gc_uncollectable = 0
+
+        self.gc_stats_changed.connect(self.update_gc_stats)
 
         self.button_force_gc.clicked.connect(self.force_gc)
 
         self.button_close.clicked.connect(self.hide)
 
+        gc.callbacks.append(self.gc_callback)
+
     def force_gc(self):
         gc.collect()
 
-        count = gc.get_count()
-        stats = gc.get_stats()
+    def gc_callback(self, phase, info):
+        try:
+            if phase == 'stop':
+                self.gc_stats_changed.emit(info['collected'], info['uncollectable'])
+        except RuntimeError as e:
+            if str(e) != 'wrapped C/C++ object of type DeveloperWindow has been deleted':
+                raise
 
-        self.label_gc_count0.setText(str(count[0]))
-        self.label_gc_count1.setText(str(count[1]))
-        self.label_gc_count2.setText(str(count[2]))
+    def update_gc_stats(self, collected, uncollectable):
+        self.gc_runs += 1
+        objects = len(gc.get_objects())
+        self.gc_collected += collected
+        self.gc_uncollectable += uncollectable
 
-        self.label_gc_collections0.setText(str(stats[0]['collections']))
-        self.label_gc_collections1.setText(str(stats[1]['collections']))
-        self.label_gc_collections2.setText(str(stats[2]['collections']))
-
-        self.label_gc_collected0.setText(str(stats[0]['collected']))
-        self.label_gc_collected1.setText(str(stats[1]['collected']))
-        self.label_gc_collected2.setText(str(stats[2]['collected']))
-
-        self.label_gc_uncollectable0.setText(str(stats[0]['uncollectable']))
-        self.label_gc_uncollectable1.setText(str(stats[1]['uncollectable']))
-        self.label_gc_uncollectable2.setText(str(stats[2]['uncollectable']))
+        self.label_gc_runs.setText(str(self.gc_runs))
+        self.label_gc_objects.setText(str(objects))
+        self.label_gc_collected.setText(str(self.gc_collected))
+        self.label_gc_uncollectable.setText(str(self.gc_uncollectable))
 
     def update_ui_state(self):
         pass
