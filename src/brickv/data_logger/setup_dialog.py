@@ -473,7 +473,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
     def update_devices_tab(self, config):
         EventLogger.debug('Updating devices tab from config')
 
-        self.model_devices.removeRows(0, self.model_data.rowCount())
+        self.model_devices.removeRows(0, self.model_devices.rowCount())
 
         for device in config['devices']:
             self.add_device_to_tree(device)
