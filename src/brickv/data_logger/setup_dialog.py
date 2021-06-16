@@ -28,8 +28,7 @@ import functools
 import logging
 from datetime import datetime
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import Qt, QRegExp
+from PyQt5.QtCore import Qt, QRegExp, QVariant, QModelIndex, QAbstractTableModel
 from PyQt5.QtWidgets import QDialog, QMessageBox, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
                         QHBoxLayout, QWidget
 from PyQt5.QtGui import QPalette, QStandardItemModel, QStandardItem, QRegExpValidator, QIcon, QColor, QTextCursor
@@ -84,6 +83,100 @@ class IntervalWidget(QWidget):
         else:
             return self.spinbox.value() / 1000.0
 
+class DataModel(QAbstractTableModel):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.row_data = []
+        self.next_row_header = 1
+        self.row_header = []
+        self.column_header = ['Time', 'Name', 'UID', 'Var', 'Raw', 'Unit']
+
+    def appendRow(self, row_data):
+        self.beginInsertRows(QModelIndex(), len(self.row_data) + 1, len(self.row_data) + 1)
+
+        self.row_data.append(row_data)
+        self.row_header.append(str(self.next_row_header))
+
+        self.next_row_header += 1
+
+        self.endInsertRows()
+
+    def removeRow(self, index):
+        if index < 0 or index >= len(self.row_data):
+            return
+
+        self.beginRemoveRows(QModelIndex(), index, index)
+
+        self.row_data.pop(index)
+        self.row_header.pop(index)
+
+        self.endRemoveRows()
+
+    def clear(self):
+        if len(self.row_data) == 0:
+            return
+
+        self.beginRemoveRows(QModelIndex(), 0, len(self.row_data) - 1)
+
+        self.row_data = []
+        self.next_row_header = 1
+        self.row_header = []
+
+        self.endRemoveRows()
+
+    # override QAbstractItemModel.data
+    def data(self, index, role=Qt.DisplayRole):
+        if role != Qt.DisplayRole:
+            return QVariant()
+
+        if not index.isValid():
+            return QVariant()
+
+        row_index = index.row()
+
+        if row_index < 0 or row_index >= len(self.row_data):
+            return QVariant()
+
+        column_index = index.column()
+
+        if column_index < 0 or column_index >= len(self.row_data[row_index]):
+            return QVariant()
+
+        return QVariant(self.row_data[row_index][column_index])
+
+    # override QAbstractTableModel.headerData
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if role != Qt.DisplayRole:
+            return QVariant()
+
+        if orientation == Qt.Horizontal:
+            if section < 0 or section >= len(self.column_header):
+                return QVariant()
+
+            return QVariant(self.column_header[section])
+        elif orientation == Qt.Vertical:
+            if section < 0 or section >= len(self.row_header):
+                return QVariant()
+
+            return QVariant(self.row_header[section])
+        else:
+            return QVariant()
+
+    # override QAbstractTableModel.rowCount
+    def rowCount(self, parent=QModelIndex()):
+        if parent.isValid():
+            return 0
+
+        return len(self.row_data)
+
+    # override QAbstractTableModel.columnCount
+    def columnCount(self, parent=QModelIndex()):
+        if parent.isValid():
+            return 0
+
+        return len(self.column_header)
+
 # noinspection PyProtectedMember,PyCallByClass
 class SetupDialog(QDialog, Ui_SetupDialog):
     """
@@ -104,8 +197,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.setupUi(self)
 
-        self.model_data = QStandardItemModel(self)
-        self.model_data.setHorizontalHeaderLabels(['Time', 'Name', 'UID', 'Var', 'Raw', 'Unit'])
+        self.model_data = DataModel(self)
         self.table_data.setModel(self.model_data)
         self.table_data.setColumnWidth(0, 160)
         self.table_data.setColumnWidth(1, 170)
@@ -394,7 +486,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.model_devices.removeRows(0, self.model_devices.rowCount())
 
     def btn_clear_data_clicked(self):
-        self.model_data.removeRows(0, self.model_data.rowCount())
+        self.model_data.clear()
 
     def tab_reset_warning(self):
         """
@@ -597,26 +689,15 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             SIGNAL function:
             Adds new CSV Data into the Table.
         """
-        rows = self.model_data.rowCount()
+        row_count = self.model_data.rowCount()
 
-        while rows >= 1000:
+        while row_count >= 1000:
             self.model_data.removeRow(0)
-            rows = self.model_data.rowCount()
+            row_count = self.model_data.rowCount()
 
-        row_number = None
-
-        if rows > 0:
-            try:
-                row_number = int(self.model_data.headerData(rows - 1, Qt.Vertical))
-            except ValueError:
-                pass
-
-        self.model_data.appendRow([QStandardItem(csv_data.timestamp),
-                                   QStandardItem(csv_data.name),
-                                   QStandardItem(csv_data.uid),
-                                   QStandardItem(csv_data.var_name),
-                                   QStandardItem(str(csv_data.raw_data)),
-                                   QStandardItem(csv_data.var_unit)])
-
-        if row_number != None:
-            self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))
+        self.model_data.appendRow([csv_data.timestamp,
+                                   csv_data.name,
+                                   csv_data.uid,
+                                   csv_data.var_name,
+                                   str(csv_data.raw_data),
+                                   csv_data.var_unit])
