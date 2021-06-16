@@ -620,6 +620,3 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         if row_number != None:
             self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))
-
-        if self.checkbox_data_auto_scroll.isChecked():
-            self.table_data.scrollToBottom()
