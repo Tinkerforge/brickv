@@ -135,7 +135,8 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
 
         self.imu = self.device
 
-        self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
+        self.cbe_all_data = CallbackEmulator(self,
+                                             self.imu.get_all_data,
                                              None,
                                              self.cb_all_data,
                                              self.increase_error_count)

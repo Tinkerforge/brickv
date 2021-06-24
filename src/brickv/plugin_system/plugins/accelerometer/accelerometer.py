@@ -64,13 +64,15 @@ class Accelerometer(PluginBase):
 
         self.accelerometer = self.device
 
-        self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
+        self.cbe_acceleration = CallbackEmulator(self,
+                                                 self.accelerometer.get_acceleration,
                                                  None,
                                                  self.cb_acceleration,
                                                  self.increase_error_count,
                                                  expand_result_tuple_for_callback=True)
 
-        self.cbe_temperature = CallbackEmulator(self.accelerometer.get_temperature,
+        self.cbe_temperature = CallbackEmulator(self,
+                                                self.accelerometer.get_temperature,
                                                 None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)

@@ -50,12 +50,36 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
 
         self.evse = self.device
 
-        self.cbe_state = CallbackEmulator(self.evse.get_state, None, self.state_cb, self.increase_error_count)
-        self.cbe_low_level_state = CallbackEmulator(self.evse.get_low_level_state, None, self.low_level_state_cb, self.increase_error_count)
-        self.cbe_max_charging_current = CallbackEmulator(self.evse.get_max_charging_current, None, self.max_charging_current_cb, self.increase_error_count)
-        self.cbe_energy_meter_values = CallbackEmulator(self.evse.get_energy_meter_values, None, self.energy_meter_values_cb, self.increase_error_count)
-        self.cbe_energy_meter_state = CallbackEmulator(self.evse.get_energy_meter_state, None, self.energy_meter_state_cb, self.increase_error_count)
-        self.cbe_dc_fault_current_state = CallbackEmulator(self.evse.get_dc_fault_current_state, None, self.dc_fault_current_state_cb, self.increase_error_count)
+        self.cbe_state = CallbackEmulator(self,
+                                          self.evse.get_state,
+                                          None,
+                                          self.state_cb,
+                                          self.increase_error_count)
+        self.cbe_low_level_state = CallbackEmulator(self,
+                                                    self.evse.get_low_level_state,
+                                                    None,
+                                                    self.low_level_state_cb,
+                                                    self.increase_error_count)
+        self.cbe_max_charging_current = CallbackEmulator(self,
+                                                         self.evse.get_max_charging_current,
+                                                         None,
+                                                         self.max_charging_current_cb,
+                                                         self.increase_error_count)
+        self.cbe_energy_meter_values = CallbackEmulator(self,
+                                                        self.evse.get_energy_meter_values,
+                                                        None,
+                                                        self.energy_meter_values_cb,
+                                                        self.increase_error_count)
+        self.cbe_energy_meter_state = CallbackEmulator(self,
+                                                       self.evse.get_energy_meter_state,
+                                                       None,
+                                                       self.energy_meter_state_cb,
+                                                       self.increase_error_count)
+        self.cbe_dc_fault_current_state = CallbackEmulator(self,
+                                                           self.evse.get_dc_fault_current_state,
+                                                           None,
+                                                           self.dc_fault_current_state_cb,
+                                                           self.increase_error_count)
 
         self.combo_gpio_input.currentIndexChanged.connect(self.gpio_changed)
         self.combo_gpio_output.currentIndexChanged.connect(self.gpio_changed)
@@ -92,10 +116,10 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
 
     def energy_meter_state_cb(self, ems):
         self.label_energy_meter_state.setText('Available: {0}, Error Counts: {1}'.format(ems.available, str(ems.error_count)))
-    
+
     def dc_fault_current_state_cb(self, state):
         self.label_dc_fault_current_state.setText(str(state))
-    
+
     def state_cb(self, state):
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
         self.label_vehicle_state.setText(VEHICLE_STATE[state.vehicle_state])

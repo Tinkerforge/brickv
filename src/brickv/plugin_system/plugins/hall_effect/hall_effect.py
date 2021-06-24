@@ -43,7 +43,8 @@ class HallEffect(PluginBase):
 
         self.hf = self.device
 
-        self.cbe_edge_count = CallbackEmulator(self.get_edge_count,
+        self.cbe_edge_count = CallbackEmulator(self,
+                                               self.get_edge_count,
                                                False,
                                                self.cb_edge_count,
                                                self.increase_error_count,

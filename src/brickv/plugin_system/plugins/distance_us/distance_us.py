@@ -37,7 +37,8 @@ class DistanceUS(PluginBase):
 
         self.dist = self.device
 
-        self.cbe_distance = CallbackEmulator(self.dist.get_distance_value,
+        self.cbe_distance = CallbackEmulator(self,
+                                             self.dist.get_distance_value,
                                              None,
                                              self.cb_distance,
                                              self.increase_error_count)

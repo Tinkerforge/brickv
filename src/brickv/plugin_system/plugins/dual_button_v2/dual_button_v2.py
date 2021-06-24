@@ -34,13 +34,15 @@ class DualButtonV2(COMCUPluginBase, Ui_DualButtonV2):
 
         self.button = self.device
 
-        self.cbe_button_state = CallbackEmulator(self.button.get_button_state,
+        self.cbe_button_state = CallbackEmulator(self,
+                                                 self.button.get_button_state,
                                                  None,
                                                  self.cb_button_state,
                                                  self.increase_error_count,
                                                  expand_result_tuple_for_callback=True)
 
-        self.cbe_led_state = CallbackEmulator(self.button.get_led_state,
+        self.cbe_led_state = CallbackEmulator(self,
+                                              self.button.get_led_state,
                                               None,
                                               self.cb_led_state,
                                               self.increase_error_count,

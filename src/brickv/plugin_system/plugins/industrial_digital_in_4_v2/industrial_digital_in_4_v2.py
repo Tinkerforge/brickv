@@ -42,7 +42,8 @@ class IndustrialDigitalIn4V2(COMCUPluginBase, Ui_IndustrialDigitalIn4V2):
         self.lbl_stat_i_ch = [self.lbl_stat_i_ch0, self.lbl_stat_i_ch1, self.lbl_stat_i_ch2, self.lbl_stat_i_ch3]
         self.lbl_stat_v_ch = [self.lbl_stat_v_ch0, self.lbl_stat_v_ch1, self.lbl_stat_v_ch2, self.lbl_stat_v_ch3]
 
-        self.cbe_get_value = CallbackEmulator(self.idi4.get_value,
+        self.cbe_get_value = CallbackEmulator(self,
+                                              self.idi4.get_value,
                                               None,
                                               self.cb_value,
                                               self.increase_error_count)

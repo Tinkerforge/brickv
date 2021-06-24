@@ -44,7 +44,8 @@ class AnalogIn(PluginBase):
         self.has_range = self.firmware_version >= (2, 0, 1)
         self.has_averaging = self.firmware_version >= (2, 0, 3)
 
-        self.cbe_voltage = CallbackEmulator(self.ai.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.ai.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.increase_error_count)

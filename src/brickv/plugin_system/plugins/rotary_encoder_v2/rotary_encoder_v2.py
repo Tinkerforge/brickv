@@ -40,7 +40,8 @@ class RotaryEncoderV2(COMCUPluginBase):
 
         self.re = self.device
 
-        self.cbe_count = CallbackEmulator(self.get_count,
+        self.cbe_count = CallbackEmulator(self,
+                                          self.get_count,
                                           False,
                                           self.cb_count,
                                           self.increase_error_count)

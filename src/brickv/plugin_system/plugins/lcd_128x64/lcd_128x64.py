@@ -117,11 +117,13 @@ class LCD128x64(COMCUPluginBase, Ui_LCD128x64):
         self.current_char_value = -1
         self.write_line_response_expected = None
 
-        self.cbe_touch_position = CallbackEmulator(self.lcd.get_touch_position,
+        self.cbe_touch_position = CallbackEmulator(self,
+                                                   self.lcd.get_touch_position,
                                                    None,
                                                    self.scribble_widget.touch_position,
                                                    self.increase_error_count)
-        self.cbe_touch_gesture = CallbackEmulator(self.lcd.get_touch_gesture,
+        self.cbe_touch_gesture = CallbackEmulator(self,
+                                                  self.lcd.get_touch_gesture,
                                                   None,
                                                   self.scribble_widget.touch_gesture,
                                                   self.increase_error_count)

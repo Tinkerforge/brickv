@@ -305,7 +305,8 @@ class RealTimeClockV2(COMCUPluginBase, Ui_RealTimeClockV2):
 
         self.rtc = self.device
 
-        self.cbe_date_time = CallbackEmulator(self.rtc.get_date_time,
+        self.cbe_date_time = CallbackEmulator(self,
+                                              self.rtc.get_date_time,
                                               None,
                                               self.cb_date_time,
                                               self.increase_error_count,

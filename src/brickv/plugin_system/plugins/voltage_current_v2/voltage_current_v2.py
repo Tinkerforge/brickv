@@ -64,17 +64,20 @@ class Calibration(QDialog, Ui_Calibration):
         self.btn_cal_rst.clicked.connect(self.cal_rst_clicked)
         self.btn_close.clicked.connect(self.close)
 
-        self.cbe_voltage = CallbackEmulator(self.parent.vc.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.parent.vc.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.parent.increase_error_count)
 
-        self.cbe_current = CallbackEmulator(self.parent.vc.get_current,
+        self.cbe_current = CallbackEmulator(self,
+                                            self.parent.vc.get_current,
                                             None,
                                             self.cb_current,
                                             self.parent.increase_error_count)
 
-        self.cbe_power = CallbackEmulator(self.parent.vc.get_power,
+        self.cbe_power = CallbackEmulator(self,
+                                          self.parent.vc.get_power,
                                           None,
                                           self.cb_power,
                                           self.parent.increase_error_count)
@@ -165,15 +168,18 @@ class VoltageCurrentV2(COMCUPluginBase, Ui_VoltageCurrentV2):
 
         self.vc = self.device
 
-        self.cbe_voltage = CallbackEmulator(self.vc.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.vc.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.increase_error_count)
-        self.cbe_current = CallbackEmulator(self.vc.get_current,
+        self.cbe_current = CallbackEmulator(self,
+                                            self.vc.get_current,
                                             None,
                                             self.cb_current,
                                             self.increase_error_count)
-        self.cbe_power = CallbackEmulator(self.vc.get_power,
+        self.cbe_power = CallbackEmulator(self,
+                                          self.vc.get_power,
                                           None,
                                           self.cb_power,
                                           self.increase_error_count)

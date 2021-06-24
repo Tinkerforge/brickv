@@ -36,7 +36,8 @@ class CO2(PluginBase):
 
         self.co2 = self.device
 
-        self.cbe_co2_concentration = CallbackEmulator(self.co2.get_co2_concentration,
+        self.cbe_co2_concentration = CallbackEmulator(self,
+                                                      self.co2.get_co2_concentration,
                                                       None,
                                                       self.cb_co2_concentration,
                                                       self.increase_error_count)

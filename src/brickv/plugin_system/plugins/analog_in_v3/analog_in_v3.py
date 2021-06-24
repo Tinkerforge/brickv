@@ -47,7 +47,8 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_gain.clicked.connect(self.gain_clicked)
         self.button_close.clicked.connect(self.close)
 
-        self.cbe_voltage = CallbackEmulator(self.parent.ai.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.parent.ai.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.parent.increase_error_count)
@@ -102,7 +103,8 @@ class AnalogInV3(COMCUPluginBase):
 
         self.ai = self.device
 
-        self.cbe_voltage = CallbackEmulator(self.ai.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.ai.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.increase_error_count)

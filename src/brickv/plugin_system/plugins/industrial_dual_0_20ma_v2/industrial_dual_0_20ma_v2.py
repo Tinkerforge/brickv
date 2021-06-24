@@ -54,12 +54,14 @@ class IndustrialDual020mAV2(COMCUPluginBase):
         self.str_connected = 'Channel {0} is <font color="green">connected (&gt;= 3.9 mA)</font>'
         self.str_not_connected = 'Channel {0} is <font color="red">not connected (&lt; 3.9 mA)</font>'
 
-        self.cbe_current0 = CallbackEmulator(self.dual020.get_current,
+        self.cbe_current0 = CallbackEmulator(self,
+                                             self.dual020.get_current,
                                              0,
                                              self.cb_current,
                                              self.increase_error_count,
                                              pass_arguments_to_result_callback=True)
-        self.cbe_current1 = CallbackEmulator(self.dual020.get_current,
+        self.cbe_current1 = CallbackEmulator(self,
+                                             self.dual020.get_current,
                                              1,
                                              self.cb_current,
                                              self.increase_error_count,

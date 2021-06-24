@@ -68,7 +68,8 @@ class Joystick(PluginBase):
 
         self.js = self.device
 
-        self.cbe_position = CallbackEmulator(self.js.get_position,
+        self.cbe_position = CallbackEmulator(self,
+                                             self.js.get_position,
                                              None,
                                              self.cb_position,
                                              self.increase_error_count,

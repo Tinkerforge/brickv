@@ -45,7 +45,7 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         self.qem = QErrorMessage(self)
         self.qtcb_emergency_shutdown.connect(self.cb_emergency_shutdown)
         self.dc.register_callback(self.dc.CALLBACK_EMERGENCY_SHUTDOWN, self.qtcb_emergency_shutdown.emit)
-    
+
         self.full_brake_button.clicked.connect(self.full_brake_clicked)
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
@@ -56,8 +56,16 @@ class DCV2(COMCUPluginBase, Ui_DCV2):
         self.deceleration_syncer  = SliderSpinSyncer(self.deceleration_slider, self.deceleration_spin, self.motion_changed)
         self.frequency_syncer     = SliderSpinSyncer(self.frequency_slider,    self.frequency_spin,    self.frequency_changed)
 
-        self.cbe_power_statistics = CallbackEmulator(self.dc.get_power_statistics, None, self.get_power_statistics_async, self.increase_error_count)
-        self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity, None, self.get_current_velocity_async, self.increase_error_count)
+        self.cbe_power_statistics = CallbackEmulator(self,
+                                                     self.dc.get_power_statistics,
+                                                     None,
+                                                     self.get_power_statistics_async,
+                                                     self.increase_error_count)
+        self.cbe_current_velocity = CallbackEmulator(self,
+                                                     self.dc.get_current_velocity,
+                                                     None,
+                                                     self.get_current_velocity_async,
+                                                     self.increase_error_count)
 
     def start(self):
         async_call(self.dc.get_drive_mode,    None, self.get_drive_mode_async,    self.increase_error_count)

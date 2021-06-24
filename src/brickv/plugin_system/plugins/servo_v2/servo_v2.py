@@ -117,7 +117,8 @@ class ServoV2(COMCUPluginBase, Ui_ServoV2):
 
         self.servo = self.device
 
-        self.cbe_status = CallbackEmulator(self.servo.get_status,
+        self.cbe_status = CallbackEmulator(self,
+                                           self.servo.get_status,
                                            None,
                                            self.cb_status,
                                            self.increase_error_count)

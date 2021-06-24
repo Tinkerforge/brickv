@@ -39,7 +39,8 @@ class AmbientLightV3(COMCUPluginBase):
 
         self.al = self.device
 
-        self.cbe_illuminance = CallbackEmulator(self.al.get_illuminance,
+        self.cbe_illuminance = CallbackEmulator(self,
+                                                self.al.get_illuminance,
                                                 None,
                                                 self.cb_illuminance,
                                                 self.increase_error_count)

@@ -36,13 +36,15 @@ class ParticulateMatter(COMCUPluginBase):
 
         self.pm = self.device
 
-        self.cbe_pm_concentration = CallbackEmulator(self.pm.get_pm_concentration,
+        self.cbe_pm_concentration = CallbackEmulator(self,
+                                                     self.pm.get_pm_concentration,
                                                      None,
                                                      self.cb_pm_concentration,
                                                      self.increase_error_count,
                                                      expand_result_tuple_for_callback=True)
 
-        self.cbe_pm_count = CallbackEmulator(self.pm.get_pm_count,
+        self.cbe_pm_count = CallbackEmulator(self,
+                                             self.pm.get_pm_count,
                                              None,
                                              self.cb_pm_count,
                                              self.increase_error_count)

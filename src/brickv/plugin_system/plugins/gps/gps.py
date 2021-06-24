@@ -40,7 +40,8 @@ class GPS(PluginBase, Ui_GPS):
 
         self.gps = self.device
 
-        self.cbe_universal = CallbackEmulator(self.get_universal,
+        self.cbe_universal = CallbackEmulator(self,
+                                              self.get_universal,
                                               None,
                                               self.cb_universal,
                                               self.increase_error_count,

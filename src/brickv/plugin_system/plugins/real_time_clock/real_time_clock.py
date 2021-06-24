@@ -310,7 +310,8 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
         # it's okay to make final decisions based on it here
         self.has_alarm = self.firmware_version >= (2, 0, 1)
 
-        self.cbe_date_time = CallbackEmulator(self.rtc.get_date_time,
+        self.cbe_date_time = CallbackEmulator(self,
+                                              self.rtc.get_date_time,
                                               None,
                                               self.cb_date_time,
                                               self.increase_error_count,

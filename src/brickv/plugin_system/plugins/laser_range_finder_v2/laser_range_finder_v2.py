@@ -42,11 +42,13 @@ class LaserRangeFinderV2(COMCUPluginBase):
 
         self.lrf = self.device
 
-        self.cbe_distance = CallbackEmulator(self.lrf.get_distance,
+        self.cbe_distance = CallbackEmulator(self,
+                                             self.lrf.get_distance,
                                              None,
                                              self.cb_distance,
                                              self.increase_error_count)
-        self.cbe_velocity = CallbackEmulator(self.lrf.get_velocity,
+        self.cbe_velocity = CallbackEmulator(self,
+                                             self.lrf.get_velocity,
                                              None,
                                              self.cb_velocity,
                                              self.increase_error_count)

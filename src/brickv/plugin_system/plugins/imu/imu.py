@@ -73,19 +73,22 @@ class IMU(PluginBase, Ui_IMU):
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self.update_data)
 
-        self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
+        self.cbe_all_data = CallbackEmulator(self,
+                                             self.imu.get_all_data,
                                              None,
                                              self.cb_all_data,
                                              self.increase_error_count,
                                              expand_result_tuple_for_callback=True,
                                              use_result_signal=False)
-        self.cbe_orientation = CallbackEmulator(self.imu.get_orientation,
+        self.cbe_orientation = CallbackEmulator(self,
+                                                self.imu.get_orientation,
                                                 None,
                                                 self.cb_orientation,
                                                 self.increase_error_count,
                                                 expand_result_tuple_for_callback=True,
                                                 use_result_signal=False)
-        self.cbe_quaternion = CallbackEmulator(self.imu.get_quaternion,
+        self.cbe_quaternion = CallbackEmulator(self,
+                                               self.imu.get_quaternion,
                                                None,
                                                self.cb_quaternion,
                                                self.increase_error_count,

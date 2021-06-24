@@ -40,7 +40,8 @@ class UVLight(PluginBase):
 
         self.uv_light = self.device
 
-        self.cbe_uv_light = CallbackEmulator(self.uv_light.get_uv_light,
+        self.cbe_uv_light = CallbackEmulator(self,
+                                             self.uv_light.get_uv_light,
                                              None,
                                              self.cb_uv_light,
                                              self.increase_error_count)

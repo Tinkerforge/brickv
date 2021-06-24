@@ -45,7 +45,8 @@ class AmbientLightV2(PluginBase):
         # it's okay to make final decisions based on it here
         self.has_clamped_output = self.firmware_version >= (2, 0, 2)
 
-        self.cbe_illuminance = CallbackEmulator(self.al.get_illuminance,
+        self.cbe_illuminance = CallbackEmulator(self,
+                                                self.al.get_illuminance,
                                                 None,
                                                 self.cb_illuminance,
                                                 self.increase_error_count)

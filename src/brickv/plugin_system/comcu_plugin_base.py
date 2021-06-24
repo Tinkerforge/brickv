@@ -35,7 +35,8 @@ class COMCUPluginBase(PluginBase):
         self.actual_start_stop_state = 'stop'
         self.expected_start_stop_state = 'stop'
         self.has_comcu = True
-        self.cbe_bootloader_mode = CallbackEmulator(self.device.get_bootloader_mode,
+        self.cbe_bootloader_mode = CallbackEmulator(self,
+                                                    self.device.get_bootloader_mode,
                                                     None,
                                                     self.cb_bootloader_mode,
                                                     self.increase_error_count)

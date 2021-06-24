@@ -46,7 +46,8 @@ class RotaryEncoder(PluginBase):
         # it's okay to make final decisions based on it here
         self.has_fixed_is_pressed = self.firmware_version >= (2, 0, 2) # is_pressed return value was inverted before
 
-        self.cbe_count = CallbackEmulator(self.get_count,
+        self.cbe_count = CallbackEmulator(self,
+                                          self.get_count,
                                           False,
                                           self.cb_count,
                                           self.increase_error_count)

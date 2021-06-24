@@ -36,7 +36,8 @@ class DustDetector(PluginBase):
 
         self.dust_detector = self.device
 
-        self.cbe_dust_density = CallbackEmulator(self.dust_detector.get_dust_density,
+        self.cbe_dust_density = CallbackEmulator(self,
+                                                 self.dust_detector.get_dust_density,
                                                  None,
                                                  self.cb_dust_density,
                                                  self.increase_error_count)

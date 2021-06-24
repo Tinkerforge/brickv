@@ -43,7 +43,8 @@ class Thermocouple(PluginBase):
         self.thermo.register_callback(self.thermo.CALLBACK_ERROR_STATE,
                                       self.qtcb_error_state.emit)
 
-        self.cbe_temperature = CallbackEmulator(self.thermo.get_temperature,
+        self.cbe_temperature = CallbackEmulator(self,
+                                                self.thermo.get_temperature,
                                                 None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)

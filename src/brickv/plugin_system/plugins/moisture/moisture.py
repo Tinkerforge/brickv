@@ -36,7 +36,8 @@ class Moisture(PluginBase):
 
         self.moisture = self.device
 
-        self.cbe_moisture_value = CallbackEmulator(self.moisture.get_moisture_value,
+        self.cbe_moisture_value = CallbackEmulator(self,
+                                                   self.moisture.get_moisture_value,
                                                    None,
                                                    self.cb_moisture_value,
                                                    self.increase_error_count)

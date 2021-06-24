@@ -39,16 +39,19 @@ class Color(PluginBase):
 
         self.color = self.device
 
-        self.cbe_color = CallbackEmulator(self.color.get_color,
+        self.cbe_color = CallbackEmulator(self,
+                                          self.color.get_color,
                                           None,
                                           self.cb_color,
                                           self.increase_error_count,
                                           expand_result_tuple_for_callback=True)
-        self.cbe_illuminance = CallbackEmulator(self.color.get_illuminance,
+        self.cbe_illuminance = CallbackEmulator(self,
+                                                self.color.get_illuminance,
                                                 None,
                                                 self.cb_illuminance,
                                                 self.increase_error_count)
-        self.cbe_color_temperature = CallbackEmulator(self.color.get_color_temperature,
+        self.cbe_color_temperature = CallbackEmulator(self,
+                                                      self.color.get_color_temperature,
                                                       None,
                                                       self.cb_color_temperature,
                                                       self.increase_error_count)

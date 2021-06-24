@@ -39,7 +39,8 @@ class IO4(PluginBase, Ui_IO4):
 
         self.io = self.device
 
-        self.cbe_value = CallbackEmulator(self.io.get_value,
+        self.cbe_value = CallbackEmulator(self,
+                                          self.io.get_value,
                                           None,
                                           self.cb_value,
                                           self.increase_error_count)

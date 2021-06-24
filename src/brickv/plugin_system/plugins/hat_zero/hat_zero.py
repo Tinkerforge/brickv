@@ -38,7 +38,8 @@ class HATZero(COMCUPluginBase, Ui_HATZero):
 
         self.hat_zero = self.device
 
-        self.cbe_voltage = CallbackEmulator(self.hat_zero.get_usb_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.hat_zero.get_usb_voltage,
                                             None,
                                             self.cb_usb_voltage,
                                             self.increase_error_count)

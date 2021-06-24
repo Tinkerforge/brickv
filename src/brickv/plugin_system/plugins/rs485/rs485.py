@@ -112,12 +112,14 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.modbus_errors[EXCEPTION_CODE_STREAM_OUT_OF_SYNC] = 'Stream out of sync.'
         self.modbus_errors[EXCEPTION_CODE_DEVICE_TIMEOUT] = 'Bricklet communication timeout.'
 
-        self.cbe_error_count = CallbackEmulator(self.rs485.get_error_count,
+        self.cbe_error_count = CallbackEmulator(self,
+                                                self.rs485.get_error_count,
                                                 None,
                                                 self.cb_error_count,
                                                 self.increase_error_count)
 
-        self.cbe_error_count_modbus = CallbackEmulator(self.rs485.get_modbus_common_error_count,
+        self.cbe_error_count_modbus = CallbackEmulator(self,
+                                                       self.rs485.get_modbus_common_error_count,
                                                        None,
                                                        self.cb_modbus_common_error_count,
                                                        self.increase_error_count)

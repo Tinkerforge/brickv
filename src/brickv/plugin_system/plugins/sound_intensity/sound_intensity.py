@@ -74,7 +74,8 @@ class SoundIntensity(PluginBase):
 
         self.si = self.device
 
-        self.cbe_intensity = CallbackEmulator(self.si.get_intensity,
+        self.cbe_intensity = CallbackEmulator(self,
+                                              self.si.get_intensity,
                                               None,
                                               self.cb_intensity,
                                               self.increase_error_count)

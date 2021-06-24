@@ -67,7 +67,8 @@ class AnalogOutV2(PluginBase):
 
         self.output_voltage_box.editingFinished.connect(self.voltage_finished)
 
-        self.cbe_input_voltage = CallbackEmulator(self.ao.get_input_voltage,
+        self.cbe_input_voltage = CallbackEmulator(self,
+                                                  self.ao.get_input_voltage,
                                                   None,
                                                   self.cb_input_voltage,
                                                   self.increase_error_count)

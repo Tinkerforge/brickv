@@ -82,7 +82,8 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.setupUi(self)
 
         self.sound_pressure_level = self.device
-        self.cbe_get_decibel = CallbackEmulator(self.sound_pressure_level.get_decibel,
+        self.cbe_get_decibel = CallbackEmulator(self,
+                                                self.sound_pressure_level.get_decibel,
                                                 None,
                                                 self.cb_decibel,
                                                 self.increase_error_count)

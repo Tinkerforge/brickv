@@ -40,17 +40,20 @@ class UVLightV2(COMCUPluginBase):
 
         self.uv_light = self.device
 
-        self.cbe_uva = CallbackEmulator(self.uv_light.get_uva,
+        self.cbe_uva = CallbackEmulator(self,
+                                        self.uv_light.get_uva,
                                         None,
                                         self.cb_uva,
                                         self.increase_error_count)
 
-        self.cbe_uvb = CallbackEmulator(self.uv_light.get_uvb,
+        self.cbe_uvb = CallbackEmulator(self,
+                                        self.uv_light.get_uvb,
                                         None,
                                         self.cb_uvb,
                                         self.increase_error_count)
 
-        self.cbe_uvi = CallbackEmulator(self.uv_light.get_uvi,
+        self.cbe_uvi = CallbackEmulator(self,
+                                        self.uv_light.get_uvi,
                                         None,
                                         self.cb_uvi,
                                         self.increase_error_count)

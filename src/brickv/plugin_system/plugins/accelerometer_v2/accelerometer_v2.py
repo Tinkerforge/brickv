@@ -59,7 +59,8 @@ class AccelerometerV2(COMCUPluginBase):
 
         self.accelerometer = self.device
 
-        self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
+        self.cbe_acceleration = CallbackEmulator(self,
+                                                 self.accelerometer.get_acceleration,
                                                  None,
                                                  self.cb_acceleration,
                                                  self.increase_error_count,

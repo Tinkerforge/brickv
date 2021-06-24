@@ -64,13 +64,15 @@ class JoystickV2(COMCUPluginBase):
 
         self.js = self.device
 
-        self.cbe_position = CallbackEmulator(self.js.get_position,
+        self.cbe_position = CallbackEmulator(self,
+                                             self.js.get_position,
                                              None,
                                              self.cb_position,
                                              self.increase_error_count,
                                              expand_result_tuple_for_callback=True)
 
-        self.cbe_pressed = CallbackEmulator(self.js.is_pressed,
+        self.cbe_pressed = CallbackEmulator(self,
+                                            self.js.is_pressed,
                                             None,
                                             self.cb_pressed,
                                             self.increase_error_count)

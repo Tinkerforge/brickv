@@ -36,12 +36,14 @@ class OutdoorWeather(COMCUPluginBase, Ui_OutdoorWeather):
 
         self.setupUi(self)
 
-        self.cbe_identifiers_station = CallbackEmulator(self.outdoor_weather.get_station_identifiers,
+        self.cbe_identifiers_station = CallbackEmulator(self,
+                                                        self.outdoor_weather.get_station_identifiers,
                                                         None,
                                                         self.cb_station_identifiers,
                                                         self.increase_error_count)
 
-        self.cbe_identifiers_sensor = CallbackEmulator(self.outdoor_weather.get_sensor_identifiers,
+        self.cbe_identifiers_sensor = CallbackEmulator(self,
+                                                       self.outdoor_weather.get_sensor_identifiers,
                                                        None,
                                                        self.cb_sensor_identifiers,
                                                        self.increase_error_count)

@@ -38,7 +38,8 @@ class AnalogInV2(PluginBase):
 
         self.ai = self.device
 
-        self.cbe_voltage = CallbackEmulator(self.ai.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.ai.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.increase_error_count)

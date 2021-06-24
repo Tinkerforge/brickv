@@ -120,7 +120,11 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.setupUi(self)
 
-        self.cbe_mfd = CallbackEmulator(self.parent.compass.get_magnetic_flux_density, None, self.cb_mfd, self.parent.increase_error_count)
+        self.cbe_mfd = CallbackEmulator(self,
+                                        self.parent.compass.get_magnetic_flux_density,
+                                        None,
+                                        self.cb_mfd,
+                                        self.parent.increase_error_count)
 
         self.x = [0, 0, 0]
         self.y = [0, 0, 0]
@@ -224,7 +228,11 @@ class Compass(COMCUPluginBase):
 
         self.compass = self.device
 
-        self.cbe_mfd = CallbackEmulator(self.compass.get_magnetic_flux_density, None, self.cb_mfd, self.increase_error_count)
+        self.cbe_mfd = CallbackEmulator(self,
+                                        self.compass.get_magnetic_flux_density,
+                                        None,
+                                        self.cb_mfd,
+                                        self.increase_error_count)
 
         self.calibration = None
 

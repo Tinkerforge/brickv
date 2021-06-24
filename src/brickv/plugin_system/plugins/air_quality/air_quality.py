@@ -35,7 +35,8 @@ class AirQuality(COMCUPluginBase):
 
         self.air_quality = self.device
 
-        self.cbe_all_values = CallbackEmulator(self.air_quality.get_all_values,
+        self.cbe_all_values = CallbackEmulator(self,
+                                               self.air_quality.get_all_values,
                                                None,
                                                self.cb_all_values,
                                                self.increase_error_count)

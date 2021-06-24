@@ -110,7 +110,8 @@ class RGBLEDMatrix(COMCUPluginBase, Ui_RGBLEDMatrix):
 
         self.voltage = 0
 
-        self.cbe_supply_voltage = CallbackEmulator(self.rgb_led_matrix.get_supply_voltage,
+        self.cbe_supply_voltage = CallbackEmulator(self,
+                                                   self.rgb_led_matrix.get_supply_voltage,
                                                    None,
                                                    self.cb_supply_voltage,
                                                    self.increase_error_count)

@@ -76,12 +76,14 @@ class IO16(PluginBase, Ui_IO16):
             'b': IO16Wrapper(self.io, 'b', self.qtcb_monoflop_done),
         }
 
-        self.cbe_port_a = CallbackEmulator(self.io.get_port,
+        self.cbe_port_a = CallbackEmulator(self,
+                                           self.io.get_port,
                                            'a',
                                            self.cb_port,
                                            self.increase_error_count,
                                            pass_arguments_to_result_callback=True)
-        self.cbe_port_b = CallbackEmulator(self.io.get_port,
+        self.cbe_port_b = CallbackEmulator(self,
+                                           self.io.get_port,
                                            'b',
                                            self.cb_port,
                                            self.increase_error_count,

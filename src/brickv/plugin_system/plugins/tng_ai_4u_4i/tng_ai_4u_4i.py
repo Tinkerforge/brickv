@@ -54,7 +54,11 @@ class TNGAI4U4I(TNGPluginBase, Ui_TNGAI4U4I):
             self.label_current_ch3,
         ]
 
-        self.cbe_values = CallbackEmulator(self.ai_4u_4i.get_values, None, self.cb_values, self.increase_error_count)
+        self.cbe_values = CallbackEmulator(self,
+                                           self.ai_4u_4i.get_values,
+                                           None,
+                                           self.cb_values,
+                                           self.increase_error_count)
 
     def cb_values(self, values):
         for i, v in enumerate(values.voltages):

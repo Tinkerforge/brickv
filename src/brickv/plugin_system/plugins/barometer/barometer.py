@@ -54,15 +54,18 @@ class Barometer(PluginBase):
         self.average_pressure = 10
         self.average_temperature = 10
 
-        self.cbe_air_pressure = CallbackEmulator(self.barometer.get_air_pressure,
+        self.cbe_air_pressure = CallbackEmulator(self,
+                                                 self.barometer.get_air_pressure,
                                                  None,
                                                  self.cb_air_pressure,
                                                  self.increase_error_count)
-        self.cbe_altitude = CallbackEmulator(self.barometer.get_altitude,
+        self.cbe_altitude = CallbackEmulator(self,
+                                             self.barometer.get_altitude,
                                              None,
                                              self.cb_altitude,
                                              self.increase_error_count)
-        self.cbe_chip_temperature = CallbackEmulator(self.barometer.get_chip_temperature,
+        self.cbe_chip_temperature = CallbackEmulator(self,
+                                                     self.barometer.get_chip_temperature,
                                                      None,
                                                      self.cb_chip_temperature,
                                                      self.increase_error_count)

@@ -37,12 +37,14 @@ class IndustrialCounter(COMCUPluginBase, Ui_IndustrialCounter):
 
         self.counter = self.device
 
-        self.cbe_signal = CallbackEmulator(self.counter.get_all_signal_data,
+        self.cbe_signal = CallbackEmulator(self,
+                                           self.counter.get_all_signal_data,
                                            None,
                                            self.cb_all_signal_data,
                                            self.increase_error_count)
 
-        self.cbe_counter = CallbackEmulator(self.counter.get_all_counter,
+        self.cbe_counter = CallbackEmulator(self,
+                                            self.counter.get_all_counter,
                                             None,
                                             self.cb_all_counter,
                                             self.increase_error_count)

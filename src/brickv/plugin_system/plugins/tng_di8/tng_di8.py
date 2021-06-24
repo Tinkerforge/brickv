@@ -40,7 +40,11 @@ class TNGDI8(TNGPluginBase, Ui_TNGDI8):
         self.setupUi(self)
         self.di8 = self.device
 
-        self.cbe_values = CallbackEmulator(self.di8.get_values, None, self.cb_values, self.increase_error_count)
+        self.cbe_values = CallbackEmulator(self,
+                                           self.di8.get_values,
+                                           None,
+                                           self.cb_values,
+                                           self.increase_error_count)
 
     def cb_values(self, values):
         s = ''

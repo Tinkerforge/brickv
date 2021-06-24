@@ -38,11 +38,13 @@ class HallEffectV2(COMCUPluginBase, Ui_HallEffectV2):
 
         self.hf = self.device
 
-        self.cbe_magnetic_flux_density = CallbackEmulator(self.hf.get_magnetic_flux_density,
+        self.cbe_magnetic_flux_density = CallbackEmulator(self,
+                                                          self.hf.get_magnetic_flux_density,
                                                           None,
                                                           self.cb_magnetic_flux_density,
                                                           self.increase_error_count)
-        self.cbe_counter = CallbackEmulator(self.get_counter,
+        self.cbe_counter = CallbackEmulator(self,
+                                            self.get_counter,
                                             False,
                                             self.cb_counter,
                                             self.increase_error_count)

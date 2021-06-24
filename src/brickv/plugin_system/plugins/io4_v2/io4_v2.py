@@ -42,7 +42,8 @@ class IO4V2(COMCUPluginBase, Ui_IO4V2):
 
         self.io.set_response_expected(self.io.FUNCTION_SET_CONFIGURATION, True)
 
-        self.cbe_value = CallbackEmulator(self.io.get_value,
+        self.cbe_value = CallbackEmulator(self,
+                                          self.io.get_value,
                                           None,
                                           self.cb_value,
                                           self.increase_error_count)

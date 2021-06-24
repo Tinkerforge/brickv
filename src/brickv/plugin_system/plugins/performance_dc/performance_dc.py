@@ -65,9 +65,21 @@ class PerformanceDC(COMCUPluginBase, Ui_PerformanceDC):
         self.deceleration_syncer  = SliderSpinSyncer(self.deceleration_slider, self.deceleration_spin, self.motion_changed)
         self.frequency_syncer     = SliderSpinSyncer(self.frequency_slider,    self.frequency_spin,    self.frequency_changed)
 
-        self.cbe_power_statistics = CallbackEmulator(self.dc.get_power_statistics, None, self.get_power_statistics_async, self.increase_error_count)
-        self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity, None, self.get_current_velocity_async, self.increase_error_count)
-        self.cbe_gpio_state       = CallbackEmulator(self.dc.get_gpio_state,       None, self.get_gpio_state_async,       self.increase_error_count)
+        self.cbe_power_statistics = CallbackEmulator(self,
+                                                     self.dc.get_power_statistics,
+                                                     None,
+                                                     self.get_power_statistics_async,
+                                                     self.increase_error_count)
+        self.cbe_current_velocity = CallbackEmulator(self,
+                                                     self.dc.get_current_velocity,
+                                                     None,
+                                                     self.get_current_velocity_async,
+                                                     self.increase_error_count)
+        self.cbe_gpio_state       = CallbackEmulator(self,
+                                                     self.dc.get_gpio_state,
+                                                     None,
+                                                     self.get_gpio_state_async,
+                                                     self.increase_error_count)
 
         self.error_led_off_action = QAction('Off', self)
         self.error_led_off_action.triggered.connect(lambda: self.dc.set_error_led_config(BrickletPerformanceDC.ERROR_LED_CONFIG_OFF))

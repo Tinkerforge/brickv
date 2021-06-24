@@ -51,17 +51,20 @@ class Calibration(QDialog, Ui_Calibration):
         self.btn_cal_calibrate.clicked.connect(self.btn_cal_calibrate_clicked)
         self.btn_close.clicked.connect(self.close)
 
-        self.cbe_air_pressure = CallbackEmulator(self.parent.barometer.get_air_pressure,
+        self.cbe_air_pressure = CallbackEmulator(self,
+                                                 self.parent.barometer.get_air_pressure,
                                                  None,
                                                  self.cb_air_pressure,
                                                  self.parent.increase_error_count)
 
-        self.cbe_altitude = CallbackEmulator(self.parent.barometer.get_altitude,
+        self.cbe_altitude = CallbackEmulator(self,
+                                             self.parent.barometer.get_altitude,
                                              None,
                                              self.cb_altitude,
                                              self.parent.increase_error_count)
 
-        self.cbe_temperature = CallbackEmulator(self.parent.barometer.get_temperature,
+        self.cbe_temperature = CallbackEmulator(self,
+                                                self.parent.barometer.get_temperature,
                                                 None,
                                                 self.cb_temperature,
                                                 self.parent.increase_error_count)
@@ -127,17 +130,20 @@ class BarometerV2(COMCUPluginBase):
 
         self.barometer = self.device
 
-        self.cbe_air_pressure = CallbackEmulator(self.barometer.get_air_pressure,
+        self.cbe_air_pressure = CallbackEmulator(self,
+                                                 self.barometer.get_air_pressure,
                                                  None,
                                                  self.cb_air_pressure,
                                                  self.increase_error_count)
 
-        self.cbe_altitude = CallbackEmulator(self.barometer.get_altitude,
+        self.cbe_altitude = CallbackEmulator(self,
+                                             self.barometer.get_altitude,
                                              None,
                                              self.cb_altitude,
                                              self.increase_error_count)
 
-        self.cbe_temperature = CallbackEmulator(self.barometer.get_temperature,
+        self.cbe_temperature = CallbackEmulator(self,
+                                                self.barometer.get_temperature,
                                                 None,
                                                 self.cb_temperature,
                                                 self.increase_error_count)

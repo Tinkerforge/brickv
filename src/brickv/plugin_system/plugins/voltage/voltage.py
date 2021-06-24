@@ -37,7 +37,8 @@ class Voltage(PluginBase):
 
         self.vol = self.device
 
-        self.cbe_voltage = CallbackEmulator(self.vol.get_voltage,
+        self.cbe_voltage = CallbackEmulator(self,
+                                            self.vol.get_voltage,
                                             None,
                                             self.cb_voltage,
                                             self.increase_error_count)

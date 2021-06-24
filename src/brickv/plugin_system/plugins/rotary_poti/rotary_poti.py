@@ -37,7 +37,8 @@ class RotaryPoti(PluginBase):
 
         self.rp = self.device
 
-        self.cbe_position = CallbackEmulator(self.rp.get_position,
+        self.cbe_position = CallbackEmulator(self,
+                                             self.rp.get_position,
                                              None,
                                              self.cb_position,
                                              self.increase_error_count)

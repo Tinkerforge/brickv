@@ -33,11 +33,11 @@ class CallbackEmulator(QObject):
     qtcb_error = pyqtSignal(object)
     qtcb_error_with_exception = pyqtSignal(object, object)
 
-    def __init__(self, function, arguments, result_callback, error_callback,
+    def __init__(self, parent, function, arguments, result_callback, error_callback,
                  pass_arguments_to_result_callback=False, pass_exception_to_error_callback=False,
                  expand_arguments_tuple_for_callback=False, expand_result_tuple_for_callback=False,
                  use_result_signal=True, debug_exception=False):
-        super().__init__()
+        super().__init__(parent)
 
         if pass_arguments_to_result_callback:
             assert arguments != None
@@ -140,15 +140,29 @@ class CallbackEmulator(QObject):
                 if not enable_ref[0]:
                     break
 
-                if self.pass_exception_to_error_callback:
-                    self.qtcb_error_with_exception.emit(e)
-                else:
-                    self.qtcb_error.emit(e)
+                try:
+                    if self.pass_exception_to_error_callback:
+                        self.qtcb_error_with_exception.emit(e)
+                    else:
+                        self.qtcb_error.emit(e)
+                except RuntimeError as e:
+                    # FIXME: filtering by exception message is not so robust
+                    if str(e) == 'wrapped C/C++ object of type CallbackEmulator has been deleted':
+                        break
+
+                    raise
             else:
                 if not enable_ref[0]:
                     break
 
                 if self.use_result_signal:
-                    self.qtcb_result.emit(result)
+                    try:
+                        self.qtcb_result.emit(result)
+                    except RuntimeError as e:
+                        # FIXME: filtering by exception message is not so robust
+                        if str(e) == 'wrapped C/C++ object of type CallbackEmulator has been deleted':
+                            break
+
+                        raise
                 else:
                     self.cb_result(result)

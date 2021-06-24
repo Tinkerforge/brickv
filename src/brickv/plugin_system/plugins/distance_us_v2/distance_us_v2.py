@@ -36,7 +36,8 @@ class DistanceUSV2(COMCUPluginBase):
 
         self.dist = self.device
 
-        self.cbe_distance = CallbackEmulator(self.dist.get_distance,
+        self.cbe_distance = CallbackEmulator(self,
+                                             self.dist.get_distance,
                                              None,
                                              self.cb_distance,
                                              self.increase_error_count)

@@ -37,11 +37,13 @@ class TemperatureIR(PluginBase):
 
         self.tir = self.device
 
-        self.cbe_ambient_temperature = CallbackEmulator(self.tir.get_ambient_temperature,
+        self.cbe_ambient_temperature = CallbackEmulator(self,
+                                                        self.tir.get_ambient_temperature,
                                                         None,
                                                         self.cb_ambient_temperature,
                                                         self.increase_error_count)
-        self.cbe_object_temperature = CallbackEmulator(self.tir.get_object_temperature,
+        self.cbe_object_temperature = CallbackEmulator(self,
+                                                       self.tir.get_object_temperature,
                                                        None,
                                                        self.cb_object_temperature,
                                                        self.increase_error_count)

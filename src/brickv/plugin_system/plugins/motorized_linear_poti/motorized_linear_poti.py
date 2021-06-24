@@ -42,7 +42,8 @@ class MotorizedLinearPoti(COMCUPluginBase):
 
         self.mp = self.device
 
-        self.cbe_position = CallbackEmulator(self.mp.get_position,
+        self.cbe_position = CallbackEmulator(self,
+                                             self.mp.get_position,
                                              None,
                                              self.cb_position,
                                              self.increase_error_count)

@@ -99,7 +99,8 @@ class DC(PluginBase, Ui_DC):
         self.dc.register_callback(self.dc.CALLBACK_VELOCITY_REACHED,
                                   self.qtcb_velocity_reached.emit)
 
-        self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity,
+        self.cbe_current_velocity = CallbackEmulator(self,
+                                                     self.dc.get_current_velocity,
                                                      None,
                                                      self.update_velocity,
                                                      self.increase_error_count)

@@ -53,7 +53,8 @@ class Calibration(QDialog, Ui_Calibration):
         self.button_cal_gain.clicked.connect(self.gain_clicked)
         self.button_close.clicked.connect(self.close)
 
-        self.cbe_adc_values = CallbackEmulator(self.parent.analog_in.get_adc_values,
+        self.cbe_adc_values = CallbackEmulator(self,
+                                               self.parent.analog_in.get_adc_values,
                                                None,
                                                self.cb_adc_values,
                                                self.parent.increase_error_count)
@@ -141,12 +142,14 @@ class IndustrialDualAnalogIn(PluginBase):
         # it's okay to make final decisions based on it here
         self.has_fixed_calibration = self.firmware_version >= (2, 0, 1)
 
-        self.cbe_voltage0 = CallbackEmulator(self.analog_in.get_voltage,
+        self.cbe_voltage0 = CallbackEmulator(self,
+                                             self.analog_in.get_voltage,
                                              0,
                                              self.cb_voltage,
                                              self.increase_error_count,
                                              pass_arguments_to_result_callback=True)
-        self.cbe_voltage1 = CallbackEmulator(self.analog_in.get_voltage,
+        self.cbe_voltage1 = CallbackEmulator(self,
+                                             self.analog_in.get_voltage,
                                              1,
                                              self.cb_voltage,
                                              self.increase_error_count,
