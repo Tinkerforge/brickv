@@ -254,7 +254,14 @@ class ErrorReporter(QMainWindow, Ui_ErrorReporter):
 
 def error_report_main():
     error_message = sys.stdin.read()
-    label_suffix, error_message = error_message.split('!!!')
+
+    if len(error_message) == 0:
+        # FIXME: for some unknown reason it can happen that stdin is empty
+        label_suffix = ''
+        error_message = 'An unknown error occurred!'
+    elif '!!!' in error_message:
+        label_suffix, error_message = error_message.split('!!!')
+
     formatted_error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
 
     app = QApplication(sys.argv)
