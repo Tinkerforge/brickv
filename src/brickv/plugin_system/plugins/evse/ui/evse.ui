@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>262</width>
-    <height>618</height>
+    <width>279</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -136,6 +136,13 @@
      </item>
      <item row="6" column="1">
       <widget class="QLabel" name="label_resistance_cp_pe">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_adc_value_cp_pe">
        <property name="text">
         <string>TBD</string>
        </property>
@@ -281,13 +288,6 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="label_adc_value_cp_pe">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="0">
       <widget class="QLabel" name="label_20">
        <property name="text">
@@ -402,6 +402,20 @@
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="label_vehicle_state">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="0">
+      <widget class="QLabel" name="label_27">
+       <property name="text">
+        <string>Hardware Version</string>
+       </property>
+      </widget>
+     </item>
+     <item row="27" column="1">
+      <widget class="QLabel" name="label_hardware_version">
        <property name="text">
         <string>TBD</string>
        </property>

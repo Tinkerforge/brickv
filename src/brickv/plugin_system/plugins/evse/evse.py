@@ -104,6 +104,13 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         else:
             res_pp = '{0} Ohm'.format(state.resistances[1])
 
+        if state.hardware_version == 14:
+            hw_version = '1.4'
+        elif state.hardware_version == 15:
+            hw_version = '1.5'
+        else:
+            hw_version = 'unxpected: {0}'.format(state.hardware_verison)
+
         self.label_led_state.setText(LED_STATE[state.led_state])
         self.label_adc_value_cp_pe.setText(str(state.adc_values[0]))
         self.label_voltage_cp_pe.setText('{0:.2f} V'.format(state.voltages[0]/1000))
@@ -118,6 +125,7 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.label_gpio_led.setText(GPIO[state.gpio[1]])
         self.label_gpio_motor_switch.setText(GPIO[state.gpio[2]])
         self.label_gpio_motor_fault.setText(GPIO[state.gpio[4]])
+        self.label_hardware_version.setText(hw_version)
 
     def max_charging_current_cb(self, mcc):
         self.label_max_current_configured.setText('{0:.1f} A'.format(mcc.max_current_configured/1000))
