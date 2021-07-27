@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2021-07-26.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -21,8 +21,9 @@ except ValueError:
 GetState = namedtuple('State', ['iec61851_state', 'vehicle_state', 'contactor_state', 'contactor_error', 'charge_release', 'allowed_charging_current', 'error_state', 'lock_state', 'time_since_state_change', 'uptime'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch'])
 GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio'])
-GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable'])
+GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable', 'max_current_managed'])
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute'])
+GetEnergyMeterDetailedValuesLowLevel = namedtuple('EnergyMeterDetailedValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetEnergyMeterState = namedtuple('EnergyMeterState', ['available', 'error_count'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['input_configuration', 'output_configuration'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
@@ -49,12 +50,18 @@ class BrickletEVSEV2(Device):
     FUNCTION_SET_CHARGING_AUTOSTART = 8
     FUNCTION_GET_CHARGING_AUTOSTART = 9
     FUNCTION_GET_ENERGY_METER_VALUES = 10
-    FUNCTION_GET_ENERGY_METER_STATE = 11
-    FUNCTION_RESET_ENERGY_METER = 12
-    FUNCTION_GET_DC_FAULT_CURRENT_STATE = 13
-    FUNCTION_RESET_DC_FAULT_CURRENT = 14
-    FUNCTION_SET_GPIO_CONFIGURATION = 15
-    FUNCTION_GET_GPIO_CONFIGURATION = 16
+    FUNCTION_GET_ENERGY_METER_DETAILED_VALUES_LOW_LEVEL = 11
+    FUNCTION_GET_ENERGY_METER_STATE = 12
+    FUNCTION_RESET_ENERGY_METER = 13
+    FUNCTION_GET_DC_FAULT_CURRENT_STATE = 14
+    FUNCTION_RESET_DC_FAULT_CURRENT = 15
+    FUNCTION_SET_GPIO_CONFIGURATION = 16
+    FUNCTION_GET_GPIO_CONFIGURATION = 17
+    FUNCTION_GET_MANAGED = 18
+    FUNCTION_SET_MANAGED = 19
+    FUNCTION_SET_MANAGED_CURRENT = 20
+    FUNCTION_GET_DATA_STORAGE = 21
+    FUNCTION_SET_DATA_STORAGE = 22
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -109,6 +116,7 @@ class BrickletEVSEV2(Device):
     CHARGE_RELEASE_AUTOMATIC = 0
     CHARGE_RELEASE_MANUAL = 1
     CHARGE_RELEASE_DEACTIVATED = 2
+    CHARGE_RELEASE_MANAGED = 3
     DC_FAULT_CURRENT_STATE_NORMAL_CONDITION = 0
     DC_FAULT_CURRENT_STATE_6_MA = 1
     DC_FAULT_CURRENT_STATE_SYSTEM = 2
@@ -149,12 +157,18 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_CHARGING_AUTOSTART] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_CHARGING_AUTOSTART] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_VALUES] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DETAILED_VALUES_LOW_LEVEL] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_RESET_ENERGY_METER] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_DC_FAULT_CURRENT_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_RESET_DC_FAULT_CURRENT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_GPIO_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_GPIO_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_MANAGED] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_MANAGED] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_MANAGED_CURRENT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_DATA_STORAGE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_DATA_STORAGE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -215,7 +229,7 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetMaxChargingCurrent(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_MAX_CHARGING_CURRENT, (), '', 14, 'H H H'))
+        return GetMaxChargingCurrent(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_MAX_CHARGING_CURRENT, (), '', 16, 'H H H H'))
 
     def start_charging(self):
         """
@@ -258,6 +272,14 @@ class BrickletEVSEV2(Device):
         self.check_validity()
 
         return GetEnergyMeterValues(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_VALUES, (), '', 20, 'I I I'))
+
+    def get_energy_meter_detailed_values_low_level(self):
+        """
+        TBD
+        """
+        self.check_validity()
+
+        return GetEnergyMeterDetailedValuesLowLevel(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_DETAILED_VALUES_LOW_LEVEL, (), '', 70, 'H 15f'))
 
     def get_energy_meter_state(self):
         """
@@ -311,6 +333,56 @@ class BrickletEVSEV2(Device):
         self.check_validity()
 
         return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_GPIO_CONFIGURATION, (), '', 10, 'B B'))
+
+    def get_managed(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_MANAGED, (), '', 9, '!')
+
+    def set_managed(self, managed, password):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        managed = bool(managed)
+        password = int(password)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_MANAGED, (managed, password), '! I', 0, '')
+
+    def set_managed_current(self, current):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        current = int(current)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_MANAGED_CURRENT, (current,), 'H', 0, '')
+
+    def get_data_storage(self, page):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_DATA_STORAGE, (page,), 'B', 71, '63B')
+
+    def set_data_storage(self, page, data):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+        data = list(map(int, data))
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_DATA_STORAGE, (page, data), 'B 63B', 0, '')
 
     def get_spitfp_error_count(self):
         """
@@ -475,5 +547,35 @@ class BrickletEVSEV2(Device):
         |device_identifier_constant|
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+
+    def get_energy_meter_detailed_values(self):
+        """
+        TBD
+        """
+        values_length = 84
+
+        with self.stream_lock:
+            ret = self.get_energy_meter_detailed_values_low_level()
+
+            if ret.values_chunk_offset == (1 << 16) - 1: # maximum chunk offset -> stream has no data
+                values_length = 0
+                values_out_of_sync = False
+                values_data = ()
+            else:
+                values_out_of_sync = ret.values_chunk_offset != 0
+                values_data = ret.values_chunk_data
+
+            while not values_out_of_sync and len(values_data) < values_length:
+                ret = self.get_energy_meter_detailed_values_low_level()
+                values_out_of_sync = ret.values_chunk_offset != len(values_data)
+                values_data += ret.values_chunk_data
+
+            if values_out_of_sync: # discard remaining stream to bring it back in-sync
+                while ret.values_chunk_offset + 15 < values_length:
+                    ret = self.get_energy_meter_detailed_values_low_level()
+
+                raise Error(Error.STREAM_OUT_OF_SYNC, 'Values stream is out-of-sync')
+
+        return values_data[:values_length]
 
 EVSEV2 = BrickletEVSEV2 # for backward compatibility

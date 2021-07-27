@@ -21,7 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QErrorMessage, QInputDialog, QAction
+from typing import Tuple
+from PyQt5.QtWidgets import QErrorMessage, QInputDialog, QAction, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
@@ -41,6 +42,29 @@ JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software
 GPIO = ['Low', 'High']
 CONTACTOR = ['Inactive', 'Active']
 LOCK_SWITCH = ['Not Available', 'Available']
+
+class EnergyMeterTable(QTableWidget):
+    def __init__(self, data, *args):
+        QTableWidget.__init__(self, *args)
+        self.data = data
+        self.update_data()
+        self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+
+    def update_data(self):
+        header = ['Property', 'Value']
+        self.setHorizontalHeaderLabels(header)
+        for i, item in enumerate(self.data.items()):
+            property, value = item
+            try:
+                value = ', '.join(map(str, value))
+            except:
+                value = str(value)
+
+            item_property = QTableWidgetItem(property)
+            item_value = QTableWidgetItem(value)
+            self.setItem(i, 0, item_property)
+            self.setItem(i, 1, item_value)
 
 class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def __init__(self, *args):
@@ -89,6 +113,66 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.button_dc_fault_reset.clicked.connect(self.dc_fault_reset_clicked)
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
         self.spinbox_max_charging_current.valueChanged.connect(self.max_charging_current_changed)
+        self.button_energy_meter_detailed.clicked.connect(self.energy_meter_detailed_clicked)
+
+    def energy_meter_detailed_clicked(self):
+        values = self.evse.get_energy_meter_detailed_values()
+        data = {}
+        data['line_to_neutral_volts[SDM630_PHASE_NUM]']  = values[0], values[1], values[2]
+        data['current[SDM630_PHASE_NUM]']                = values[3], values[4], values[5]
+        data['power[SDM630_PHASE_NUM]']                  = values[6], values[7], values[8]
+        data['volt_amps[SDM630_PHASE_NUM]']              = values[9], values[10], values[11]
+        data['volt_amps_reactive[SDM630_PHASE_NUM]']     = values[12], values[13], values[14]
+        data['power_factor[SDM630_PHASE_NUM]']           = values[15], values[16], values[17]
+        data['phase_angle[SDM630_PHASE_NUM]']            = values[18], values[19], values[20]
+        data['average_line_to_neutral_volts']            = values[21]
+        data['average_line_current']                     = values[22]
+        data['sum_of_line_currents']                     = values[23]
+        data['total_system_power']                       = values[24]
+        data['total_system_volt_amps']                   = values[25]
+        data['total_system_var']                         = values[26]
+        data['total_system_power_factor']                = values[27]
+        data['total_system_phase_angle']                 = values[28]
+        data['frequency_of_supply_voltages']             = values[29]
+        data['total_import_kwh']                         = values[30]
+        data['total_export_kwh']                         = values[31]
+        data['total_import_kvarh']                       = values[32]
+        data['total_export_kvarh']                       = values[33]
+        data['total_vah']                                = values[34]
+        data['ah']                                       = values[35]
+        data['total_system_power_demand']                = values[36]
+        data['maximum_total_system_power_demand']        = values[37]
+        data['total_system_va_demand']                   = values[38]
+        data['maximum_total_system_va_demand']           = values[39]
+        data['neutral_current_demand']                   = values[40]
+        data['maximum_neutral_current_demand']           = values[41]
+        data['line1_to_line2_volts']                     = values[42]
+        data['line2_to_line3_volts']                     = values[43]
+        data['line3_to_line1_volts']                     = values[44]
+        data['average_line_to_line_volts']               = values[45]
+        data['neutral_current']                          = values[46]
+        data['ln_volts_thd[SDM630_PHASE_NUM]']           = values[47], values[48], values[49]
+        data['current_thd[SDM630_PHASE_NUM]']            = values[50], values[51], values[52]
+        data['average_line_to_neutral_volts_thd']        = values[53]
+        data['current_demand[SDM630_PHASE_NUM]']         = values[54], values[55], values[56]
+        data['maximum_current_demand[SDM630_PHASE_NUM]'] = values[57], values[58], values[59]
+        data['line1_to_line2_volts_thd']                 = values[60]
+        data['line2_to_line3_volts_thd']                 = values[61]
+        data['line3_to_line1_volts_thd']                 = values[62]
+        data['average_line_to_line_volts_thd']           = values[63]
+        data['total_kwh_sum']                            = values[64]
+        data['total_kvarh_sum']                          = values[65]
+        data['import_kwh[SDM630_PHASE_NUM]']             = values[66], values[67], values[68]
+        data['export_kwh[SDM630_PHASE_NUM]']             = values[69], values[70], values[71]
+        data['total_kwh[SDM630_PHASE_NUM]']              = values[72], values[73], values[74]
+        data['import_kvarh[SDM630_PHASE_NUM]']           = values[75], values[76], values[77]
+        data['export_kvarh[SDM630_PHASE_NUM]']           = values[78], values[79], values[80]
+        data['total_kvarh[SDM630_PHASE_NUM]']            = values[81], values[82], values[83]
+
+        table = EnergyMeterTable(data, 50, 2, self)
+        # add Qt.Window to table's flags 
+        table.setWindowFlags(table.windowFlags() | Qt.Window)
+        table.show()
 
     def max_charging_current_changed(self, current):
         self.evse.set_max_charging_current(current)
