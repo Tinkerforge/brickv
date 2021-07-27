@@ -172,6 +172,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         table = EnergyMeterTable(data, 50, 2, self)
         # add Qt.Window to table's flags 
         table.setWindowFlags(table.windowFlags() | Qt.Window)
+        table.resize(500, 700)
         table.show()
 
     def max_charging_current_changed(self, current):
