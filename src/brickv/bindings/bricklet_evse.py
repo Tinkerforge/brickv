@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-07-16.      #
+# This file was automatically generated on 2021-07-26.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -52,6 +52,8 @@ class BrickletEVSE(Device):
     FUNCTION_SET_MANAGED_CURRENT = 13
     FUNCTION_GET_USER_CALIBRATION = 14
     FUNCTION_SET_USER_CALIBRATION = 15
+    FUNCTION_GET_DATA_STORAGE = 16
+    FUNCTION_SET_DATA_STORAGE = 17
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -147,6 +149,8 @@ class BrickletEVSE(Device):
         self.response_expected[BrickletEVSE.FUNCTION_SET_MANAGED_CURRENT] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSE.FUNCTION_GET_USER_CALIBRATION] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_USER_CALIBRATION] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_DATA_STORAGE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_SET_DATA_STORAGE] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSE.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -317,6 +321,27 @@ class BrickletEVSE(Device):
         resistance_880 = list(map(int, resistance_880))
 
         self.ipcon.send_request(self, BrickletEVSE.FUNCTION_SET_USER_CALIBRATION, (password, user_calibration_active, voltage_diff, voltage_mul, voltage_div, resistance_2700, resistance_880), 'I ! h h h h 14h', 0, '')
+
+    def get_data_storage(self, page):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+
+        return self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_DATA_STORAGE, (page,), 'B', 71, '63B')
+
+    def set_data_storage(self, page, data):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+        data = list(map(int, data))
+
+        self.ipcon.send_request(self, BrickletEVSE.FUNCTION_SET_DATA_STORAGE, (page, data), 'B 63B', 0, '')
 
     def get_spitfp_error_count(self):
         """
