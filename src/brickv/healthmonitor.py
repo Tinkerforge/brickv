@@ -34,7 +34,7 @@ from brickv.ui_healthmonitor import Ui_HealthMonitor
 from brickv.async_call import async_call
 from brickv.utils import get_modeless_dialog_flags, get_save_file_name, get_home_path
 from brickv.devicesproxymodel import DevicesProxyModel
-from brickv.infos import DeviceInfo, inventory
+from brickv.infos import DeviceInfo, inventory, get_version_string
 
 SETTLE_DURATION = 5.0 # seconds
 
@@ -49,7 +49,7 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         self.button_save_report_to_csv_file.clicked.connect(self.save_report_to_csv_file)
         self.button_close.clicked.connect(self.hide)
 
-        self.fixed_column_names = ['Name', 'UID', 'Position', 'Metric Errors']
+        self.fixed_column_names = ['Name', 'UID', 'Position', 'FW Version', 'Metric Errors']
         self.dynamic_column_names = []
         self.metric_errors = {} # by uid
         self.old_values = {} # by uid, by metric name
@@ -99,9 +99,17 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
             except:
                 metric_names = []
 
+            fw_version = QStandardItem(get_version_string(info.firmware_version_installed, replace_unknown='?'))
+
+            if info.firmware_version_installed < info.firmware_version_latest:
+                font = fw_version.font()
+                font.setBold(True)
+                fw_version.setFont(font)
+
             row = [QStandardItem(info.name),
                    QStandardItem(info.uid),
                    QStandardItem(info.position.title()),
+                   fw_version,
                    QStandardItem(str(self.metric_errors.get(info.uid, 0)))]
 
             for metric_name in metric_names:
