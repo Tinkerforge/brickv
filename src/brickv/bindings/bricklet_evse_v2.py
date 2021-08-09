@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-08-04.      #
+# This file was automatically generated on 2021-08-06.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -101,10 +101,9 @@ class BrickletEVSEV2(Device):
     LOCK_STATE_ERROR = 5
     ERROR_STATE_OK = 0
     ERROR_STATE_SWITCH = 2
-    ERROR_STATE_CALIBRATION = 3
+    ERROR_STATE_DC_FAULT = 3
     ERROR_STATE_CONTACTOR = 4
     ERROR_STATE_COMMUNICATION = 5
-    ERROR_STATE_DC_FAULT = 6
     JUMPER_CONFIGURATION_6A = 0
     JUMPER_CONFIGURATION_10A = 1
     JUMPER_CONFIGURATION_13A = 2
@@ -211,7 +210,7 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 42, 'B H 5H 5h 2I 24!'))
+        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 50, 'B H 7H 7h 2I 24!'))
 
     def set_max_charging_current(self, max_current):
         """
