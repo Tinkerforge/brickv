@@ -239,8 +239,8 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
                 gpio_str += '0'
 
         self.label_led_state.setText(LED_STATE[state.led_state])
-        self.label_adc_values.setText('CP/PE w/o resistor: {0}, CP/PE w/ resistor: {1}, PP/PE: {2}, +12V rail: {3}, -12V rail: {4}'.format(*state.adc_values))
-        self.label_voltages.setText('CP/PE w/o resistor: {0:.2f}V, CP/PE w/ resistor: {1:.2f}V, PP/PE: {2:.2f}V, +12V rail: {3:.2f}V, -12V rail: {4:.2f}V'.format(state.voltages[0]/1000, state.voltages[1]/1000, state.voltages[2]/1000, state.voltages[3]/1000, state.voltages[4]/1000))
+        self.label_adc_values.setText('CP/PE w/o resistor (PWM high): {0}, CP/PE w/ resistor (PWM high): {1}\nCP/PE w/o resistor (PWM low): {2}, CP/PE w/ resistor (PWM low): {3}\nPP/PE: {4}, +12V rail: {5}, -12V rail: {6}'.format(*state.adc_values))
+        self.label_voltages.setText('CP/PE w/o resistor (PWM high): {0:.2f}V, CP/PE w/ resistor (PWM high): {1:.2f}V\nCP/PE w/o resistor (PWM low): {2:.2f}V, CP/PE w/ resistor (PWM low): {3:.2f}V\nPP/PE: {4:.2f}V, +12V rail: {5:.2f}V, -12V rail: {6:.2f}V'.format(state.voltages[0]/1000, state.voltages[1]/1000, state.voltages[2]/1000, state.voltages[3]/1000, state.voltages[4]/1000, state.voltages[5]/1000, state.voltages[6]/1000))
         self.label_resistances.setText('CP/PE: {0} Ohm, PP/PE: {1} Ohm'.format(*state.resistances))
         self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
         self.label_gpios.setText(gpio_str)
