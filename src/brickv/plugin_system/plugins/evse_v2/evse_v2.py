@@ -43,6 +43,25 @@ GPIO = ['Low', 'High']
 CONTACTOR = ['Inactive', 'Active']
 LOCK_SWITCH = ['Not Available', 'Available']
 
+class DataStorageTable(QTableWidget):
+    def __init__(self, page, data, *args):
+        QTableWidget.__init__(self, *args)
+        self.page = page
+        self.data = data
+        self.update_data()
+        self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+
+    def update_data(self):
+        self.setWindowTitle('Page {0}'.format(self.page))
+        header = ['Byte', 'Value']
+        self.setHorizontalHeaderLabels(header)
+        for i, item in enumerate(self.data):
+            item_property = QTableWidgetItem(str(i))
+            item_value = QTableWidgetItem(str(item))
+            self.setItem(i, 0, item_property)
+            self.setItem(i, 1, item_value)
+
 class EnergyMeterTable(QTableWidget):
     def __init__(self, data, *args):
         QTableWidget.__init__(self, *args)
@@ -114,6 +133,60 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
         self.spinbox_max_charging_current.valueChanged.connect(self.max_charging_current_changed)
         self.button_energy_meter_detailed.clicked.connect(self.energy_meter_detailed_clicked)
+        self.button_read_page.clicked.connect(self.read_page_clicked)
+        self.checkbox_managed.stateChanged.connect(self.managed_changed)
+        self.spin_managed_current.valueChanged.connect(self.managed_current_changed)
+        self.combo_button_config.currentIndexChanged.connect(self.button_config_changed)
+        self.button_set_indicator.clicked.connect(self.set_indicator_clicked)
+
+    def set_indicator_clicked(self):
+        index = self.combobox_indication.currentIndex()
+
+        indication = -1
+        if index == 0:
+            indication = -1
+        elif index == 1:
+            indication = 0
+        elif index == 2:
+            indication = 64
+        elif index == 3:
+            indication = 128
+        elif index == 4:
+            indication = 192
+        elif index == 5:
+            indication = 255
+        elif index == 6:
+            indication = 1001
+        elif index == 7:
+            indication = 1002
+        elif index == 8:
+            indication = 1003
+
+        self.evse.set_indicator_led(indication, self.spin_duration.value())
+
+    def button_config_changed(self, config):
+        self.evse.set_button_configuration(config)
+    
+    def managed_current_changed(self, current):
+        self.evse.set_managed_current(current)
+
+    def managed_changed(self, managed):
+        value = managed == Qt.Checked
+        if value:
+            password = 0x00363702
+        else:
+            password = 0x036370FF
+        self.evse.set_managed(value, password)
+
+    def read_page_clicked(self):
+        page = self.spinbox_page.value()
+        data = self.evse.get_data_storage(page)
+
+        table = DataStorageTable(page, data, len(data), 2, self)
+        # add Qt.Window to table's flags 
+        table.setWindowFlags(table.windowFlags() | Qt.Window)
+        table.resize(500, 700)
+        table.show()
 
     def energy_meter_detailed_clicked(self):
         values = self.evse.get_energy_meter_detailed_values()
@@ -249,6 +322,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.label_max_current_configured.setText('{0:.1f} A'.format(mcc.max_current_configured/1000))
         self.label_max_current_incoming_cable.setText('{0:.1f} A'.format(mcc.max_current_incoming_cable/1000))
         self.label_max_current_outgoing_cable.setText('{0:.1f} A'.format(mcc.max_current_outgoing_cable/1000))
+        self.label_max_current_managed.setText('{0:.1f} A'.format(mcc.max_current_managed/1000))
 
     def get_hardware_configuration_async(self, conf):
         self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[conf.jumper_configuration])
@@ -264,10 +338,51 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.spinbox_max_charging_current.setValue(mcc.max_current_configured)
         self.spinbox_max_charging_current.blockSignals(False)
 
+    def get_managed_async(self, managed):
+        self.checkbox_managed.blockSignals(True)
+        self.checkbox_managed.setChecked(managed)
+        self.checkbox_managed.blockSignals(False)
+
+    def get_indicator_led_async(self, led):
+        self.spin_duration.blockSignals(True)
+        self.spin_duration.setValue(led.duration)
+        self.spin_duration.blockSignals(False)
+
+        self.combobox_indication.blockSignals(True)
+        if led.indication == -1:
+           self.combobox_indication.setCurrentIndex(0)
+        elif led.indication == 0:
+           self.combobox_indication.setCurrentIndex(1)
+        elif led.indication == 64:
+           self.combobox_indication.setCurrentIndex(2)
+        elif led.indication == 128:
+           self.combobox_indication.setCurrentIndex(3)
+        elif led.indication == 192:
+           self.combobox_indication.setCurrentIndex(4)
+        elif led.indication == 255:
+           self.combobox_indication.setCurrentIndex(5)
+        elif led.indication == 1001:
+           self.combobox_indication.setCurrentIndex(6)
+        elif led.indication == 1002:
+           self.combobox_indication.setCurrentIndex(7)
+        elif led.indication == 1003:
+           self.combobox_indication.setCurrentIndex(8)
+        else:
+           self.combobox_indication.setCurrentIndex(-1)
+        self.combobox_indication.blockSignals(False)
+
+    def get_button_configuration_async(self, config):
+        self.combo_button_config.blockSignals(True)
+        self.combo_button_config.setCurrentIndex(config)
+        self.combo_button_config.blockSignals(False)
+
     def start(self):
         async_call(self.evse.get_hardware_configuration, None, self.get_hardware_configuration_async, self.increase_error_count)
         async_call(self.evse.get_charging_autostart, None, self.get_charging_autostart_async, self.increase_error_count)
         async_call(self.evse.get_max_charging_current, None, self.get_max_charging_current_async, self.increase_error_count)
+        async_call(self.evse.get_managed, None, self.get_managed_async, self.increase_error_count)
+        async_call(self.evse.get_indicator_led, None, self.get_indicator_led_async, self.increase_error_count)
+        async_call(self.evse.get_button_configuration, None, self.get_button_configuration_async, self.increase_error_count)
         self.cbe_state.set_period(100)
         self.cbe_low_level_state.set_period(100)
         self.cbe_max_charging_current.set_period(500)

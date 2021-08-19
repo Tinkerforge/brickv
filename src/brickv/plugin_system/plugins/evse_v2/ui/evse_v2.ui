@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>643</width>
-    <height>570</height>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -128,6 +128,13 @@
        </property>
       </widget>
      </item>
+     <item row="21" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>DC Fault Current State</string>
+       </property>
+      </widget>
+     </item>
      <item row="8" column="1">
       <widget class="QLabel" name="label_gpios">
        <property name="text">
@@ -240,7 +247,7 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
+     <item row="19" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Energy Meter Values</string>
@@ -260,35 +267,28 @@
        </property>
       </spacer>
      </item>
-     <item row="18" column="1">
+     <item row="19" column="1">
       <widget class="QLabel" name="label_energy_meter_values">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="20" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Energy Meter State</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="1">
+     <item row="20" column="1">
       <widget class="QLabel" name="label_energy_meter_state">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>DC Fault Current State</string>
-       </property>
-      </widget>
-     </item>
-     <item row="20" column="1">
+     <item row="21" column="1">
       <widget class="QLabel" name="label_dc_fault_current_state">
        <property name="text">
         <string>TBD</string>
@@ -304,6 +304,20 @@
      </item>
      <item row="12" column="1">
       <widget class="QLabel" name="label_jumper_configuration">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Max Current Managed</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="1">
+      <widget class="QLabel" name="label_max_current_managed">
        <property name="text">
         <string>TBD</string>
        </property>
@@ -422,6 +436,179 @@
       <widget class="QPushButton" name="button_energy_meter_detailed">
        <property name="text">
         <string>Show Detailed Energy Meter Info</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLabel" name="label_27">
+       <property name="text">
+        <string>Button Config:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QSpinBox" name="spinbox_page">
+       <property name="suffix">
+        <string> Page</string>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="5">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>Indication:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="6">
+      <widget class="QComboBox" name="combobox_indication">
+       <item>
+        <property name="text">
+         <string>Deactivated</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Off</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>25%</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>50%</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>75%</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ack</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>nack</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>nag</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="7" column="5" colspan="2">
+      <widget class="QPushButton" name="button_set_indicator">
+       <property name="text">
+        <string>Set Indicator LED</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="3">
+      <widget class="QSpinBox" name="spin_managed_current">
+       <property name="suffix">
+        <string>mA</string>
+       </property>
+       <property name="maximum">
+        <number>32000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QLabel" name="label_22">
+       <property name="text">
+        <string>Managed Current:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QCheckBox" name="checkbox_managed">
+       <property name="text">
+        <string>Managed</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QPushButton" name="button_read_page">
+       <property name="text">
+        <string>Read Page</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QComboBox" name="combo_button_config">
+       <item>
+        <property name="text">
+         <string>Deactivated</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Start Charging</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Stop Charging</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Start And Stop Charging</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="5" column="5">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Duration:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="7">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="4" rowspan="4">
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="6">
+      <widget class="QSpinBox" name="spin_duration">
+       <property name="suffix">
+        <string>ms</string>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" rowspan="4">
+      <widget class="Line" name="line_5">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>

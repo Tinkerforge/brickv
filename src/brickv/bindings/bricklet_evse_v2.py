@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-08-06.      #
+# This file was automatically generated on 2021-08-19.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -26,6 +26,7 @@ GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relativ
 GetEnergyMeterDetailedValuesLowLevel = namedtuple('EnergyMeterDetailedValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetEnergyMeterState = namedtuple('EnergyMeterState', ['available', 'error_count'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['enable_input_configuration', 'input_configuration', 'output_configuration'])
+GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -62,6 +63,10 @@ class BrickletEVSEV2(Device):
     FUNCTION_SET_MANAGED_CURRENT = 20
     FUNCTION_GET_DATA_STORAGE = 21
     FUNCTION_SET_DATA_STORAGE = 22
+    FUNCTION_GET_INDICATOR_LED = 23
+    FUNCTION_SET_INDICATOR_LED = 24
+    FUNCTION_SET_BUTTON_CONFIGURATION = 25
+    FUNCTION_GET_BUTTON_CONFIGURATION = 26
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -125,6 +130,10 @@ class BrickletEVSEV2(Device):
     ENABLE_INPUT_DEACTIVATED = 0
     ENABLE_INPUT_ACTIVE_OPEN = 1
     ENABLE_INPUT_ACTIVE_CLOSE = 2
+    BUTTON_CONFIGURATION_DEACTIVATED = 0
+    BUTTON_CONFIGURATION_START_CHARGING = 1
+    BUTTON_CONFIGURATION_STOP_CHARGING = 2
+    BUTTON_CONFIGURATION_START_AND_STOP_CHARGING = 3
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -172,6 +181,10 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_MANAGED_CURRENT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_DATA_STORAGE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_DATA_STORAGE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_INDICATOR_LED] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_INDICATOR_LED] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_BUTTON_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -387,6 +400,43 @@ class BrickletEVSEV2(Device):
         data = list(map(int, data))
 
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_DATA_STORAGE, (page, data), 'B 63B', 0, '')
+
+    def get_indicator_led(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return GetIndicatorLED(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_INDICATOR_LED, (), '', 12, 'h H'))
+
+    def set_indicator_led(self, indication, duration):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        indication = int(indication)
+        duration = int(duration)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_INDICATOR_LED, (indication, duration), 'h H', 9, 'B')
+
+    def set_button_configuration(self, button_configuration):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        button_configuration = int(button_configuration)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_BUTTON_CONFIGURATION, (button_configuration,), 'B', 0, '')
+
+    def get_button_configuration(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_CONFIGURATION, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
