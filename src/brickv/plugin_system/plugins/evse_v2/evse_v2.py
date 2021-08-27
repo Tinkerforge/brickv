@@ -35,7 +35,7 @@ from brickv.slider_spin_syncer import SliderSpinSyncer
 
 IEC61851_STATE = ['A', 'B', 'C', 'D', 'EF']
 VEHICLE_STATE = ['Not Connected', 'Connected', 'Charging', 'Error']
-LED_STATE = ['Off', 'On', 'Blinking', 'Flicker', 'Breathing']
+LED_STATE = ['Off', 'On', 'Blinking', 'Flicker', 'Breathing', 'API']
 CONTACTOR_STATE = ['Not Live', 'Live']
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
 JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software', 'Unconfigured']
