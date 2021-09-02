@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-08-19.      #
+# This file was automatically generated on 2021-09-02.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -25,7 +25,7 @@ GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configure
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute', 'phases_active'])
 GetEnergyMeterDetailedValuesLowLevel = namedtuple('EnergyMeterDetailedValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetEnergyMeterState = namedtuple('EnergyMeterState', ['available', 'error_count'])
-GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['enable_input_configuration', 'input_configuration', 'output_configuration'])
+GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['shutdown_input_configuration', 'input_configuration', 'output_configuration'])
 GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -127,9 +127,11 @@ class BrickletEVSEV2(Device):
     DC_FAULT_CURRENT_STATE_SYSTEM_ERROR = 2
     DC_FAULT_CURRENT_STATE_UNKNOWN_ERROR = 3
     DC_FAULT_CURRENT_STATE_CALIBRATION_ERROR = 4
-    ENABLE_INPUT_DEACTIVATED = 0
-    ENABLE_INPUT_ACTIVE_OPEN = 1
-    ENABLE_INPUT_ACTIVE_CLOSE = 2
+    SHUTDOWN_INPUT_IGNORED = 0
+    SHUTDOWN_INPUT_SHUTDOWN_ON_OPEN = 1
+    SHUTDOWN_INPUT_SHUTDOWN_ON_CLOSE = 2
+    OUTPUT_LOW = 0
+    OUTPUT_HIGH = 1
     BUTTON_CONFIGURATION_DEACTIVATED = 0
     BUTTON_CONFIGURATION_START_CHARGING = 1
     BUTTON_CONFIGURATION_STOP_CHARGING = 2
@@ -331,17 +333,17 @@ class BrickletEVSEV2(Device):
 
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET_DC_FAULT_CURRENT, (password,), 'I', 0, '')
 
-    def set_gpio_configuration(self, enable_input_configuration, input_configuration, output_configuration):
+    def set_gpio_configuration(self, shutdown_input_configuration, input_configuration, output_configuration):
         """
         TODO
         """
         self.check_validity()
 
-        enable_input_configuration = int(enable_input_configuration)
+        shutdown_input_configuration = int(shutdown_input_configuration)
         input_configuration = int(input_configuration)
         output_configuration = int(output_configuration)
 
-        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_GPIO_CONFIGURATION, (enable_input_configuration, input_configuration, output_configuration), 'B B B', 0, '')
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_GPIO_CONFIGURATION, (shutdown_input_configuration, input_configuration, output_configuration), 'B B B', 0, '')
 
     def get_gpio_configuration(self):
         """
