@@ -126,6 +126,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
 
         self.combo_gpio_input.currentIndexChanged.connect(self.gpio_changed)
         self.combo_gpio_output.currentIndexChanged.connect(self.gpio_changed)
+        self.combo_shutdown_input.currentIndexChanged.connect(self.gpio_changed)
         self.checkbox_autostart.stateChanged.connect(self.autostart_changed)
         self.button_start_charging.clicked.connect(self.start_charging_clicked)
         self.button_stop_charging.clicked.connect(self.stop_charging_clicked)
@@ -267,7 +268,10 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.evse.set_charging_autostart(state == Qt.Checked)
 
     def gpio_changed(self):
-        print('gpio changed')
+        shutdown_input = self.combo_shutdown_input.currentIndex()
+        gpio_input     = 0 # self.combo_gpio_input.currentIndex()
+        gpio_output    = self.combo_gpio_output.currentIndex()
+        self.evse.set_gpio_configuration(shutdown_input, gpio_input, gpio_output)
 
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh, Active Phases: {3}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active)))
@@ -376,6 +380,17 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.combo_button_config.setCurrentIndex(config)
         self.combo_button_config.blockSignals(False)
 
+    def get_gpio_configuration_async(self, config):
+        self.combo_shutdown_input.blockSignals(True)
+        self.combo_gpio_input.blockSignals(True)
+        self.combo_gpio_output.blockSignals(True)
+        self.combo_shutdown_input.setCurrentIndex(config.shutdown_input_configuration)
+#        self.combo_gpio_input.setCurrentIndex(config.input_configuration)
+        self.combo_gpio_output.setCurrentIndex(config.output_configuration)
+        self.combo_shutdown_input.blockSignals(False)
+        self.combo_gpio_input.blockSignals(False)
+        self.combo_gpio_output.blockSignals(False)
+
     def start(self):
         async_call(self.evse.get_hardware_configuration, None, self.get_hardware_configuration_async, self.increase_error_count)
         async_call(self.evse.get_charging_autostart, None, self.get_charging_autostart_async, self.increase_error_count)
@@ -383,6 +398,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         async_call(self.evse.get_managed, None, self.get_managed_async, self.increase_error_count)
         async_call(self.evse.get_indicator_led, None, self.get_indicator_led_async, self.increase_error_count)
         async_call(self.evse.get_button_configuration, None, self.get_button_configuration_async, self.increase_error_count)
+        async_call(self.evse.get_gpio_configuration, None, self.get_gpio_configuration_async, self.increase_error_count)
         self.cbe_state.set_period(100)
         self.cbe_low_level_state.set_period(100)
         self.cbe_max_charging_current.set_period(500)

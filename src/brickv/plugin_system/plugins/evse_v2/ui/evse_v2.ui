@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>699</height>
+    <width>737</width>
+    <height>702</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -423,7 +423,18 @@
       </spacer>
      </item>
      <item row="1" column="6">
-      <widget class="QComboBox" name="combo_gpio_output"/>
+      <widget class="QComboBox" name="combo_gpio_output">
+       <item>
+        <property name="text">
+         <string>Low</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>High</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item row="0" column="4" rowspan="3">
       <widget class="Line" name="line_2">
@@ -609,6 +620,53 @@
       <widget class="Line" name="line_5">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QComboBox" name="combo_shutdown_input">
+       <item>
+        <property name="text">
+         <string>Ignored</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On Close</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On Open</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_28">
+       <property name="text">
+        <string>Shutdown Input:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="Line" name="line_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2" colspan="2">
+      <widget class="Line" name="line_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="5" colspan="2">
+      <widget class="Line" name="line_8">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
