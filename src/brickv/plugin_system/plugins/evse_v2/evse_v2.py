@@ -274,7 +274,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.evse.set_gpio_configuration(shutdown_input, gpio_input, gpio_output)
 
     def energy_meter_values_cb(self, emv):
-        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh, Active Phases: {3}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active)))
+        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
 
     def energy_meter_state_cb(self, ems):
         self.label_energy_meter_state.setText('Available: {0}, Error Counts: {1}'.format(ems.available, str(ems.error_count)))
