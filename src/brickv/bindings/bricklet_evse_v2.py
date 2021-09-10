@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-09-02.      #
+# This file was automatically generated on 2021-09-10.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetState = namedtuple('State', ['iec61851_state', 'vehicle_state', 'contactor_st
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch'])
 GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio'])
 GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable', 'max_current_managed'])
-GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute', 'phases_active'])
+GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected'])
 GetEnergyMeterDetailedValuesLowLevel = namedtuple('EnergyMeterDetailedValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetEnergyMeterState = namedtuple('EnergyMeterState', ['available', 'error_count'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['shutdown_input_configuration', 'input_configuration', 'output_configuration'])
@@ -289,7 +289,7 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetEnergyMeterValues(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_VALUES, (), '', 21, 'f f f 3!'))
+        return GetEnergyMeterValues(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_VALUES, (), '', 22, 'f f f 3! 3!'))
 
     def get_energy_meter_detailed_values_low_level(self):
         """
@@ -608,7 +608,7 @@ class BrickletEVSEV2(Device):
         """
         TBD
         """
-        values_length = 84
+        values_length = 85
 
         with self.stream_lock:
             ret = self.get_energy_meter_detailed_values_low_level()
