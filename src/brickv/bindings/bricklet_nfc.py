@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2021-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -23,9 +23,11 @@ ReaderReadPageLowLevel = namedtuple('ReaderReadPageLowLevel', ['data_length', 'd
 CardemuGetState = namedtuple('CardemuGetState', ['state', 'idle'])
 P2PGetState = namedtuple('P2PGetState', ['state', 'idle'])
 P2PReadNDEFLowLevel = namedtuple('P2PReadNDEFLowLevel', ['ndef_length', 'ndef_chunk_offset', 'ndef_chunk_data'])
+SimpleGetTagIDLowLevel = namedtuple('SimpleGetTagIDLowLevel', ['tag_type', 'tag_id_length', 'tag_id_data', 'last_seen'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 ReaderGetTagID = namedtuple('ReaderGetTagID', ['tag_type', 'tag_id'])
+SimpleGetTagID = namedtuple('SimpleGetTagID', ['tag_type', 'tag_id', 'last_seen'])
 
 class BrickletNFC(Device):
     """
@@ -66,6 +68,7 @@ class BrickletNFC(Device):
     FUNCTION_GET_DETECTION_LED_CONFIG = 26
     FUNCTION_SET_MAXIMUM_TIMEOUT = 27
     FUNCTION_GET_MAXIMUM_TIMEOUT = 28
+    FUNCTION_SIMPLE_GET_TAG_ID_LOW_LEVEL = 29
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -83,6 +86,7 @@ class BrickletNFC(Device):
     MODE_CARDEMU = 1
     MODE_P2P = 2
     MODE_READER = 3
+    MODE_SIMPLE = 4
     TAG_TYPE_MIFARE_CLASSIC = 0
     TAG_TYPE_TYPE1 = 1
     TAG_TYPE_TYPE2 = 2
@@ -165,7 +169,7 @@ class BrickletNFC(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletNFC.DEVICE_IDENTIFIER, BrickletNFC.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickletNFC.FUNCTION_SET_MODE] = BrickletNFC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletNFC.FUNCTION_GET_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -192,6 +196,7 @@ class BrickletNFC(Device):
         self.response_expected[BrickletNFC.FUNCTION_GET_DETECTION_LED_CONFIG] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_SET_MAXIMUM_TIMEOUT] = BrickletNFC.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletNFC.FUNCTION_SIMPLE_GET_TAG_ID_LOW_LEVEL] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_SET_BOOTLOADER_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletNFC.FUNCTION_GET_BOOTLOADER_MODE] = BrickletNFC.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -703,6 +708,16 @@ class BrickletNFC(Device):
 
         return self.ipcon.send_request(self, BrickletNFC.FUNCTION_GET_MAXIMUM_TIMEOUT, (), '', 10, 'H')
 
+    def simple_get_tag_id_low_level(self, index):
+        """
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        index = int(index)
+
+        return SimpleGetTagIDLowLevel(*self.ipcon.send_request(self, BrickletNFC.FUNCTION_SIMPLE_GET_TAG_ID_LOW_LEVEL, (index,), 'B', 24, 'B B 10B I'))
+
     def get_spitfp_error_count(self):
         """
         Returns the error count for the communication between Brick and Bricklet.
@@ -1111,6 +1126,16 @@ class BrickletNFC(Device):
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'NDEF stream is out-of-sync')
 
         return ndef_data[:ndef_length]
+
+    def simple_get_tag_id(self, index):
+        """
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        index = int(index)
+
+        ret = self.simple_get_tag_id_low_level(index)
+
+        return SimpleGetTagID(ret.tag_type, ret.tag_id_data[:ret.tag_id_length], ret.last_seen)
 
     def register_callback(self, callback_id, function):
         """

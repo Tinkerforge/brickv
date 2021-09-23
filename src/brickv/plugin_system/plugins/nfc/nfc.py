@@ -22,15 +22,17 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem
 from PyQt5.QtGui import QTextCursor
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.nfc.ui_nfc import Ui_NFC
 from brickv.bindings.bricklet_nfc import BrickletNFC
 from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 from brickv.spin_box_hex import SpinBoxHex
 from brickv.utils import get_main_window
+from brickv.bindings.ip_connection import Error as TinkerforgeError
 
 class NFC(COMCUPluginBase, Ui_NFC):
     qtcb_state_changed_cardemu = pyqtSignal(int, bool)
@@ -46,6 +48,14 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.setupUi(self)
 
         self.nfc = self.device
+
+        self.has_simple_mode = None
+
+        self.cbe_simple_tag_id = CallbackEmulator(self,
+                                                  self.simple_get_tag_id_wrapper,
+                                                  None,
+                                                  self.cb_simple_tag_id_wrapper,
+                                                  self.increase_error_count)
 
         self.current_mode = None
         self.current_mifare_operation = None
@@ -127,6 +137,10 @@ class NFC(COMCUPluginBase, Ui_NFC):
         self.combo_cardemu_record_type_changed(0)
         self.combo_p2p_write_record_type_changed(0)
 
+        self.tree_simple_tags.header().resizeSection(0, 50)
+        self.tree_simple_tags.header().resizeSection(1, 250)
+        self.tree_simple_tags.header().resizeSection(2, 250)
+
     def pack_ndef_record_text(self, text_raw):
         payload_text = []
 
@@ -172,28 +186,38 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.frame_mode_p2p.hide()
             self.frame_mode_reader.hide()
             self.frame_mode_cardemu.hide()
+            self.frame_mode_simple.hide()
             self.button_initialize.setEnabled(False)
             self.label_status.setText('NFC turned off')
         elif mode == self.nfc.MODE_CARDEMU:
             self.frame_mode_p2p.hide()
             self.frame_mode_reader.hide()
             self.frame_mode_cardemu.show()
+            self.frame_mode_simple.hide()
             self.button_initialize.setEnabled(True)
         elif mode == self.nfc.MODE_P2P:
             self.frame_mode_p2p.show()
             self.frame_mode_reader.hide()
             self.frame_mode_cardemu.hide()
+            self.frame_mode_simple.hide()
             self.button_initialize.setEnabled(True)
         elif mode == self.nfc.MODE_READER:
             self.frame_mode_p2p.hide()
             self.frame_mode_reader.show()
             self.frame_mode_cardemu.hide()
+            self.frame_mode_simple.hide()
             self.label_reader_id.setText('')
             self.button_initialize.setEnabled(True)
             self.textedit_read_page.setPlainText('')
             self.group_box_reader_read_page.setEnabled(False)
             self.group_box_reader_write_page.setEnabled(False)
             self.combo_reader_tag_type.setCurrentIndex(self.nfc.TAG_TYPE_MIFARE_CLASSIC)
+        elif mode == self.nfc.MODE_SIMPLE:
+            self.frame_mode_p2p.hide()
+            self.frame_mode_reader.hide()
+            self.frame_mode_cardemu.hide()
+            self.frame_mode_simple.setVisible(self.has_simple_mode)
+            self.button_initialize.setEnabled(self.has_simple_mode)
 
     def mode_changed(self, index):
         self.label_status.setText('-')
@@ -203,36 +227,57 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
         if index == self.nfc.MODE_OFF:
             if self.change_mode:
+                self.cbe_simple_tag_id.set_period(0)
                 self.nfc.set_mode(self.nfc.MODE_OFF)
 
             self.current_mode = self.nfc.MODE_OFF
             self.update_gui_mode_changed(self.nfc.MODE_OFF)
         elif index == self.nfc.MODE_CARDEMU:
             if self.change_mode:
+                self.cbe_simple_tag_id.set_period(0)
                 self.nfc.set_mode(self.nfc.MODE_CARDEMU)
 
             self.current_mode = self.nfc.MODE_CARDEMU
             self.update_gui_mode_changed(self.nfc.MODE_CARDEMU)
         elif index == self.nfc.MODE_P2P:
             if self.change_mode:
+                self.cbe_simple_tag_id.set_period(0)
                 self.nfc.set_mode(self.nfc.MODE_P2P)
 
             self.current_mode = self.nfc.MODE_P2P
             self.update_gui_mode_changed(self.nfc.MODE_P2P)
         elif index == self.nfc.MODE_READER:
             if self.change_mode:
+                self.cbe_simple_tag_id.set_period(0)
                 self.nfc.set_mode(self.nfc.MODE_READER)
 
             self.current_mode = self.nfc.MODE_READER
             self.update_gui_mode_changed(self.nfc.MODE_READER)
+        elif index == self.nfc.MODE_SIMPLE:
+            if self.change_mode and self.has_simple_mode:
+                self.nfc.set_mode(self.nfc.MODE_SIMPLE)
+                self.cbe_simple_tag_id.set_period(250)
+
+            self.current_mode = self.nfc.MODE_SIMPLE
+            self.update_gui_mode_changed(self.nfc.MODE_SIMPLE)
+
+            if self.has_simple_mode:
+                self.label_status.setText('Simple: Scanning')
+                self.button_initialize.setEnabled(True)
+            else:
+                self.label_status.setText('Simple: FW >= 2.0.6 required')
+                self.button_initialize.setEnabled(False)
 
         if not self.change_mode:
             status_text = '-'
             mode = self.nfc.get_mode()
 
             if mode == self.nfc.MODE_OFF:
+                self.cbe_simple_tag_id.set_period(0)
+
                 status_text = 'NFC turned off'
             elif mode == self.nfc.MODE_CARDEMU:
+                self.cbe_simple_tag_id.set_period(0)
                 status_text = 'Card Emulator: '
                 state = self.nfc.cardemu_get_state()
 
@@ -257,6 +302,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
                 else:
                     status_text += 'Unknown state'
             elif mode == self.nfc.MODE_P2P:
+                self.cbe_simple_tag_id.set_period(0)
+
                 status_text = 'P2P: '
 
                 state = self.nfc.p2p_get_state()
@@ -282,6 +329,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
                 else:
                     status_text += 'Unknown state'
             elif mode == self.nfc.MODE_READER:
+                self.cbe_simple_tag_id.set_period(0)
+
                 status_text = 'Reader: '
                 state = self.nfc.reader_get_state()
 
@@ -329,6 +378,10 @@ class NFC(COMCUPluginBase, Ui_NFC):
                     status_text += 'Request NDEF error'
                 else:
                     status_text += 'Unknown state'
+            elif mode == self.nfc.MODE_SIMPLE:
+                self.cbe_simple_tag_id.set_period(250)
+
+                status_text = 'Simple: Scanning'
 
             self.label_status.setText(status_text)
 
@@ -701,10 +754,12 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.frame_mode_p2p.setEnabled(True)
             self.label_state.setText('P2P: Unknown state')
 
+    def tag_id_as_byte_string(self, tag_id):
+        tag_bytes_format = ' '.join("{{{}:02X}}".format(i) for i in range(0, len(tag_id)))
+
+        return tag_bytes_format.format(*tag_id)
+
     def cb_state_changed_reader(self, state, idle):
-        def tag_id_as_byte_string(tag_id):
-            tag_bytes_format = ' '.join("{{{}:02X}}".format(i) for i in range(0, len(tag_id)))
-            return tag_bytes_format.format(*tag_id)
 
         self.current_state['reader'] = state
 
@@ -746,7 +801,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
                     self.current_tag_id['tag_id'] = tag_id
                     self.current_tag_id['tag_id_type'] = tag_id_type
                     tag_type_name = self.combo_reader_tag_type.currentText().replace("NFC Forum ", "")
-                    tag = 'Found {} tag with ID <font color="green"><b>{}</b></font>'.format(tag_type_name, tag_id_as_byte_string(tag_id))
+                    tag = 'Found {} tag with ID <font color="green"><b>{}</b></font>'.format(tag_type_name, self.tag_id_as_byte_string(tag_id))
                     self.group_box_reader_read_page.setEnabled(True)
                     self.group_box_reader_write_page.setEnabled(True)
                 else:
@@ -956,17 +1011,26 @@ class NFC(COMCUPluginBase, Ui_NFC):
     def button_initialize_clicked(self):
         if self.combo_box_mode.currentIndex() == self.nfc.MODE_CARDEMU:
             self.change_mode = True
+            self.cardemu_start_discovery_clicked = False
             self.button_initialize.setEnabled(False)
             self.mode_changed(self.nfc.MODE_CARDEMU)
-            self.cardemu_start_discovery_clicked = False
         elif self.combo_box_mode.currentIndex() == self.nfc.MODE_P2P:
             self.change_mode = True
-            self.mode_changed(self.nfc.MODE_P2P)
             self.button_initialize.setEnabled(False)
+            self.mode_changed(self.nfc.MODE_P2P)
         elif self.combo_box_mode.currentIndex() == self.nfc.MODE_READER:
             self.change_mode = True
-            self.mode_changed(self.nfc.MODE_READER)
             self.button_initialize.setEnabled(False)
+            self.mode_changed(self.nfc.MODE_READER)
+        elif self.combo_box_mode.currentIndex() == self.nfc.MODE_SIMPLE:
+            self.change_mode = True
+            self.button_initialize.setEnabled(False)
+
+            if self.has_simple_mode:
+                self.mode_changed(self.nfc.MODE_SIMPLE)
+
+                # clear tag history
+                async_call(self.nfc.simple_get_tag_id, 255, None, self.increase_error_count)
 
     def read_page_clicked(self):
         page = self.spinbox_read_page.value()
@@ -1061,6 +1125,47 @@ class NFC(COMCUPluginBase, Ui_NFC):
                 self.nfc.reader_write_page(self.nfc.READER_REQUEST_TYPE4_NDEF,
                                            self.write_page_clicked_data)
 
+    def simple_get_tag_id_wrapper(self):
+        if not self.has_simple_mode:
+            return []
+
+        tags = []
+
+        for i in range(8):
+            try:
+                tag = self.nfc.simple_get_tag_id(i)
+            except TinkerforgeError:
+                tag = None
+
+            tags.append(tag)
+
+        return tags
+
+    def cb_simple_tag_id_wrapper(self, tags):
+        root = self.tree_simple_tags.invisibleRootItem()
+        selected_i = None
+
+        for i in range(root.childCount()):
+            if root.child(i).isSelected():
+                selected_i = i
+
+        self.tree_simple_tags.clear()
+
+        for i, tag in enumerate(tags):
+            if tag == None:
+                strings = ['-'] * 4
+            elif len(tag.tag_id) == 0:
+                break
+            else:
+                tag_type = self.combo_reader_tag_type.itemText(tag.tag_type)
+
+                strings = [str(i + 1), tag_type, self.tag_id_as_byte_string(tag.tag_id), str(tag.last_seen // 1000)]
+
+            item = QTreeWidgetItem(root, strings)
+
+            if i == selected_i:
+                item.setSelected(True)
+
     def get_mode_async(self, mode):
         if mode == self.nfc.MODE_OFF:
             self.change_mode = True
@@ -1074,13 +1179,22 @@ class NFC(COMCUPluginBase, Ui_NFC):
         elif mode == self.nfc.MODE_READER:
             self.change_mode = False
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
+        elif mode == self.nfc.MODE_SIMPLE:
+            self.change_mode = False
+            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_SIMPLE)
 
     def start(self):
+        # the firmware version might change between init and start of a Co-MCU
+        # Bricklet plugin, because a Co-MCU Bricklet can be restarted without
+        # recreating the plugin. therefore, the firmware version has to be checked
+        # on every start
+        self.has_simple_mode = self.firmware_version >= (2, 0, 6)
+
         self.combo_box_mode.setCurrentIndex(-1)
         async_call(self.nfc.get_mode, None, self.get_mode_async, self.increase_error_count)
 
     def stop(self):
-        pass
+        self.cbe_simple_tag_id.set_period(0)
 
     def destroy(self):
         pass
