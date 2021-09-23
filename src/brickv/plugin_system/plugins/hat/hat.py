@@ -39,6 +39,8 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
         self.hat = self.device
 
+        self.has_rtc_driver_config = None
+
         self.cbe_voltages = CallbackEmulator(self,
                                              self.hat.get_voltages,
                                              None,
@@ -57,9 +59,10 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     def bricklet_power_changed(self, state):
         self.hat.set_bricklet_power(state == Qt.Checked)
-    
+
     def rtc_driver_changed(self, index):
-        self.hat.set_rtc_driver(index)
+        if self.has_rtc_driver_config:
+            self.hat.set_rtc_driver(index)
 
     def button_sleep_clicked(self):
         self.hat.set_sleep_mode(self.spinbox_sleep_delay.value(),
@@ -104,7 +107,6 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.combo_rtc_driver.setCurrentIndex(rtc_driver)
         self.combo_rtc_driver.blockSignals(False)
 
-
     def cb_voltages(self, voltages):
         self.label_voltage_usb.setText('{:.2f}V'.format(voltages.voltage_usb / 1000.0))
         self.label_voltage_dc.setText('{:.2f}V'.format(voltages.voltage_dc / 1000.0))
@@ -112,8 +114,22 @@ class HAT(COMCUPluginBase, Ui_HAT):
         self.update_bricklets()
 
     def start(self):
+        # the firmware version might change between init and start of a Co-MCU
+        # Bricklet plugin, because a Co-MCU Bricklet can be restarted without
+        # recreating the plugin. therefore, the firmware version has to be checked
+        # on every start
+        self.has_rtc_driver_config = self.firmware_version >= (2, 0, 3)
+
         async_call(self.hat.get_bricklet_power, None, self.get_bricklet_power_async, self.increase_error_count)
-        async_call(self.hat.get_rtc_driver, None, self.get_rtc_driver_async, self.increase_error_count)
+
+        if self.has_rtc_driver_config:
+            async_call(self.hat.get_rtc_driver, None, self.get_rtc_driver_async, self.increase_error_count)
+        else:
+            self.combo_rtc_driver.blockSignals(True)
+            self.combo_rtc_driver.setCurrentIndex(0) # PCF8523
+            self.combo_rtc_driver.blockSignals(False)
+
+        self.combo_rtc_driver.setEnabled(self.has_rtc_driver_config)
 
         self.update_bricklets()
 
