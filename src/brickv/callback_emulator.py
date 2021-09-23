@@ -79,7 +79,7 @@ class CallbackEmulator(QObject):
                 self.thread.start()
         else:
             if period != 0:
-                self.period_queue.put(period)
+                self.period_queue.put(period / 1000)
             else:
                 self.enable_ref[0] = False
 
