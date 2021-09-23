@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2021-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -41,6 +41,8 @@ class BrickHAT(Device):
     FUNCTION_GET_VOLTAGES = 5
     FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION = 6
     FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION = 7
+    FUNCTION_SET_RTC_DRIVER = 9
+    FUNCTION_GET_RTC_DRIVER = 10
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -54,6 +56,8 @@ class BrickHAT(Device):
     FUNCTION_READ_UID = 249
     FUNCTION_GET_IDENTITY = 255
 
+    RTC_DRIVER_PCF8523 = 0
+    RTC_DRIVER_DS1338 = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -77,7 +81,7 @@ class BrickHAT(Device):
         """
         Device.__init__(self, uid, ipcon, BrickHAT.DEVICE_IDENTIFIER, BrickHAT.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickHAT.FUNCTION_SET_SLEEP_MODE] = BrickHAT.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickHAT.FUNCTION_GET_SLEEP_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -86,6 +90,8 @@ class BrickHAT(Device):
         self.response_expected[BrickHAT.FUNCTION_GET_VOLTAGES] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_SET_VOLTAGES_CALLBACK_CONFIGURATION] = BrickHAT.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickHAT.FUNCTION_SET_RTC_DRIVER] = BrickHAT.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickHAT.FUNCTION_GET_RTC_DRIVER] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_SET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickHAT.FUNCTION_GET_BOOTLOADER_MODE] = BrickHAT.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -216,6 +222,34 @@ class BrickHAT(Device):
         self.check_validity()
 
         return GetVoltagesCallbackConfiguration(*self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_VOLTAGES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
+
+    def set_rtc_driver(self, rtc_driver):
+        """
+        Configures the RTC driver that is given to the Raspberry Pi to be used.
+        Currently there are two different RTCs used:
+
+        * Hardware version <= 1.5: PCF8523T
+        * Hardware version 1.6: DS1338Z
+
+        The correct driver will be set during factory flashing by Tinkerforge.
+
+        .. versionadded:: 2.0.3$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        rtc_driver = int(rtc_driver)
+
+        self.ipcon.send_request(self, BrickHAT.FUNCTION_SET_RTC_DRIVER, (rtc_driver,), 'B', 0, '')
+
+    def get_rtc_driver(self):
+        """
+        Returns the RTC driver as set by :func:`Set RTC Driver`.
+
+        .. versionadded:: 2.0.3$nbsp;(Firmware)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickHAT.FUNCTION_GET_RTC_DRIVER, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """

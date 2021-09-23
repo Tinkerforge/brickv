@@ -47,6 +47,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
         self.button_sleep.clicked.connect(self.button_sleep_clicked)
         self.bricklet_power_checkbox.stateChanged.connect(self.bricklet_power_changed)
+        self.combo_rtc_driver.currentIndexChanged.connect(self.rtc_driver_changed)
         self.ports = [self.port_a, self.port_b, self.port_c, self.port_d, self.port_e, self.port_f, self.port_g, self.port_h]
 
         for port in self.ports:
@@ -56,6 +57,9 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     def bricklet_power_changed(self, state):
         self.hat.set_bricklet_power(state == Qt.Checked)
+    
+    def rtc_driver_changed(self, index):
+        self.hat.set_rtc_driver(index)
 
     def button_sleep_clicked(self):
         self.hat.set_sleep_mode(self.spinbox_sleep_delay.value(),
@@ -95,6 +99,12 @@ class HAT(COMCUPluginBase, Ui_HAT):
     def get_bricklet_power_async(self, power):
         self.bricklet_power_checkbox.setChecked(power)
 
+    def get_rtc_driver_async(self, rtc_driver):
+        self.combo_rtc_driver.blockSignals(True)
+        self.combo_rtc_driver.setCurrentIndex(rtc_driver)
+        self.combo_rtc_driver.blockSignals(False)
+
+
     def cb_voltages(self, voltages):
         self.label_voltage_usb.setText('{:.2f}V'.format(voltages.voltage_usb / 1000.0))
         self.label_voltage_dc.setText('{:.2f}V'.format(voltages.voltage_dc / 1000.0))
@@ -103,6 +113,7 @@ class HAT(COMCUPluginBase, Ui_HAT):
 
     def start(self):
         async_call(self.hat.get_bricklet_power, None, self.get_bricklet_power_async, self.increase_error_count)
+        async_call(self.hat.get_rtc_driver, None, self.get_rtc_driver_async, self.increase_error_count)
 
         self.update_bricklets()
 
