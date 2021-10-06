@@ -51,6 +51,10 @@ def refresh_firmware_info(url_part, latest_version):
 
     if name in ['dc', 'imu', 'imu_2.0']:
         name = name.upper()
+    elif name.startswith('warp_'):
+        name = name.replace('warp_', 'WARP_')
+    elif name.startswith('warp2_'):
+        name = name.replace('warp2_', 'WARP2_')
 
     words = name.split('_')
     parts = []
