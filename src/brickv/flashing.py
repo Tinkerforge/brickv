@@ -36,7 +36,6 @@ import json
 import html
 from threading import Thread
 from distutils.version import StrictVersion
-from io import BytesIO as FileLike
 
 from PyQt5.QtCore import Qt, QStandardPaths
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
@@ -1173,7 +1172,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             zip_file = plugin
 
             try:
-                zf = zipfile.ZipFile(FileLike(zip_file), 'r')
+                zf = zipfile.ZipFile(io.BytesIO(zip_file), 'r')
             except Exception as e:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read *.zbin file: {0}'.format(e))
@@ -1297,7 +1296,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             zip_file = plugin
 
             try:
-                zf = zipfile.ZipFile(FileLike(zip_file), 'r')
+                zf = zipfile.ZipFile(io.BytesIO(zip_file), 'r')
             except Exception as e:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read *.zbin file: {0}'.format(e))
