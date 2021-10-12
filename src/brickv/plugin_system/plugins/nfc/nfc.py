@@ -1169,7 +1169,13 @@ class NFC(COMCUPluginBase, Ui_NFC):
     def get_mode_async(self, mode):
         if mode == self.nfc.MODE_OFF:
             self.change_mode = True
-            self.combo_box_mode.setCurrentIndex(self.nfc.MODE_READER)
+
+            if self.has_simple_mode:
+                mode = self.nfc.MODE_SIMPLE
+            else:
+                mode = self.nfc.MODE_READER
+
+            self.combo_box_mode.setCurrentIndex(mode)
         elif mode == self.nfc.MODE_CARDEMU:
             self.change_mode = False
             self.combo_box_mode.setCurrentIndex(self.nfc.MODE_CARDEMU)
