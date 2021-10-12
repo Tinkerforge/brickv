@@ -620,7 +620,7 @@
 - Filter Updates/Flashing and RED Brick Console serial port selection based on
   USB product- and vendor-ID
 
-2021-10-12: 2.4.20 (<unknown>)
+2021-10-12: 2.4.20 (9cbc35c)
 - Hide unused custom line ending controls in hex mode in RS485 Bricklet plugin
 - Reuse thread in Data Logger timer to avoid slow memory leak
 - Fix Data Logger device list clearing on config loading
