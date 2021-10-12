@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2021-09-23.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -47,6 +47,8 @@ class BrickletEPaper296x128(Device):
     FUNCTION_GET_UPDATE_MODE = 13
     FUNCTION_SET_DISPLAY_TYPE = 14
     FUNCTION_GET_DISPLAY_TYPE = 15
+    FUNCTION_SET_DISPLAY_DRIVER = 16
+    FUNCTION_GET_DISPLAY_DRIVER = 17
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -84,6 +86,8 @@ class BrickletEPaper296x128(Device):
     UPDATE_MODE_DELTA = 2
     DISPLAY_TYPE_BLACK_WHITE_RED = 0
     DISPLAY_TYPE_BLACK_WHITE_GRAY = 1
+    DISPLAY_DRIVER_SSD1675A = 0
+    DISPLAY_DRIVER_SSD1680 = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -107,7 +111,7 @@ class BrickletEPaper296x128(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletEPaper296x128.DEVICE_IDENTIFIER, BrickletEPaper296x128.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletEPaper296x128.FUNCTION_DRAW] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_DRAW_STATUS] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -123,6 +127,8 @@ class BrickletEPaper296x128(Device):
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEPaper296x128.FUNCTION_SET_DISPLAY_DRIVER] = BrickletEPaper296x128.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEPaper296x128.FUNCTION_GET_DISPLAY_DRIVER] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEPaper296x128.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEPaper296x128.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -408,6 +414,31 @@ class BrickletEPaper296x128(Device):
         self.check_validity()
 
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE, (), '', 9, 'B')
+
+    def set_display_driver(self, display_driver):
+        """
+        Sets the type of display driver. The Bricklet can currently support
+        SSD1675A and SSD1680. This will be factory set
+        during the flashing and testing phase. The value is saved in
+        non-volatile memory and will stay after a power cycle.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        display_driver = int(display_driver)
+
+        self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_DRIVER, (display_driver,), 'B', 0, '')
+
+    def get_display_driver(self):
+        """
+        Returns the e-paper display driver.
+
+        .. versionadded:: 2.0.3$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_DRIVER, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
