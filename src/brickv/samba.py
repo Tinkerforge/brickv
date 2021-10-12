@@ -36,35 +36,23 @@ def get_serial_ports(vid=None, pid=None):
     ports = []
 
     for info in serial.tools.list_ports.comports():
-        if isinstance(info, tuple): # pySerial >= 2.6 and < 3.0
-            if not info[2].lower().startswith('usb '):
-                continue # ignore non-USB based serial ports
+        if info.vid == None or info.pid == None:
+            continue # ignore non-USB based serial ports
 
-            # FIXME: filter by VID and PID
+        if vid != None and info.vid != vid:
+            continue # no VID match
 
-            path = info[0]
-            description = info[0]
+        if pid != None and info.pid != pid:
+            continue # no PID match
 
-            if info[1] != 'n/a' and info[1] != 'CDC Abstract Control Model (ACM)' and not info[0].endswith('/' + info[1]):
-                description += ' - ' + info[1]
-        else: # pySerial >= 3.0
-            if info.vid == None or info.pid == None:
-                continue # ignore non-USB based serial ports
+        path = info.device
+        description = info.device
 
-            if vid != None and info.vid != vid:
-                continue # no VID match
-
-            if pid != None and info.pid != pid:
-                continue # no PID match
-
-            path = info.device
-            description = info.device
-
-            if info.description != 'n/a' and info.description != info.name:
-                if info.description == 'RED Brick - CDC Abstract Control Model (ACM)':
-                    description += ' - RED Brick (ACM)'
-                else:
-                    description += ' - ' + info.description
+        if info.description != 'n/a' and info.description != info.name:
+            if info.description == 'RED Brick - CDC Abstract Control Model (ACM)':
+                description += ' - RED Brick (ACM)'
+            else:
+                description += ' - ' + info.description
 
         ports.append(SerialPort(path, description))
 

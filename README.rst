@@ -43,7 +43,7 @@ The following libraries are required:
 
 * Python >= 3.5
 * PyQt >= 5.5 with QtOpenGL
-* pySerial >= 2.6
+* pySerial >= 3.0
 * pytz
 * tzlocal
 
