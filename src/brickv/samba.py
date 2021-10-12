@@ -30,9 +30,9 @@ import serial
 import serial.tools.list_ports
 import collections
 
-SerialPort = collections.namedtuple('SerialPort', 'path description')
+SerialPort = collections.namedtuple('SerialPort', 'path description opaque')
 
-def get_serial_ports(vid=None, pid=None):
+def get_serial_ports(vid=None, pid=None, opaque=None):
     ports = []
 
     for info in serial.tools.list_ports.comports():
@@ -54,7 +54,7 @@ def get_serial_ports(vid=None, pid=None):
             else:
                 description += ' - ' + info.description
 
-        ports.append(SerialPort(path, description))
+        ports.append(SerialPort(path, description, opaque))
 
     return ports
 

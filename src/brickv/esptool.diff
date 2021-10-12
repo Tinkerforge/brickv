@@ -1,0 +1,68 @@
+--- esptool.py_orig	2021-05-27 08:03:02.000000000 +0200
++++ esptool.py	2021-10-12 11:04:12.237158812 +0200
+@@ -30,9 +30,43 @@
+ import shlex
+ import string
+ import struct
+-import sys
++import sys as sys_orig
+ import time
+ import zlib
++from contextlib import contextmanager
++
++print_orig = print
++print_callback_ref = [print_orig]
++firmware_ref = [None]
++
++def print(*args, end='\n'):
++    print_callback = print_callback_ref[0]
++
++    if print_callback != None:
++        print_callback(*args, end=end)
++
++class StdoutWrapper:
++    def flush(self):
++        pass
++
++    def isatty(self):
++        return False
++
++stdout_wrapper = StdoutWrapper()
++
++class SysWrapper:
++    def __getattribute__(self, name):
++        if name == 'stdout':
++            return stdout_wrapper
++
++        return getattr(sys_orig, name)
++
++sys = SysWrapper()
++
++@contextmanager
++def open_firmware():
++    yield io.BytesIO(firmware_ref[0])
++
+ 
+ try:
+     import serial
+@@ -2224,7 +2258,7 @@
+         Returns a BaseFirmwareImage subclass, either ESP8266ROMFirmwareImage (v1) or ESP8266V2FirmwareImage (v2).
+     """
+     chip = chip.lower().replace("-", "")
+-    with open(filename, 'rb') as f:
++    with open_firmware() if filename == '[firmware]' else open(filename, 'rb') as f:
+         if chip == 'esp32':
+             return ESP32FirmwareImage(f)
+         elif chip == "esp32s2":
+@@ -4257,7 +4291,10 @@
+             except ValueError:
+                 raise argparse.ArgumentError(self, 'Address "%s" must be a number' % values[i])
+             try:
+-                argfile = open(values[i + 1], 'rb')
++                if values[i + 1] == '[firmware]':
++                    argfile = io.BytesIO(firmware_ref[0])
++                else:
++                    argfile = open(values[i + 1], 'rb')
+             except IOError as e:
+                 raise argparse.ArgumentError(self, e)
+             except IndexError:

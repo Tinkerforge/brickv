@@ -37,9 +37,9 @@ import html
 from threading import Thread
 from distutils.version import StrictVersion
 
-from PyQt5.QtCore import Qt, QStandardPaths
+from PyQt5.QtCore import Qt, pyqtSignal, QStandardPaths
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
-from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QProgressBar
+from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QProgressDialog, QProgressBar, QPlainTextEdit, QVBoxLayout, QPushButton
 
 from brickv import config
 from brickv.ui_flashing import Ui_Flashing
@@ -57,6 +57,9 @@ from brickv.firmware_fetch import ERROR_DOWNLOAD
 from brickv.utils import get_main_window, get_save_file_name
 from brickv.devicesproxymodel import DevicesProxyModel
 from brickv.urlopen import urlopen
+from brickv.esptool import main as esptool_main, \
+                           print_callback_ref as esptool_print_callback_ref, \
+                           firmware_ref as esptool_firmware_ref
 
 FIRMWARE_URL = 'https://download.tinkerforge.com/firmwares/'
 SELECT = 'Select...'
@@ -139,6 +142,49 @@ class ThreadWithReturnValue(Thread):
 
 class BrickletKindMismatchError(Exception):
     pass
+
+class ESPToolDialog(QDialog):
+    add_text = pyqtSignal(str)
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.setWindowTitle("Updates / Flashing")
+        self.setWindowModality(Qt.WindowModal)
+
+        self.layout = QVBoxLayout(self)
+        self.edit = QPlainTextEdit(self)
+        self.button = QPushButton('Close', self)
+
+        self.layout.addWidget(self.edit)
+        self.layout.addWidget(self.button)
+
+        self.edit.setReadOnly(True)
+        self.edit.setLineWrapMode(QPlainTextEdit.NoWrap)
+
+        self.button.setEnabled(False)
+
+        self.text = ''
+
+        self.add_text.connect(self.cb_add_text)
+        self.button.clicked.connect(self.close)
+
+    def closeEvent(self, event):
+        if not self.button.isEnabled():
+            event.ignore()
+        else:
+            super().closeEvent(event)
+
+    def cb_add_text(self, text):
+        self.show()
+
+        self.text += text
+
+        self.edit.setPlainText(self.text)
+
+        scrollbar = self.edit.verticalScrollBar()
+
+        scrollbar.setValue(scrollbar.maximum())
 
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
@@ -628,15 +674,18 @@ class FlashingWindow(QDialog, Ui_Flashing):
             progress.setValue(0)
             progress.show()
 
-            ports = get_serial_ports(vid=0x03eb, pid=0x6124) # ATMEL AT91 USB bootloader
+            ports = get_serial_ports(vid=0x03eb, pid=0x6124, opaque='atmel') # ATMEL AT91 USB bootloader
+            ports += get_serial_ports(vid=0x10c4, pid=0xea60, opaque='esp32') # CP2102N USB to UART chip used on ESP32 (Ethernet) Bricks
         except:
+            import traceback
+            traceback.print_exc()
             progress.cancel()
             self.combo_serial_port.addItem(NO_BOOTLOADER)
             self.update_ui_state()
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
             for port in ports:
-                self.combo_serial_port.addItem(port.description, port.path)
+                self.combo_serial_port.addItem(port.description, port)
 
             if self.combo_serial_port.count() == 0:
                 self.combo_serial_port.addItem(NO_BOOTLOADER)
@@ -801,10 +850,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.edit_custom_firmware.setText(filename)
 
     def firmware_save_clicked(self):
-        port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
+        port = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
 
+        if port.opaque == 'atmel':
+            self.firmware_save_atmel(port)
+        elif port.opaque == 'esp32':
+            self.firmware_save_esp32(port)
+
+    def firmware_save_atmel(self, port):
         try:
-            samba = SAMBA(port_name)
+            samba = SAMBA(port.path)
         except SAMBAException as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
@@ -988,6 +1043,117 @@ class FlashingWindow(QDialog, Ui_Flashing):
             sys.excepthook(*exc_info)
 
         self.refresh_serial_ports()
+
+    def firmware_save_esp32(self, port):
+        progress = PaddedProgressDialog(self, text_for_width_calculation='Downloading factory calibration for IMU Brick')
+        current_text = self.combo_firmware.currentText()
+
+        # Get firmware
+        name = None
+        version = None
+
+        if current_text == SELECT:
+            return
+        elif current_text == CUSTOM:
+            firmware_file_name = self.edit_custom_firmware.text()
+
+            try:
+                with open(firmware_file_name, 'rb') as f:
+                    firmware = f.read()
+            except IOError:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could not read firmware file')
+                return
+        else:
+            url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex())
+            name = self.firmware_infos[url_part].name
+            version = self.combo_firmware_version.currentData()
+            url = FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version)
+            firmware = self.download_file(url, '{0} Brick firmware {1}.{2}.{3}'.format(name, *version), progress_dialog=progress)
+
+            if firmware == None:
+                return
+
+        progress.cancel()
+
+        dialog = ESPToolDialog(self)
+        dialog.resize(900, 600)
+        dialog.show()
+
+        esptool_print_callback_ref[0] = lambda *args, end='\n': dialog.add_text.emit(' '.join(args) + end)
+
+        def esptool_handler():
+            # Erase flash
+            dialog.add_text.emit('===== Erasing flash =====\n\n')
+
+            try:
+                esptool_main(['--port', port.path,
+                              'erase_flash'])
+            except BaseException as e:
+                dialog.add_text.emit('\nERROR: [{0}] {1}\n\n===== Failure ====='.format(e.__class__.__name__, e))
+                return
+
+            if 'Chip erase completed successfully' not in dialog.text:
+                dialog.add_text.emit('\nERROR: Could not erase flash\n\n===== Failure =====')
+                return
+
+            dialog.add_text.emit('\nSuccessfully erased flash\n')
+
+            # Flash firmware
+            esptool_firmware_ref[0] = firmware
+
+            dialog.add_text.emit('\n===== Flashing firmware =====\n\n')
+
+            try:
+                esptool_main(['--port', port.path,
+                              '--baud', '921600',
+                              '--before', 'default_reset',
+                              '--after', 'hard_reset',
+                              'write_flash',
+                              '--flash_mode', 'dio',
+                              '--flash_freq', '40m',
+                              '--flash_size', '16MB',
+                              '0x1000',
+                              '[firmware]'])
+            except BaseException as e:
+                dialog.add_text.emit('\nERROR: [{0}] {1}\n\n===== Failure ====='.format(e.__class__.__name__, e))
+                return
+
+            if 'Hash of data verified.' not in dialog.text:
+                if current_text == CUSTOM:
+                    text = '\nERROR: Could not flash firmware\n'
+                else:
+                    text = '\nERROR: Could not flash {0} Brick firmware {1}.{2}.{3}\n'.format(name, *version)
+
+                text += '\n===== Failure =====\n'
+
+                dialog.add_text.emit(text)
+                return
+
+            if current_text == CUSTOM:
+                text = '\nSuccessfully flashed firmware\n'
+            else:
+                text = '\nSuccessfully flashed {0} Brick firmware {1}.{2}.{3}\n'.format(name, *version)
+
+            text += '\n===== Success =====\n'
+            text += '\nIMPORTANT: Please wait up to 60 seconds until the blue Status LED is blinking before disconnecting the USB cable'
+
+            dialog.add_text.emit(text)
+
+        esptool_thread = ThreadWithReturnValue(target=esptool_handler)
+        esptool_thread.start()
+
+        while True:
+            response, exception = esptool_thread.join(timeout=1.0/60)
+
+            if not esptool_thread.is_alive():
+                break
+
+            QApplication.processEvents()
+
+        esptool_print_callback_ref[0] = None
+
+        dialog.button.setEnabled(True)
 
     def read_current_uid(self):
         if self.current_bricklet_has_comcu() or self.current_bricklet_is_tng():
