@@ -70,3 +70,8 @@
 
 2021-05-11: 2.1.7 (61e985c)
 - Add support for DC 2.0, Industrial PTC and Silent Stepper Bricklet 2.0
+
+2021-10-12: 2.1.8 (<unknown>)
+- Reuse thread in timer to avoid slow memory leak
+- Fix device list clearing on config loading
+- Fix slow memory leak in data tab
