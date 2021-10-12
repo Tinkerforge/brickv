@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # ESP8266 & ESP32 family ROM Bootloader Utility
 # Copyright (C) 2014-2021 Fredrik Ahlberg, Angus Gratton, Espressif Systems (Shanghai) CO LTD, other contributors as noted.
 # https://github.com/espressif/esptool
