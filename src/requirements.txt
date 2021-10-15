@@ -1,6 +1,7 @@
 PyInstaller >= 3.5
 PyQt5 == 5.11.3
-pyserial >= 3.0
+pyserial >= 3.0; sys_platform == 'linux'
+pyserial >= 3.5; sys_platform != 'linux'
 pytz
 setuptools
 tzlocal
