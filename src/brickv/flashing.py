@@ -1088,6 +1088,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             try:
                 esptool_main(['--port', port.path,
+                              '--chip', 'esp32',
                               'erase_flash'])
             except BaseException as e:
                 dialog.add_text.emit('\nERROR: [{0}] {1}\n\n===== Failure ====='.format(e.__class__.__name__, e))
@@ -1106,6 +1107,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
             try:
                 esptool_main(['--port', port.path,
+                              '--chip', 'esp32',
                               '--baud', '921600',
                               '--before', 'default_reset',
                               '--after', 'hard_reset',
