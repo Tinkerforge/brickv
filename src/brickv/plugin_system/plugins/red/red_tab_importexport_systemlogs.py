@@ -73,6 +73,8 @@ class SystemLog:
         self.edit.setPlainText(content)
 
 class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
+    MAX_LOG_LENGTH = 10 * 1024 * 1024 # bytes
+
     def __init__(self):
         QWidget.__init__(self)
 
@@ -168,6 +170,8 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             self.button_refresh.setEnabled(True)
 
         def cb_open(dummy):
+            truncated_ref = [False]
+
             def cb_read_status(bytes_read, max_length):
                 self.progress_download.setValue(bytes_read)
 
@@ -190,10 +194,20 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
                 if '\x00' in content:
                     content = re.sub(r'(\n?)\x00+(\n?)', '\n[REBOOT]\n', content)
 
+                if truncated_ref[0]:
+                    content = '[TRUNCATED]\n' + content
+
                 log.set_content(content)
 
-            self.progress_download.setRange(0, self.log_file.length)
-            self.log_file.read_async(self.log_file.length, cb_read, cb_read_status)
+            length = self.log_file.length
+
+            if length > self.MAX_LOG_LENGTH:
+                position = self.log_file.set_position(length - self.MAX_LOG_LENGTH, REDFile.ORIGIN_BEGINNING)
+                length -= position
+                truncated_ref[0] = True
+
+            self.progress_download.setRange(0, length)
+            self.log_file.read_async(length, cb_read, cb_read_status)
 
         def cb_open_error(error):
             log.log('Error: {0}'.format(error), bold=True)

@@ -672,6 +672,10 @@ class REDFileBase(REDObject):
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
 
+    ORIGIN_BEGINNING = BrickRED.FILE_ORIGIN_BEGINNING
+    ORIGIN_CURRENT = BrickRED.FILE_ORIGIN_CURRENT
+    ORIGIN_END = BrickRED.FILE_ORIGIN_END
+
     EVENT_READABLE = BrickRED.FILE_EVENT_READABLE
     EVENT_WRITABLE = BrickRED.FILE_EVENT_WRITABLE
 
@@ -1008,6 +1012,21 @@ class REDFileBase(REDObject):
 
         if self._write_async_data != None:
             self._write_async_data.abort = True
+
+    def set_position(self, offset, origin):
+        if self.object_id is None:
+            raise RuntimeError('Cannot set position of unattached file object')
+
+        try:
+            error_code, position = self._session._brick.set_file_position(self.object_id, offset, origin)
+        except Error:
+            self._session.increase_error_count()
+            raise
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set position of file object {0}'.format(self.object_id), error_code)
+
+        return position
 
     def set_events(self, events):
         if self.object_id is None:
