@@ -49,7 +49,7 @@ def get_serial_ports(vid=None, pid=None, opaque=None):
 
         path = info.device
         description = info.device
-        serial_number = info.serial_number.lower()
+        serial_number = info.serial_number.lower() # ignore case, because Windows reports the serial number as all uppercase
 
         if info.vid == 0x10c4 and info.pid == 0xea60 and serial_number.startswith('tinkerforge_'):
             parts = serial_number.split('_')
