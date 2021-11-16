@@ -30,6 +30,8 @@ import serial
 import serial.tools.list_ports
 import collections
 
+from brickv.bindings.ip_connection import base58encode
+
 SerialPort = collections.namedtuple('SerialPort', 'path description opaque')
 
 def get_serial_ports(vid=None, pid=None, opaque=None):
@@ -47,8 +49,15 @@ def get_serial_ports(vid=None, pid=None, opaque=None):
 
         path = info.device
         description = info.device
+        serial_number = info.serial_number.lower()
 
-        if info.description != 'n/a' and info.description != info.name:
+        if info.vid == 0x10c4 and info.pid == 0xea60 and serial_number.startswith('tinkerforge_'):
+            parts = serial_number.split('_')
+            product_name = ' '.join([x.capitalize() for x in parts[1:-2]]).replace('Esp32', 'ESP32')
+            description += ' - ' + product_name
+            uid = base58encode(int(parts[-1]))
+            description += ' [' + uid + ']'
+        elif info.description != 'n/a' and info.description != info.name:
             if info.description == 'RED Brick - CDC Abstract Control Model (ACM)':
                 description += ' - RED Brick (ACM)'
             else:
