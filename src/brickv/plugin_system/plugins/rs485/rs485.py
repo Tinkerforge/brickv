@@ -198,9 +198,10 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.rs485.register_callback(self.rs485.CALLBACK_MODBUS_MASTER_READ_INPUT_REGISTERS_RESPONSE,
                                      self.qtcb_modbus_master_read_input_registers_response.emit)
 
-        self.rs485_input_combobox.addItem("")
-        self.rs485_input_combobox.lineEdit().returnPressed.connect(self.input_changed)
-        self.rs485_send_button.clicked.connect(self.input_changed)
+        self.combo_input.addItem("")
+        self.combo_input.lineEdit().setMaxLength(65533)
+        self.combo_input.lineEdit().returnPressed.connect(self.do_write)
+        self.button_write.clicked.connect(self.do_write)
 
         self.rs485_input_line_ending_lineedit.setValidator(HexValidator())
         self.rs485_input_line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
@@ -220,7 +221,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
-        self.layout().insertWidget(2, self.hextext, stretch=2)
+        self.layout().insertWidget(1, self.hextext, stretch=1)
 
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
@@ -247,7 +248,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                 self.text,
                                 self.hextext,
                                 self.line_3,
-                                self.rs485_send_button,
+                                self.button_write,
                                 self.label_error_overrun_name,
                                 self.label_error_overrun,
                                 self.label_error_parity_name,
@@ -255,7 +256,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
                                 self.label_error_stream_name,
                                 self.label_error_stream,
                                 self.rs485_input_label,
-                                self.rs485_input_combobox,
+                                self.combo_input,
                                 self.rs485_input_line_ending_combobox,
                                 self.rs485_input_line_ending_lineedit]
 
@@ -837,37 +838,40 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         return line_ending
 
-    def input_changed(self):
+    def do_write(self):
         if self.configured_mode != self.rs485.MODE_RS485:
             self.popup_fail(MSG_ERR_NOT_RS485)
             return
 
         pos = 0
         written = 0
-        text = self.rs485_input_combobox.currentText()
+        text = self.combo_input.currentText()
+        attempts_without_progress = 0
 
         if self.text_type_combobox.currentIndex() == 0:
             bytes_ = text.encode('utf-8') + self.get_line_ending()
         else:
             bytes_ = bytes.fromhex(text)
 
-        attempts_without_progress = 0
         while pos < len(bytes_):
             written = self.rs485.write(bytes_[pos:])
             pos = pos + written
+
             if written == 0:
                 attempts_without_progress += 1
             else:
                 attempts_without_progress = 0
 
             if attempts_without_progress == 100:
-                self.popup_fail("Could not write line. Made no progress after {} attempts.".format(attempts_without_progress))
+                self.popup_fail("Could not write. Made no progress after {} attempts.".format(attempts_without_progress))
                 return
 
-        entries = [self.rs485_input_combobox.itemText(i) for i in range(self.rs485_input_combobox.count())]
+        entries = [self.combo_input.itemText(i) for i in range(self.combo_input.count())]
+
         if text not in entries:
-            self.rs485_input_combobox.addItem(text)
-        self.rs485_input_combobox.setCurrentIndex(self.rs485_input_combobox.count() - 1)
+            self.combo_input.addItem(text)
+
+        self.combo_input.setCurrentIndex(self.combo_input.count() - 1)
 
     def get_rs485_configuration_async(self, conf):
         self.baudrate_spinbox.setValue(conf.baudrate)
@@ -894,18 +898,18 @@ class RS485(COMCUPluginBase, Ui_RS485):
         if self.text_type_combobox.currentIndex() == 0:
             self.hextext.hide()
             self.text.show()
-            self.rs485_input_combobox.setValidator(None)
+            self.combo_input.setValidator(None)
             self.rs485_input_line_ending_lineedit.show()
             self.rs485_input_line_ending_combobox.show()
         else:
             self.text.hide()
             self.hextext.show()
-            self.rs485_input_combobox.setValidator(HexValidator())
+            self.combo_input.setValidator(HexValidator())
             self.rs485_input_line_ending_lineedit.hide()
             self.rs485_input_line_ending_combobox.hide()
 
-        self.rs485_input_combobox.clearEditText()
-        self.rs485_input_combobox.clear()
+        self.combo_input.clearEditText()
+        self.combo_input.clear()
 
     def configuration_changed(self):
         self.apply_button.setEnabled(True)

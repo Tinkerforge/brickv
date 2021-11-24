@@ -23,14 +23,15 @@ Boston, MA 02111-1307, USA.
 
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QMessageBox
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_rs232_v2 import BrickletRS232V2
 from brickv.plugin_system.plugins.rs232_v2.ui_rs232_v2 import Ui_RS232_V2
 from brickv.async_call import async_call
 from brickv.hex_validator import HexValidator
-
 from brickv.qhexedit import QHexeditWidget
+from brickv.utils import get_main_window
 
 CBOX_IDX_FC_HW = 2
 BAUDRATE_MAX_RS232 = 250000
@@ -59,9 +60,9 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         self.rs232.register_callback(self.rs232.CALLBACK_ERROR_COUNT,
                                      self.qtcb_error_count.emit)
 
-        self.input_combobox.addItem("")
-        self.input_combobox.lineEdit().setMaxLength(65533)
-        self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+        self.combo_input.addItem("")
+        self.combo_input.lineEdit().returnPressed.connect(self.do_write)
+        self.button_write.clicked.connect(self.do_write)
 
         self.line_ending_lineedit.setValidator(HexValidator())
         self.line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
@@ -76,7 +77,7 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
-        self.layout().insertWidget(2, self.hextext)
+        self.layout().insertWidget(1, self.hextext, stretch=1)
 
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
@@ -146,6 +147,9 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         selected_line_ending = self.line_ending_combobox.currentText()
         self.line_ending_lineedit.setEnabled(selected_line_ending == 'Hex:')
 
+    def popup_fail(self, msg):
+        QMessageBox.critical(get_main_window(), self.device_info.name, msg)
+
     def get_line_ending(self):
         selected_line_ending = self.line_ending_combobox.currentText()
 
@@ -169,16 +173,37 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
 
         return line_ending
 
-    def input_changed(self):
+    def do_write(self):
         pos = 0
         written = 0
-        text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
+        text = self.combo_input.currentText()
+        attempts_without_progress = 0
+        self.popup_fail("Could not write. Made no progress after {} attempts.".format(attempts_without_progress))
 
-        while pos < len(text):
-            written = self.rs232.write(text[pos:])
+        if self.text_type_combobox.currentIndex() == 0:
+            bytes_ = text.encode('utf-8') + self.get_line_ending()
+        else:
+            bytes_ = bytes.fromhex(text)
+
+        while pos < len(bytes_):
+            written = self.rs232.write(bytes_[pos:])
             pos = pos + written
 
-        self.input_combobox.setCurrentIndex(0)
+            if written == 0:
+                attempts_without_progress += 1
+            else:
+                attempts_without_progress = 0
+
+            if attempts_without_progress == 100:
+                self.popup_fail("Could not write. Made no progress after {} attempts.".format(attempts_without_progress))
+                return
+
+        entries = [self.combo_input.itemText(i) for i in range(self.combo_input.count())]
+
+        if text not in entries:
+            self.combo_input.addItem(text)
+
+        self.combo_input.setCurrentIndex(self.combo_input.count() - 1)
 
     def get_configuration_async(self, conf):
         self.stopbits_spinbox.setValue(conf.stopbits)
@@ -192,9 +217,18 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         if self.text_type_combobox.currentIndex() == 0:
             self.hextext.hide()
             self.text.show()
+            self.combo_input.setValidator(None)
+            self.line_ending_lineedit.show()
+            self.line_ending_combobox.show()
         else:
             self.text.hide()
             self.hextext.show()
+            self.combo_input.setValidator(HexValidator())
+            self.line_ending_lineedit.hide()
+            self.line_ending_combobox.hide()
+
+        self.combo_input.clearEditText()
+        self.combo_input.clear()
 
     def configuration_changed(self):
         if self.baudrate_spinbox.value() > BAUDRATE_MAX_RS232:

@@ -15,14 +15,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout_3"/>
-   </item>
-   <item>
     <widget class="QPlainTextEdit" name="text">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>2</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
@@ -55,7 +52,7 @@
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>2</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="rootIsDecorated">
@@ -103,7 +100,7 @@
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>2</verstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="rootIsDecorated">
@@ -405,7 +402,7 @@
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QComboBox" name="rs485_input_combobox">
+          <widget class="QComboBox" name="combo_input">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>1</horstretch>
@@ -685,9 +682,9 @@
         </widget>
        </item>
        <item row="9" column="1">
-        <widget class="QPushButton" name="rs485_send_button">
+        <widget class="QPushButton" name="button_write">
          <property name="text">
-          <string>Write Line</string>
+          <string>Write</string>
          </property>
          <property name="default">
           <bool>false</bool>
@@ -956,7 +953,7 @@
   <tabstop>apply_button</tabstop>
   <tabstop>button_clear_text</tabstop>
   <tabstop>text_type_combobox</tabstop>
-  <tabstop>rs485_input_combobox</tabstop>
+  <tabstop>combo_input</tabstop>
   <tabstop>rs485_input_line_ending_combobox</tabstop>
   <tabstop>rs485_input_line_ending_lineedit</tabstop>
   <tabstop>modbus_slave_behaviour_combobox</tabstop>
@@ -967,7 +964,7 @@
   <tabstop>modbus_master_param2_hex_spinbox</tabstop>
   <tabstop>modbus_master_param2_bool_combobox</tabstop>
   <tabstop>modbus_master_send_button</tabstop>
-  <tabstop>rs485_send_button</tabstop>
+  <tabstop>button_write</tabstop>
  </tabstops>
  <resources/>
  <connections/>
