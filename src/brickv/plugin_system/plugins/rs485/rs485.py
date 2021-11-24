@@ -220,7 +220,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
 
         self.hextext = QHexeditWidget(self.text.font())
         self.hextext.hide()
-        self.layout().insertWidget(2, self.hextext)
+        self.layout().insertWidget(2, self.hextext, stretch=2)
 
         self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
         self.button_clear_text.clicked.connect(self.hextext.clear)
