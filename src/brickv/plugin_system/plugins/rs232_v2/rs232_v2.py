@@ -178,7 +178,6 @@ class RS232V2(COMCUPluginBase, Ui_RS232_V2):
         written = 0
         text = self.combo_input.currentText()
         attempts_without_progress = 0
-        self.popup_fail("Could not write. Made no progress after {} attempts.".format(attempts_without_progress))
 
         if self.text_type_combobox.currentIndex() == 0:
             bytes_ = text.encode('utf-8') + self.get_line_ending()
