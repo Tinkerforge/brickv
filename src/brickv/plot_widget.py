@@ -3,6 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014, 2016, 2018-2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 plot_widget.py: Graph for simple value over time representation
 
@@ -391,8 +392,8 @@ class YScale(Scale):
         for value in tick_text_values:
             tick_text_point = transform.map(QPointF(tick_text_x, value))
 
-            tick_text_x = tick_text_point.x()
-            tick_text_y = tick_text_point.y() - self.tick_text_height_half
+            tick_text_x = int(tick_text_point.x())
+            tick_text_y = int(tick_text_point.y() - self.tick_text_height_half)
 
             if DEBUG:
                 painter.fillRect(tick_text_x, tick_text_y,
@@ -1227,7 +1228,7 @@ class PlotWidget(QWidget):
         if external_timer == None:
             self.timer = QTimer(self)
             self.timer.timeout.connect(self.add_new_data)
-            self.timer.start(self.update_interval * 1000)
+            self.timer.start(int(self.update_interval * 1000))
         else:
             # assuming that the external timer runs with the configured interval
             external_timer.timeout.connect(self.add_new_data)

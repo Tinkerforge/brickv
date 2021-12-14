@@ -3,6 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 async_call.py: Asynchronous call for Brick/Bricklet functions
 
@@ -60,7 +61,7 @@ def async_call(function, arguments, result_callback, error_callback,
                    debug_exception, retry_on_exception, session_id)
 
     if delay != None:
-        QTimer.singleShot(delay * 1000, functools.partial(async_call_queue.put, ac))
+        QTimer.singleShot(int(delay * 1000), functools.partial(async_call_queue.put, ac))
     else:
         async_call_queue.put(ac)
 

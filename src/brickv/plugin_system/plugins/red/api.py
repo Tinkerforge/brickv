@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014-2015, 2020 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 api.py: RED Brick API wrapper
 
@@ -246,7 +247,7 @@ class REDSession(QObject):
 
         self._session_id = session_id
 
-        self._keep_alive_timer.start(REDSession.KEEP_ALIVE_INTERVAL * 1000)
+        self._keep_alive_timer.start(int(REDSession.KEEP_ALIVE_INTERVAL * 1000))
 
         return self
 
