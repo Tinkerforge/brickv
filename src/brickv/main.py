@@ -170,7 +170,7 @@ class ExceptionReporter:
         ignored = []
         while True:
             time_occured, exctype, value, tb, thread = self.error_queue.get()
-            error = "".join(traceback.format_exception(etype=exctype, value=value, tb=tb))
+            error = "".join(traceback.format_exception(exctype, value=value, tb=tb))
 
             hash_ = hash(error)
             if hash_ in ignored:
@@ -203,7 +203,7 @@ class ExceptionReporter:
 
             prefix = label_suffix + '!!!' + prefix
 
-            traceback.print_exception(etype=exctype, value=value, tb=tb)
+            traceback.print_exception(exctype, value=value, tb=tb)
             print("")
 
             report_message = prefix + '\n' + error + '\nActive Threads:\n\n' + '\n\n'.join(self.get_python_thread_stack_traces())
