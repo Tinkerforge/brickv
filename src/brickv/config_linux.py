@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012, 2014, 2017, 2019 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 config_linux.py: Config Handling for Linux
 
@@ -37,7 +38,7 @@ else:
 CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 
 def get_config_value(section, option, default):
-    scp = configparser.SafeConfigParser()
+    scp = configparser.ConfigParser()
     scp.read(CONFIG_FILENAME)
 
     try:
@@ -46,7 +47,7 @@ def get_config_value(section, option, default):
         return default
 
 def set_config_value(section, option, value):
-    scp = configparser.SafeConfigParser()
+    scp = configparser.ConfigParser()
     scp.read(CONFIG_FILENAME)
 
     if not scp.has_section(section):
