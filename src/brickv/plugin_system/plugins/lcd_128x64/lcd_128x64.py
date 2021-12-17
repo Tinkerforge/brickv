@@ -2,7 +2,7 @@
 """
 LCD128x64 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020-2021 Erik Fleckstein <erik@tinkerforge.com>
 
 lcd_128x64.py: LCD 128x64 Plugin Implementation
 

@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2014-2015, 2017 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 knob_widget.py: Round slider
 

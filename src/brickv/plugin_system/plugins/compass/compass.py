@@ -2,6 +2,7 @@
 """
 Compass Plugin
 Copyright (C) 2019 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 compass.py: Compass Plugin Implementation
 

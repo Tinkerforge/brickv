@@ -2,6 +2,7 @@
 """
 LED Strip 2.0 Plugin
 Copyright (C) 2018 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 led_strip_v2.py: LED Strip Plugin Implementation
 

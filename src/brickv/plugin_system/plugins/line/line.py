@@ -3,6 +3,7 @@
 Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2021 Erik Fleckstein <erik@tinkerforge.com>
 
 line.py: Line Plugin Implementation
 
