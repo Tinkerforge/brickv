@@ -190,7 +190,7 @@ class LEDStripV2(COMCUPluginBase, Ui_LEDStripV2):
 
         self.channel_mapping_combobox.blockSignals(False)
 
-        self.box_num_led.setMaximum(6144 / num_channels)
+        self.box_num_led.setMaximum(int(6144 / num_channels))
 
         self.get_channel_mapping_async(channel_mapping)
 

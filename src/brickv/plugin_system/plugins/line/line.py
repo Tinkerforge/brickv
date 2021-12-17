@@ -48,7 +48,7 @@ class ReflectivityFrame(QFrame):
         g.setColorAt(0, Qt.white)
         g.setColorAt(1, Qt.black)
 
-        y = self.height() - self.reflectivity * self.height() / 4095.0
+        y = int(self.height() - self.reflectivity * self.height() / 4095.0)
 
         qp.fillRect(0, 0, self.width(), self.height(), g)
         qp.setPen(Qt.red)

@@ -66,11 +66,11 @@ class TouchScribbleWidget(ScribbleWidget):
     def paint_overlay(self, event, painter):
         if self.touch_age < self.touch_age_max:
             painter.setPen(Qt.red)
-            painter.drawEllipse(self.touch_x * self.scaling_factor - self.circle_width/2.0, self.touch_y * self.scaling_factor - self.circle_width/2.0, self.circle_width, self.circle_width)
+            painter.drawEllipse(int(self.touch_x * self.scaling_factor - self.circle_width/2.0), int(self.touch_y * self.scaling_factor - self.circle_width/2.0), self.circle_width, self.circle_width)
             if self.touch_pressure > 100:
-                painter.drawEllipse(self.touch_x * self.scaling_factor - self.circle_width/3.0, self.touch_y * self.scaling_factor - self.circle_width/3.0, self.circle_width/1.5, self.circle_width/1.5)
+                painter.drawEllipse(int(self.touch_x * self.scaling_factor - self.circle_width/3.0), int(self.touch_y * self.scaling_factor - self.circle_width/3.0), int(self.circle_width/1.5), int(self.circle_width/1.5))
                 if self.touch_pressure > 175:
-                    painter.drawEllipse(self.touch_x * self.scaling_factor - self.circle_width/6.0, self.touch_y * self.scaling_factor - self.circle_width/6.0, self.circle_width/3.0, self.circle_width/3.0)
+                    painter.drawEllipse(int(self.touch_x * self.scaling_factor - self.circle_width/6.0), int(self.touch_y * self.scaling_factor - self.circle_width/6.0), int(self.circle_width/3.0), int(self.circle_width/3.0))
 
         if self.gesture_age < self.gesture_age_max:
             pen_width = 1
@@ -84,13 +84,13 @@ class TouchScribbleWidget(ScribbleWidget):
 
             scaling_factor = 2
             if self.gesture == BrickletLCD128x64.GESTURE_LEFT_TO_RIGHT:
-                painter.drawChord(20-75/2.0*scaling_factor, 20, 75 * scaling_factor, 10 * scaling_factor, 90*16, -180*16)
+                painter.drawChord(int(20-75/2.0*scaling_factor), 20, 75 * scaling_factor, 10 * scaling_factor, 90*16, -180*16)
             elif self.gesture == BrickletLCD128x64.GESTURE_RIGHT_TO_LEFT:
                 painter.drawChord(20, 20, 75 * scaling_factor, 10 * scaling_factor, 90*16, 180*16)
             elif self.gesture == BrickletLCD128x64.GESTURE_BOTTOM_TO_TOP:
                 painter.drawChord(20, 20, 10 * scaling_factor, 75 * scaling_factor, 0, 180*16)
             elif self.gesture == BrickletLCD128x64.GESTURE_TOP_TO_BOTTOM:
-                painter.drawChord(20, 20-75/2.0*scaling_factor, 10 * scaling_factor, 75 * scaling_factor, 0, -180*16)
+                painter.drawChord(20, int(20-75/2.0*scaling_factor), 10 * scaling_factor, 75 * scaling_factor, 0, -180*16)
 
 
 class LCD128x64(COMCUPluginBase, Ui_LCD128x64):

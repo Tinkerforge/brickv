@@ -828,15 +828,15 @@ class QHexeditWidget(QAbstractScrollArea):
 
         if self.show_address and self.show_line1:
             line1_x = self.line1()
-            painter.drawLine(line1_x, 0, line1_x, widget_height)
+            painter.drawLine(int(line1_x), 0, int(line1_x), widget_height)
 
         if self.show_hex and self.show_line2:
             line2_x = self.line2()
-            painter.drawLine(line2_x, 0, line2_x, widget_height)
+            painter.drawLine(int(line2_x), 0, int(line2_x), widget_height)
 
         if self.show_ascii and self.show_line3:
             line3_x = self.line3()
-            painter.drawLine(line3_x, 0, line3_x, widget_height)
+            painter.drawLine(int(line3_x), 0, int(line3_x), widget_height)
 
         return
 

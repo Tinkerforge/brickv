@@ -148,7 +148,7 @@ class KnobWidget(QWidget):
             painter.save()
             painter.rotate(angle)
             painter.setPen(QPen(self.mark_color, 2))
-            painter.drawLine(0, -knob_radius * 0.4, 0, -knob_radius * 0.8)
+            painter.drawLine(0, int(-knob_radius * 0.4), 0, int(-knob_radius * 0.8))
             painter.restore()
         elif self.knob_style == KnobWidget.STYLE_NEEDLE:
             painter.setPen(self.border_color)
@@ -164,7 +164,7 @@ class KnobWidget(QWidget):
                                 -knob_radius - self.knob_to_scale,
                                 knob_radius * 2 + self.knob_to_scale * 2,
                                 knob_radius * 2 + self.knob_to_scale * 2,
-                                (90 + self.total_angle / 2) * 16, -self.total_angle * 16)
+                                int((90 + self.total_angle / 2) * 16), -self.total_angle * 16)
 
             # draw scale ticks
             def value_to_angle(value):
@@ -177,15 +177,15 @@ class KnobWidget(QWidget):
 
                 painter.save()
                 painter.rotate(value_to_angle(value))
-                painter.drawLine(0, -knob_radius - self.knob_to_scale,
-                                 0, -knob_radius - self.knob_to_scale - self.tick_size_large)
+                painter.drawLine(0, int(-knob_radius - self.knob_to_scale),
+                                 0, int(-knob_radius - self.knob_to_scale - self.tick_size_large))
 
                 if self.scale_text_visible:
-                    p = painter.worldTransform().map(QPoint(0, -knob_radius - \
+                    p = painter.worldTransform().map(QPoint(0, int(-knob_radius - \
                                                                self.knob_to_scale - \
                                                                self.tick_size_large - \
                                                                self.tick_to_text - \
-                                                               self.text_radius))
+                                                               self.text_radius)))
 
                 painter.restore()
 
@@ -198,7 +198,7 @@ class KnobWidget(QWidget):
                                             self.text_radius, self.text_radius)
                         painter.restore()
 
-                    painter.drawText(p.x() - x - 30, p.y() - y - 30, 60, 60,
+                    painter.drawText(int(p.x() - x - 30), int(p.y() - y - 30), 60, 60,
                                      Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter,
                                      str(value))
 
@@ -210,15 +210,15 @@ class KnobWidget(QWidget):
 
                     painter.save()
                     painter.rotate(value_to_angle(sub_value))
-                    painter.drawLine(0, -knob_radius - self.knob_to_scale,
-                                     0, -knob_radius - self.knob_to_scale - self.tick_size_small)
+                    painter.drawLine(0,int(-knob_radius - self.knob_to_scale),
+                                     0,int(-knob_radius - self.knob_to_scale - self.tick_size_small))
                     painter.restore()
 
                 value += self.scale_step_size
 
         if self.title_text != None:
-            painter.drawText(-knob_radius, knob_radius - 30,
-                             knob_radius * 2, 60,
+            painter.drawText(int(-knob_radius), int(knob_radius - 30),
+                             int(knob_radius * 2), 60,
                              Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter,
                              self.title_text)
 
@@ -247,7 +247,7 @@ class KnobWidget(QWidget):
         else:
             additional_radius = self.knob_scaleless_to_border
 
-        diameter = (self.knob_radius + additional_radius) * 2
+        diameter = int((self.knob_radius + additional_radius) * 2)
 
         self.setMinimumSize(diameter, diameter)
 
@@ -287,7 +287,7 @@ class KnobWidget(QWidget):
         self.minimum_value = minimum_value
         self.maximum_value = maximum_value
 
-        # Don't allow min=max value, otherwise we have a value_range of 0 which 
+        # Don't allow min=max value, otherwise we have a value_range of 0 which
         # results in division by zero in some parts of the code
         if maximum_value == minimum_value:
             self.maximum_value = maximum_value + 1
