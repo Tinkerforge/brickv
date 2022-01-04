@@ -636,5 +636,5 @@
 - Fix serial port listing on Apple M1 Macs
 - Truncate RED Brick log file view to 10MB
 - Improve hex input mode for RS232 Bricklet 2.0
-- Improve compatibilty with Python 3.10
+- Improve compatibility with Python 3.10
 - Fix OpenGL problems on macOS 12
