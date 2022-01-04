@@ -1,5 +1,7 @@
-PyInstaller >= 3.5
-PyQt5 == 5.11.3
+PyInstaller == 4.7; sys_platform == 'darwin'
+PyInstaller >= 3.5; sys_platform != 'darwin'
+PyQt5 == 5.15.6; sys_platform == 'darwin'
+PyQt5 == 5.11.3; sys_platform != 'darwin'
 pyserial >= 3.0; sys_platform == 'linux'
 pyserial >= 3.5; sys_platform != 'linux'
 pytz

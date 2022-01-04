@@ -32,45 +32,13 @@ from PyQt5.QtGui import QOpenGLVersionProfile, QSurfaceFormat, \
                         QOpenGLShaderProgram, QOpenGLShader, \
                         QOpenGLBuffer, QVector3D, QOpenGLTexture, \
                         QImage, QMatrix4x4
-
 from brickv.utils import get_resources_path, get_main_window
 
-if sys.platform.startswith('linux'):
-    libGL_path = ctypes.util.find_library('GL')
-    dll_type = ctypes.CDLL
-elif sys.platform.startswith('darwin'):
-    libGL_path = ctypes.util.find_library('OpenGL')
-    dll_type = ctypes.CDLL
-else:
-    libGL_path = ctypes.util.find_library('opengl32')
-    dll_type = ctypes.WinDLL
-
-has_libGL = libGL_path != None
-
-if has_libGL:
-    libGL = dll_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
-
-    GLclampf = ctypes.c_float
-    GLenum = ctypes.c_uint
-    GLsizei = ctypes.c_int
-    GLvoid_ptr = ctypes.c_void_p
-    GLbitfield = ctypes.c_uint
-
-    glClearColor = libGL.glClearColor
-    glClearColor.restype = None
-    glClearColor.argtypes = [GLclampf, GLclampf, GLclampf, GLclampf]
-
-    glEnable = libGL.glEnable
-    glEnable.restype = None
-    glEnable.argtypes = [GLenum]
-
-    glDrawElements = libGL.glDrawElements
-    glDrawElements.restype = None
-    glDrawElements.argtypes = [GLenum, GLsizei, GLenum, GLvoid_ptr]
-
-    glClear = libGL.glClear
-    glClear.restype = None
-    glClear.argtypes = [GLbitfield]
+GLclampf = ctypes.c_float
+GLenum = ctypes.c_uint
+GLsizei = ctypes.c_int
+GLvoid_ptr = ctypes.c_void_p
+GLbitfield = ctypes.c_uint
 
 GL_DEPTH_TEST = 0x0B71
 GL_CULL_FACE = 0x0B44
@@ -86,6 +54,12 @@ class RenderWidget(QOpenGLWidget):
     def __init__(self, obj_path, parent=None):
         super().__init__(parent)
 
+        self.has_gl_functions = False
+        self.glClearColor = None
+        self.glEnable = None
+        self.glDrawElements = None
+        self.glClear = None
+
         surface_format = QSurfaceFormat()
         surface_format.setSamples(16)
         QOpenGLWidget.setFormat(self, surface_format)
@@ -96,9 +70,6 @@ class RenderWidget(QOpenGLWidget):
 
         self.obj_path = obj_path
         self.initialized = False
-
-        if not has_libGL:
-            get_main_window().show_status('OpenGL library not found. Disabling 3D view.')
 
     def __del__(self):
         self.cleanup()
@@ -176,14 +147,67 @@ class RenderWidget(QOpenGLWidget):
         return vertex_buf, index_buf
 
     def initializeGL(self):
-        if not has_libGL:
-            return
-
         profile = QOpenGLVersionProfile()
         profile.setVersion(4, 1)
         profile.setProfile(QSurfaceFormat.CoreProfile)
 
-        glClearColor(0.85, 0.85, 0.85, 1.0)
+        context = self.context()
+
+        if hasattr(context, 'getProcAddress'):
+            glClearColorPtr = context.getProcAddress(b'glClearColor')
+            glClearColorFunc = ctypes.CFUNCTYPE(None, GLclampf, GLclampf, GLclampf, GLclampf)
+            self.glClearColor = glClearColorFunc(int(glClearColorPtr))
+
+            glEnablePtr = context.getProcAddress(b'glEnable')
+            glEnableFunc = ctypes.CFUNCTYPE(None, GLenum)
+            self.glEnable = glEnableFunc(int(glEnablePtr))
+
+            glDrawElementsPtr = context.getProcAddress(b'glDrawElements')
+            glDrawElementsFunc = ctypes.CFUNCTYPE(None, GLenum, GLsizei, GLenum, GLvoid_ptr)
+            self.glDrawElements = glDrawElementsFunc(int(glDrawElementsPtr))
+
+            glClearPtr = context.getProcAddress(b'glClear')
+            glClearFunc = ctypes.CFUNCTYPE(None, GLbitfield)
+            self.glClear = glEnableFunc(int(glClearPtr))
+
+            self.has_gl_functions = True
+        else:
+            if sys.platform.startswith('linux'):
+                libGL_path = ctypes.util.find_library('GL')
+                libGL_type = ctypes.CDLL
+            elif sys.platform.startswith('darwin'):
+                libGL_path = ctypes.util.find_library('OpenGL')
+                libGL_type = ctypes.CDLL
+            else:
+                libGL_path = ctypes.util.find_library('opengl32')
+                libGL_type = ctypes.WinDLL
+
+            if libGL_path != None:
+                libGL = libGL_type(libGL_path, mode=ctypes.RTLD_GLOBAL)
+
+                self.glClearColor = libGL.glClearColor
+                self.glClearColor.restype = None
+                self.glClearColor.argtypes = [GLclampf, GLclampf, GLclampf, GLclampf]
+
+                self.glEnable = libGL.glEnable
+                self.glEnable.restype = None
+                self.glEnable.argtypes = [GLenum]
+
+                self.glDrawElements = libGL.glDrawElements
+                self.glDrawElements.restype = None
+                self.glDrawElements.argtypes = [GLenum, GLsizei, GLenum, GLvoid_ptr]
+
+                self.glClear = libGL.glClear
+                self.glClear.restype = None
+                self.glClear.argtypes = [GLbitfield]
+
+                self.has_gl_functions = True
+
+        if not self.has_gl_functions:
+            get_main_window().show_status('OpenGL functions not found. Disabling 3D view.')
+            return
+
+        self.glClearColor(0.85, 0.85, 0.85, 1.0)
         self.program = self.init_shaders()
 
         vertices, normals, tex_coords, faces, material = read_obj(self.obj_path)
@@ -192,8 +216,8 @@ class RenderWidget(QOpenGLWidget):
         self.model_offset = -(self.bounding_box[0] + 0.5 * (self.bounding_box[1] - self.bounding_box[0])) # Offset to move the model's center into 0,0,0
 
         self.texture = load_texture(material)
-        glEnable(GL_DEPTH_TEST)
-        glEnable(GL_CULL_FACE)
+        self.glEnable(GL_DEPTH_TEST)
+        self.glEnable(GL_CULL_FACE)
 
         self.vertex_buf, self.index_buf = self.init_buffers(vertices, normals, tex_coords, faces)
         self.initialized = True
@@ -221,7 +245,7 @@ class RenderWidget(QOpenGLWidget):
         self.program.enableAttributeArray(tex_coord_loc)
         self.program.setAttributeBuffer(tex_coord_loc, GL_FLOAT, offset * float_size, 2, self.vertex_buf_stride * float_size)
 
-        glDrawElements(GL_TRIANGLES, self.index_count, GL_UNSIGNED_INT, None)
+        self.glDrawElements(GL_TRIANGLES, self.index_count, GL_UNSIGNED_INT, None)
         self.vertex_buf.release()
         self.index_buf.release()
 
@@ -239,10 +263,10 @@ class RenderWidget(QOpenGLWidget):
         return result
 
     def paintGL(self):
-        if not has_libGL:
+        if not self.has_gl_functions:
             return
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        self.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.program.bind()
         self.texture.bind()
 
@@ -261,7 +285,7 @@ class RenderWidget(QOpenGLWidget):
         self.program.release()
 
     def resizeGL(self, w, h):
-        if not has_libGL:
+        if not self.has_gl_functions:
             return
 
         aspect = float(w) / float(h if h != 0 else 1)
