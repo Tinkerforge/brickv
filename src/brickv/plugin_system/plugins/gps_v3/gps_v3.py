@@ -76,7 +76,6 @@ class GPSV3(COMCUPluginBase, Ui_GPSV3):
         self.warm_start.clicked.connect(lambda: self.restart_clicked(1))
         self.cold_start.clicked.connect(lambda: self.restart_clicked(2))
         self.factory_reset.clicked.connect(lambda: self.restart_clicked(3))
-        self.antenna_external_radio.toggled.connect(self.antenna_changed)
 
         self.had_fix = False
 
@@ -247,9 +246,6 @@ class GPSV3(COMCUPluginBase, Ui_GPSV3):
     def format_changed(self, index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew)
 
-    def antenna_changed(self, antenna):
-        self.gps.set_antenna_config(antenna)
-
     def restart_clicked(self, restart_type):
         if restart_type > 0:
             self.had_fix = False # don't show cached data
@@ -313,17 +309,8 @@ class GPSV3(COMCUPluginBase, Ui_GPSV3):
         elif config == BrickletGPSV3.FIX_LED_CONFIG_SHOW_PPS:
             self.fix_led_show_pps_action.trigger()
 
-    def get_antenna_config_async(self, config):
-        self.antenna_internal_radio.blockSignals(True)
-        self.antenna_external_radio.blockSignals(True)
-        self.antenna_internal_radio.setChecked(config == 0)
-        self.antenna_external_radio.setChecked(config != 0)
-        self.antenna_internal_radio.blockSignals(False)
-        self.antenna_external_radio.blockSignals(False)
-
     def start(self):
         async_call(self.gps.get_fix_led_config, None, self.get_fix_led_config_async, self.increase_error_count)
-        async_call(self.gps.get_antenna_config, None, self.get_antenna_config_async, self.increase_error_count)
 
         self.cbe_universal.set_period(100)
         self.cbe_universal_gps.set_period(100)

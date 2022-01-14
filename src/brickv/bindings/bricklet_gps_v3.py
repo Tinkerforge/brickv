@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-13.      #
+# This file was automatically generated on 2022-01-14.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -68,8 +68,6 @@ class BrickletGPSV3(Device):
     FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 20
     FUNCTION_SET_SBAS_CONFIG = 27
     FUNCTION_GET_SBAS_CONFIG = 28
-    FUNCTION_SET_ANTENNA_CONFIG = 29
-    FUNCTION_GET_ANTENNA_CONFIG = 30
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -100,8 +98,6 @@ class BrickletGPSV3(Device):
     FIX_LED_CONFIG_SHOW_PPS = 4
     SBAS_ENABLED = 0
     SBAS_DISABLED = 1
-    ANTENNA_INTERNAL = 0
-    ANTENNA_EXTERNAL = 1
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -149,8 +145,6 @@ class BrickletGPSV3(Device):
         self.response_expected[BrickletGPSV3.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV3.FUNCTION_SET_SBAS_CONFIG] = BrickletGPSV3.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGPSV3.FUNCTION_GET_SBAS_CONFIG] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPSV3.FUNCTION_SET_ANTENNA_CONFIG] = BrickletGPSV3.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletGPSV3.FUNCTION_GET_ANTENNA_CONFIG] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV3.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV3.FUNCTION_SET_BOOTLOADER_MODE] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPSV3.FUNCTION_GET_BOOTLOADER_MODE] = BrickletGPSV3.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -450,24 +444,6 @@ class BrickletGPSV3(Device):
         self.check_validity()
 
         return self.ipcon.send_request(self, BrickletGPSV3.FUNCTION_GET_SBAS_CONFIG, (), '', 9, 'B')
-
-    def set_antenna_config(self, antenna_config):
-        """
-        Configures the Bricklet to either use the internal or external antenna (through the u.fl connector)
-        """
-        self.check_validity()
-
-        antenna_config = int(antenna_config)
-
-        self.ipcon.send_request(self, BrickletGPSV3.FUNCTION_SET_ANTENNA_CONFIG, (antenna_config,), 'B', 0, '')
-
-    def get_antenna_config(self):
-        """
-        Returns the Antenna configuration as set by :func:`Set Antenna Config`
-        """
-        self.check_validity()
-
-        return self.ipcon.send_request(self, BrickletGPSV3.FUNCTION_GET_ANTENNA_CONFIG, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
         """
