@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>737</width>
-    <height>702</height>
+    <width>759</width>
+    <height>742</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -128,7 +128,14 @@
        </property>
       </widget>
      </item>
-     <item row="21" column="0">
+     <item row="16" column="1">
+      <widget class="QLabel" name="label_energy_meter_error">
+       <property name="text">
+        <string>TBD</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>DC Fault Current State</string>
@@ -191,48 +198,6 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="0">
-      <widget class="QLabel" name="label_23">
-       <property name="text">
-        <string>Max Current Configured</string>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="0">
-      <widget class="QLabel" name="label_24">
-       <property name="text">
-        <string>Max Current Incoming Cable</string>
-       </property>
-      </widget>
-     </item>
-     <item row="17" column="0">
-      <widget class="QLabel" name="label_25">
-       <property name="text">
-        <string>Max Current Outgoing Cable</string>
-       </property>
-      </widget>
-     </item>
-     <item row="15" column="1">
-      <widget class="QLabel" name="label_max_current_configured">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="16" column="1">
-      <widget class="QLabel" name="label_max_current_incoming_cable">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="17" column="1">
-      <widget class="QLabel" name="label_max_current_outgoing_cable">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_26">
        <property name="text">
@@ -247,7 +212,7 @@
        </property>
       </widget>
      </item>
-     <item row="19" column="0">
+     <item row="15" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Energy Meter Values</string>
@@ -267,28 +232,21 @@
        </property>
       </spacer>
      </item>
-     <item row="19" column="1">
+     <item row="15" column="1">
       <widget class="QLabel" name="label_energy_meter_values">
        <property name="text">
         <string>TBD</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="0">
+     <item row="16" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Energy Meter State</string>
+        <string>Energy Meter Error</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="1">
-      <widget class="QLabel" name="label_energy_meter_state">
-       <property name="text">
-        <string>TBD</string>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="1">
+     <item row="17" column="1">
       <widget class="QLabel" name="label_dc_fault_current_state">
        <property name="text">
         <string>TBD</string>
@@ -309,107 +267,482 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="0">
-      <widget class="QLabel" name="label_15">
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_8">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Max Current Managed</string>
+        <string>Slot</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="1">
-      <widget class="QLabel" name="label_max_current_managed">
-       <property name="text">
-        <string>TBD</string>
+     <item row="1" column="3">
+      <widget class="QSpinBox" name="spin_slot_current_2">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
        </property>
       </widget>
+     </item>
+     <item row="2" column="7">
+      <widget class="QCheckBox" name="check_slot_active_6">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>Current</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_22">
+       <property name="text">
+        <string>Active</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_23">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spin_slot_current_0">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_24">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="check_slot_active_0">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QCheckBox" name="check_slot_active_1">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="check_slot_clear_0">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_25">
+       <property name="text">
+        <string>1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_29">
+       <property name="text">
+        <string>2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_30">
+       <property name="text">
+        <string>3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QLabel" name="label_31">
+       <property name="text">
+        <string>4</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <widget class="QLabel" name="label_32">
+       <property name="text">
+        <string>5</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7">
+      <widget class="QLabel" name="label_33">
+       <property name="text">
+        <string>6</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="8">
+      <widget class="QLabel" name="label_34">
+       <property name="text">
+        <string>7</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="9">
+      <widget class="QLabel" name="label_35">
+       <property name="text">
+        <string>8</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="10">
+      <widget class="QLabel" name="label_36">
+       <property name="text">
+        <string>9</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="11">
+      <widget class="QLabel" name="label_37">
+       <property name="text">
+        <string>10</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QCheckBox" name="check_slot_clear_1">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QCheckBox" name="check_slot_active_2">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QCheckBox" name="check_slot_clear_2">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="4">
+      <widget class="QCheckBox" name="check_slot_active_3">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="4">
+      <widget class="QCheckBox" name="check_slot_clear_3">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="5">
+      <widget class="QCheckBox" name="check_slot_active_4">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="5">
+      <widget class="QCheckBox" name="check_slot_clear_4">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="6">
+      <widget class="QCheckBox" name="check_slot_active_5">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="6">
+      <widget class="QCheckBox" name="check_slot_clear_5">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="7">
+      <widget class="QCheckBox" name="check_slot_clear_6">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="8">
+      <widget class="QCheckBox" name="check_slot_active_7">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="8">
+      <widget class="QCheckBox" name="check_slot_clear_7">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="9">
+      <widget class="QCheckBox" name="check_slot_active_8">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="10">
+      <widget class="QCheckBox" name="check_slot_active_9">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="11">
+      <widget class="QCheckBox" name="check_slot_active_10">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="9">
+      <widget class="QCheckBox" name="check_slot_clear_8">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="10">
+      <widget class="QCheckBox" name="check_slot_clear_9">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="11">
+      <widget class="QCheckBox" name="check_slot_clear_10">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QSpinBox" name="spin_slot_current_1">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QSpinBox" name="spin_slot_current_3">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
+      <widget class="QSpinBox" name="spin_slot_current_4">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="QSpinBox" name="spin_slot_current_5">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="QSpinBox" name="spin_slot_current_6">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="9">
+      <widget class="QSpinBox" name="spin_slot_current_8">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="8">
+      <widget class="QSpinBox" name="spin_slot_current_7">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="10">
+      <widget class="QSpinBox" name="spin_slot_current_9">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="11">
+      <widget class="QSpinBox" name="spin_slot_current_10">
+       <property name="suffix">
+        <string>A</string>
+       </property>
+       <property name="minimum">
+        <number>6</number>
+       </property>
+       <property name="maximum">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="12">
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
    <item>
+    <widget class="Line" name="line_9">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="5">
+     <item row="5" column="4">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Duration:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
       <widget class="QLabel" name="label_11">
        <property name="text">
         <string>GPIO Input:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Max Charging Current:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkbox_autostart">
-       <property name="text">
-        <string>Autostart</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QSpinBox" name="spinbox_max_charging_current">
-       <property name="suffix">
-        <string>mA</string>
-       </property>
-       <property name="prefix">
-        <string/>
-       </property>
-       <property name="minimum">
-        <number>6000</number>
-       </property>
-       <property name="maximum">
-        <number>32000</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="6">
+     <item row="0" column="5">
       <widget class="QComboBox" name="combo_gpio_input"/>
      </item>
-     <item row="0" column="1" rowspan="3">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="button_start_charging">
-       <property name="text">
-        <string>Start Charging</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="button_stop_charging">
-       <property name="text">
-        <string>Stop Charging</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2" colspan="2">
+     <item row="2" column="1" colspan="2">
       <widget class="QPushButton" name="button_energy_meter_reset">
        <property name="text">
         <string>Reset Energy Meter</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2" colspan="2">
+     <item row="1" column="1" colspan="2">
       <widget class="QPushButton" name="button_dc_fault_reset">
        <property name="text">
         <string>Reset DC Fault Current</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="5">
+     <item row="1" column="4">
       <widget class="QLabel" name="label_14">
        <property name="text">
         <string>GPIO Output:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="7">
+     <item row="1" column="6">
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -422,7 +755,7 @@
        </property>
       </spacer>
      </item>
-     <item row="1" column="6">
+     <item row="1" column="5">
       <widget class="QComboBox" name="combo_gpio_output">
        <item>
         <property name="text">
@@ -436,28 +769,28 @@
        </item>
       </widget>
      </item>
-     <item row="0" column="4" rowspan="3">
+     <item row="0" column="3" rowspan="3">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="2" column="5" colspan="2">
+     <item row="2" column="4" colspan="2">
       <widget class="QPushButton" name="button_energy_meter_detailed">
        <property name="text">
         <string>Show Detailed Energy Meter Info</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="2">
+     <item row="5" column="1">
       <widget class="QLabel" name="label_27">
        <property name="text">
         <string>Button Config:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="3">
+     <item row="4" column="2">
       <widget class="QSpinBox" name="spinbox_page">
        <property name="suffix">
         <string> Page</string>
@@ -467,14 +800,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="5">
+     <item row="4" column="4">
       <widget class="QLabel" name="label_20">
        <property name="text">
         <string>Indication:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="6">
+     <item row="4" column="5">
       <widget class="QComboBox" name="combobox_indication">
        <item>
         <property name="text">
@@ -523,45 +856,21 @@
        </item>
       </widget>
      </item>
-     <item row="7" column="5" colspan="2">
+     <item row="7" column="4" colspan="2">
       <widget class="QPushButton" name="button_set_indicator">
        <property name="text">
         <string>Set Indicator LED</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="3">
-      <widget class="QSpinBox" name="spin_managed_current">
-       <property name="suffix">
-        <string>mA</string>
-       </property>
-       <property name="maximum">
-        <number>32000</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="2">
-      <widget class="QLabel" name="label_22">
-       <property name="text">
-        <string>Managed Current:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QCheckBox" name="checkbox_managed">
-       <property name="text">
-        <string>Managed</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
+     <item row="4" column="1">
       <widget class="QPushButton" name="button_read_page">
        <property name="text">
         <string>Read Page</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="3">
+     <item row="5" column="2">
       <widget class="QComboBox" name="combo_button_config">
        <item>
         <property name="text">
@@ -585,28 +894,21 @@
        </item>
       </widget>
      </item>
-     <item row="5" column="5">
-      <widget class="QLabel" name="label_21">
-       <property name="text">
-        <string>Duration:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="7">
+     <item row="3" column="0" colspan="6">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="4" rowspan="4">
+     <item row="4" column="3" rowspan="4">
       <widget class="Line" name="line_4">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="5" column="6">
+     <item row="5" column="5">
       <widget class="QSpinBox" name="spin_duration">
        <property name="suffix">
         <string>ms</string>
@@ -616,14 +918,28 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1" rowspan="4">
-      <widget class="Line" name="line_5">
+     <item row="6" column="0">
+      <widget class="Line" name="line_6">
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="1" colspan="2">
+      <widget class="Line" name="line_7">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_28">
+       <property name="text">
+        <string>Shutdown Input:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
       <widget class="QComboBox" name="combo_shutdown_input">
        <item>
         <property name="text">
@@ -640,27 +956,6 @@
          <string>On Open</string>
         </property>
        </item>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_28">
-       <property name="text">
-        <string>Shutdown Input:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="Line" name="line_6">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="2" colspan="2">
-      <widget class="Line" name="line_7">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
       </widget>
      </item>
     </layout>

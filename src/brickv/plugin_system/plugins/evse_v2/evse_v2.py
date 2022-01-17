@@ -103,42 +103,35 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
                                                     None,
                                                     self.low_level_state_cb,
                                                     self.increase_error_count)
-        self.cbe_max_charging_current = CallbackEmulator(self,
-                                                         self.evse.get_max_charging_current,
-                                                         None,
-                                                         self.max_charging_current_cb,
-                                                         self.increase_error_count)
         self.cbe_energy_meter_values = CallbackEmulator(self,
                                                         self.evse.get_energy_meter_values,
                                                         None,
                                                         self.energy_meter_values_cb,
                                                         self.increase_error_count)
-        self.cbe_energy_meter_state = CallbackEmulator(self,
-                                                       self.evse.get_energy_meter_state,
+        self.cbe_energy_meter_error = CallbackEmulator(self,
+                                                       self.evse.get_energy_meter_error,
                                                        None,
-                                                       self.energy_meter_state_cb,
+                                                       self.energy_meter_error_cb,
                                                        self.increase_error_count)
-        self.cbe_dc_fault_current_state = CallbackEmulator(self,
-                                                           self.evse.get_dc_fault_current_state,
-                                                           None,
-                                                           self.dc_fault_current_state_cb,
-                                                           self.increase_error_count)
+        self.cbe_all_charging_slots = CallbackEmulator(self,
+                                                       self.evse.get_all_charging_slots,
+                                                       None,
+                                                       self.all_charging_slots_cb,
+                                                       self.increase_error_count)
 
         self.combo_gpio_input.currentIndexChanged.connect(self.gpio_changed)
         self.combo_gpio_output.currentIndexChanged.connect(self.gpio_changed)
         self.combo_shutdown_input.currentIndexChanged.connect(self.gpio_changed)
-        self.checkbox_autostart.stateChanged.connect(self.autostart_changed)
-        self.button_start_charging.clicked.connect(self.start_charging_clicked)
-        self.button_stop_charging.clicked.connect(self.stop_charging_clicked)
         self.button_dc_fault_reset.clicked.connect(self.dc_fault_reset_clicked)
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
-        self.spinbox_max_charging_current.valueChanged.connect(self.max_charging_current_changed)
         self.button_energy_meter_detailed.clicked.connect(self.energy_meter_detailed_clicked)
         self.button_read_page.clicked.connect(self.read_page_clicked)
-        self.checkbox_managed.stateChanged.connect(self.managed_changed)
-        self.spin_managed_current.valueChanged.connect(self.managed_current_changed)
         self.combo_button_config.currentIndexChanged.connect(self.button_config_changed)
         self.button_set_indicator.clicked.connect(self.set_indicator_clicked)
+
+        self.spin_slot_current = [self.spin_slot_current_0, self.spin_slot_current_1, self.spin_slot_current_2, self.spin_slot_current_3, self.spin_slot_current_4, self.spin_slot_current_5, self.spin_slot_current_6, self.spin_slot_current_7, self.spin_slot_current_8, self.spin_slot_current_9, self.spin_slot_current_10]
+        self.check_slot_active = [self.check_slot_active_0, self.check_slot_active_1, self.check_slot_active_2, self.check_slot_active_3, self.check_slot_active_4, self.check_slot_active_5, self.check_slot_active_6, self.check_slot_active_7, self.check_slot_active_8, self.check_slot_active_9, self.check_slot_active_10]
+        self.check_slot_clear  = [self.check_slot_clear_0,  self.check_slot_clear_1,  self.check_slot_clear_2,  self.check_slot_clear_3,  self.check_slot_clear_4,  self.check_slot_clear_5,  self.check_slot_clear_6,  self.check_slot_clear_7,  self.check_slot_clear_8,  self.check_slot_clear_9,  self.check_slot_clear_10]
 
     def set_indicator_clicked(self):
         index = self.combobox_indication.currentIndex()
@@ -168,17 +161,6 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def button_config_changed(self, config):
         self.evse.set_button_configuration(config)
     
-    def managed_current_changed(self, current):
-        self.evse.set_managed_current(current)
-
-    def managed_changed(self, managed):
-        value = managed == Qt.Checked
-        if value:
-            password = 0x00363702
-        else:
-            password = 0x036370FF
-        self.evse.set_managed(value, password)
-
     def read_page_clicked(self):
         page = self.spinbox_page.value()
         data = self.evse.get_data_storage(page)
@@ -253,20 +235,11 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def max_charging_current_changed(self, current):
         self.evse.set_max_charging_current(current)
 
-    def start_charging_clicked(self):
-        self.evse.start_charging()
-
-    def stop_charging_clicked(self):
-        self.evse.stop_charging()
-
     def dc_fault_reset_clicked(self):
         self.evse.reset_dc_fault_current(0xDC42FA23)
 
     def energy_meter_reset_clicked(self):
         self.evse.reset_energy_meter()
-
-    def autostart_changed(self, state):
-        self.evse.set_charging_autostart(state == Qt.Checked)
 
     def gpio_changed(self):
         shutdown_input = self.combo_shutdown_input.currentIndex()
@@ -277,17 +250,37 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
 
-    def energy_meter_state_cb(self, ems):
-        self.label_energy_meter_state.setText('Available: {0}, Error Counts: {1}'.format(ems.available, str(ems.error_count)))
+    def energy_meter_error_cb(self, eme):
+        self.label_energy_meter_error.setText('Error Counts: {0}'.format(str(eme)))
 
-    def dc_fault_current_state_cb(self, state):
-        self.label_dc_fault_current_state.setText(str(state))
+    def all_charging_slots_cb(self, acs):
+        for i in range(len(self.spin_slot_current)):
+            self.spin_slot_current[i].setValue(int(acs.max_current[i]/1000))
+            self.check_slot_active[i].setChecked(bool(acs.active_and_clear_on_disconnect[i] & 1))
+            self.check_slot_clear[i].setChecked(bool(acs.active_and_clear_on_disconnect[i] & 2))
 
     def state_cb(self, state):
+        self.label_dc_fault_current_state.setText(str(state.dc_fault_current_state))
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
         self.label_vehicle_state.setText(VEHICLE_STATE[state.vehicle_state])
         self.label_contactor_check.setText('Input: {0}, Output: {1}, Error: {2}'.format(CONTACTOR_STATE[state.contactor_state in (1, 3)], CONTACTOR_STATE[state.contactor_state in (2, 3)], state.contactor_error))
         self.label_lock_state.setText(LOCK_STATE[state.lock_state])
+
+    def low_level_state_cb(self, state):
+        gpio_str = ''
+        for g in state.gpio:
+            if g:
+                gpio_str += '1'
+            else:
+                gpio_str += '0'
+
+        self.label_led_state.setText(LED_STATE[state.led_state])
+        self.label_adc_values.setText('CP/PE w/o resistor (PWM high): {0}, CP/PE w/ resistor (PWM high): {1}\nCP/PE w/o resistor (PWM low): {2}, CP/PE w/ resistor (PWM low): {3}\nPP/PE: {4}, +12V rail: {5}, -12V rail: {6}'.format(*state.adc_values))
+        self.label_voltages.setText('CP/PE w/o resistor (PWM high): {0:.2f}V, CP/PE w/ resistor (PWM high): {1:.2f}V\nCP/PE w/o resistor (PWM low): {2:.2f}V, CP/PE w/ resistor (PWM low): {3:.2f}V\nPP/PE: {4:.2f}V, +12V rail: {5:.2f}V, -12V rail: {6:.2f}V'.format(state.voltages[0]/1000, state.voltages[1]/1000, state.voltages[2]/1000, state.voltages[3]/1000, state.voltages[4]/1000, state.voltages[5]/1000, state.voltages[6]/1000))
+        self.label_resistances.setText('CP/PE: {0} Ohm, PP/PE: {1} Ohm'.format(*state.resistances))
+        self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
+        self.label_gpios.setText(gpio_str)
+
         m, s = divmod(int(state.uptime/1000), 60)
         h, m = divmod(m, 60)
         d, h = divmod(h, 24)
@@ -308,45 +301,9 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         else:
             self.label_time_since_state_change.setText('{0} Days, {1:d}:{2:02d}:{3:02d}'.format(d, h, m, s))
 
-    def low_level_state_cb(self, state):
-        gpio_str = ''
-        for g in state.gpio:
-            if g:
-                gpio_str += '1'
-            else:
-                gpio_str += '0'
-
-        self.label_led_state.setText(LED_STATE[state.led_state])
-        self.label_adc_values.setText('CP/PE w/o resistor (PWM high): {0}, CP/PE w/ resistor (PWM high): {1}\nCP/PE w/o resistor (PWM low): {2}, CP/PE w/ resistor (PWM low): {3}\nPP/PE: {4}, +12V rail: {5}, -12V rail: {6}'.format(*state.adc_values))
-        self.label_voltages.setText('CP/PE w/o resistor (PWM high): {0:.2f}V, CP/PE w/ resistor (PWM high): {1:.2f}V\nCP/PE w/o resistor (PWM low): {2:.2f}V, CP/PE w/ resistor (PWM low): {3:.2f}V\nPP/PE: {4:.2f}V, +12V rail: {5:.2f}V, -12V rail: {6:.2f}V'.format(state.voltages[0]/1000, state.voltages[1]/1000, state.voltages[2]/1000, state.voltages[3]/1000, state.voltages[4]/1000, state.voltages[5]/1000, state.voltages[6]/1000))
-        self.label_resistances.setText('CP/PE: {0} Ohm, PP/PE: {1} Ohm'.format(*state.resistances))
-        self.label_cp_pwm_duty_cycle.setText('{0} %'.format(state.cp_pwm_duty_cycle/10))
-        self.label_gpios.setText(gpio_str)
-
-    def max_charging_current_cb(self, mcc):
-        self.label_max_current_configured.setText('{0:.1f} A'.format(mcc.max_current_configured/1000))
-        self.label_max_current_incoming_cable.setText('{0:.1f} A'.format(mcc.max_current_incoming_cable/1000))
-        self.label_max_current_outgoing_cable.setText('{0:.1f} A'.format(mcc.max_current_outgoing_cable/1000))
-        self.label_max_current_managed.setText('{0:.1f} A'.format(mcc.max_current_managed/1000))
-
     def get_hardware_configuration_async(self, conf):
         self.label_jumper_configuration.setText(JUMPER_CONFIGURATON[conf.jumper_configuration])
         self.label_lock_switch.setText(LOCK_SWITCH[conf.has_lock_switch])
-
-    def get_charging_autostart_async(self, autostart):
-        self.checkbox_autostart.blockSignals(True)
-        self.checkbox_autostart.setChecked(autostart)
-        self.checkbox_autostart.blockSignals(False)
-
-    def get_max_charging_current_async(self, mcc):
-        self.spinbox_max_charging_current.blockSignals(True)
-        self.spinbox_max_charging_current.setValue(mcc.max_current_configured)
-        self.spinbox_max_charging_current.blockSignals(False)
-
-    def get_managed_async(self, managed):
-        self.checkbox_managed.blockSignals(True)
-        self.checkbox_managed.setChecked(managed)
-        self.checkbox_managed.blockSignals(False)
 
     def get_indicator_led_async(self, led):
         self.spin_duration.blockSignals(True)
@@ -394,26 +351,21 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
 
     def start(self):
         async_call(self.evse.get_hardware_configuration, None, self.get_hardware_configuration_async, self.increase_error_count)
-        async_call(self.evse.get_charging_autostart, None, self.get_charging_autostart_async, self.increase_error_count)
-        async_call(self.evse.get_max_charging_current, None, self.get_max_charging_current_async, self.increase_error_count)
-        async_call(self.evse.get_managed, None, self.get_managed_async, self.increase_error_count)
         async_call(self.evse.get_indicator_led, None, self.get_indicator_led_async, self.increase_error_count)
         async_call(self.evse.get_button_configuration, None, self.get_button_configuration_async, self.increase_error_count)
         async_call(self.evse.get_gpio_configuration, None, self.get_gpio_configuration_async, self.increase_error_count)
         self.cbe_state.set_period(100)
         self.cbe_low_level_state.set_period(100)
-        self.cbe_max_charging_current.set_period(500)
         self.cbe_energy_meter_values.set_period(100)
-        self.cbe_energy_meter_state.set_period(100)
-        self.cbe_dc_fault_current_state.set_period(100)
+        self.cbe_energy_meter_error.set_period(100)
+        self.cbe_all_charging_slots.set_period(500)
 
     def stop(self):
         self.cbe_state.set_period(0)
         self.cbe_low_level_state.set_period(0)
-        self.cbe_max_charging_current.set_period(0)
-        self.cbe_energy_meter_values.set_period(100)
-        self.cbe_energy_meter_state.set_period(100)
-        self.cbe_dc_fault_current_state.set_period(100)
+        self.cbe_energy_meter_values.set_period(0)
+        self.cbe_energy_meter_error.set_period(0)
+        self.cbe_all_charging_slots.set_period(0)
 
     def destroy(self):
         pass
