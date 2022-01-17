@@ -133,6 +133,20 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.check_slot_active = [self.check_slot_active_0, self.check_slot_active_1, self.check_slot_active_2, self.check_slot_active_3, self.check_slot_active_4, self.check_slot_active_5, self.check_slot_active_6, self.check_slot_active_7, self.check_slot_active_8, self.check_slot_active_9, self.check_slot_active_10]
         self.check_slot_clear  = [self.check_slot_clear_0,  self.check_slot_clear_1,  self.check_slot_clear_2,  self.check_slot_clear_3,  self.check_slot_clear_4,  self.check_slot_clear_5,  self.check_slot_clear_6,  self.check_slot_clear_7,  self.check_slot_clear_8,  self.check_slot_clear_9,  self.check_slot_clear_10]
 
+        def get_slot_changed_lambda(i):
+            return lambda: self.slot_changed(i)
+
+        for i in range(len(self.spin_slot_current)):
+            self.spin_slot_current[i].valueChanged.connect(get_slot_changed_lambda(i))
+            self.check_slot_active[i].stateChanged.connect(get_slot_changed_lambda(i))
+            self.check_slot_clear[i].stateChanged.connect(get_slot_changed_lambda(i))
+
+    def slot_changed(self, slot):
+        current = self.spin_slot_current[slot].value()*1000
+        active  = self.check_slot_active[slot].isChecked()
+        clear   = self.check_slot_clear[slot].isChecked()
+        self.evse.set_charging_slot(slot, current, active, clear)
+
     def set_indicator_clicked(self):
         index = self.combobox_indication.currentIndex()
 
@@ -255,9 +269,15 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
 
     def all_charging_slots_cb(self, acs):
         for i in range(len(self.spin_slot_current)):
+            self.spin_slot_current[i].blockSignals(True)
             self.spin_slot_current[i].setValue(int(acs.max_current[i]/1000))
+            self.spin_slot_current[i].blockSignals(False)
+            self.check_slot_active[i].blockSignals(True)
             self.check_slot_active[i].setChecked(bool(acs.active_and_clear_on_disconnect[i] & 1))
+            self.check_slot_active[i].blockSignals(False)
+            self.check_slot_clear[i].blockSignals(True)
             self.check_slot_clear[i].setChecked(bool(acs.active_and_clear_on_disconnect[i] & 2))
+            self.check_slot_clear[i].blockSignals(False)
 
     def state_cb(self, state):
         self.label_dc_fault_current_state.setText(str(state.dc_fault_current_state))
