@@ -21,9 +21,28 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+
 from typing import Tuple
-from PyQt5.QtWidgets import QErrorMessage, QInputDialog, QAction, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QErrorMessage, QInputDialog, QAction, QTableWidget, QTableWidgetItem, QSpinBox
 from PyQt5.QtCore import QTimer, Qt, pyqtSignal
+
+
+class CurrentSpinBox(QSpinBox):
+    def stepBy(self, steps):
+        newValue = int(self.checkValue(self.value() + (steps * self.singleStep())))
+        self.setValue(newValue);
+
+    def checkValue(self, value):
+        if (value < 4) or (value < 0):
+            return 6
+
+        if (value >= 4) and (value < 6):
+            return 0
+
+        if value > 32:
+            return 32
+
+        return value
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.plugin_system.plugins.evse_v2.ui_evse_v2 import Ui_EVSEV2

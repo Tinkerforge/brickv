@@ -286,15 +286,18 @@
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QSpinBox" name="spin_slot_current_2">
+      <widget class="CurrentSpinBox" name="spin_slot_current_2">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
@@ -327,7 +330,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QSpinBox" name="spin_slot_current_0">
+      <widget class="CurrentSpinBox" name="spin_slot_current_0">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -335,10 +338,13 @@
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
@@ -579,7 +585,7 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QSpinBox" name="spin_slot_current_1">
+      <widget class="CurrentSpinBox" name="spin_slot_current_1">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -587,72 +593,87 @@
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QSpinBox" name="spin_slot_current_3">
+      <widget class="CurrentSpinBox" name="spin_slot_current_3">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="5">
-      <widget class="QSpinBox" name="spin_slot_current_4">
+      <widget class="CurrentSpinBox" name="spin_slot_current_4">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="6">
-      <widget class="QSpinBox" name="spin_slot_current_5">
+      <widget class="CurrentSpinBox" name="spin_slot_current_5">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="7">
-      <widget class="QSpinBox" name="spin_slot_current_6">
+      <widget class="CurrentSpinBox" name="spin_slot_current_6">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
        </property>
+       <property name="value">
+        <number>0</number>
+       </property>
       </widget>
      </item>
      <item row="1" column="9">
-      <widget class="QSpinBox" name="spin_slot_current_8">
+      <widget class="CurrentSpinBox" name="spin_slot_current_8">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
@@ -660,41 +681,50 @@
       </widget>
      </item>
      <item row="1" column="8">
-      <widget class="QSpinBox" name="spin_slot_current_7">
+      <widget class="CurrentSpinBox" name="spin_slot_current_7">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="10">
-      <widget class="QSpinBox" name="spin_slot_current_9">
+      <widget class="CurrentSpinBox" name="spin_slot_current_9">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
      <item row="1" column="11">
-      <widget class="QSpinBox" name="spin_slot_current_10">
+      <widget class="CurrentSpinBox" name="spin_slot_current_10">
        <property name="suffix">
         <string>A</string>
        </property>
        <property name="minimum">
-        <number>6</number>
+        <number>0</number>
        </property>
        <property name="maximum">
         <number>32</number>
+       </property>
+       <property name="value">
+        <number>0</number>
        </property>
       </widget>
      </item>
@@ -986,6 +1016,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CurrentSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>brickv.plugin_system.plugins.evse_v2.evse_v2</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
