@@ -129,7 +129,7 @@
       </widget>
      </item>
      <item row="16" column="1">
-      <widget class="QLabel" name="label_energy_meter_error">
+      <widget class="QLabel" name="label_energy_meter_errors">
        <property name="text">
         <string>TBD</string>
        </property>
@@ -206,7 +206,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLabel" name="label_vehicle_state">
+      <widget class="QLabel" name="label_charger_state">
        <property name="text">
         <string>TBD</string>
        </property>
@@ -825,9 +825,9 @@
       </widget>
      </item>
      <item row="2" column="4" colspan="2">
-      <widget class="QPushButton" name="button_energy_meter_detailed">
+      <widget class="QPushButton" name="button_energy_meter_all">
        <property name="text">
-        <string>Show Detailed Energy Meter Info</string>
+        <string>Show All Energy Meter Info</string>
        </property>
       </widget>
      </item>

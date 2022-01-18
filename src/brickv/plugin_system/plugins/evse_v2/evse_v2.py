@@ -53,7 +53,7 @@ from brickv.callback_emulator import CallbackEmulator
 from brickv.slider_spin_syncer import SliderSpinSyncer
 
 IEC61851_STATE = ['A', 'B', 'C', 'D', 'EF']
-VEHICLE_STATE = ['Not Connected', 'Connected', 'Charging', 'Error']
+CHARGER_STATE = ['Not Connected', 'Waiting For Charge Release', 'Ready To Charge', 'Charging', 'Error']
 LED_STATE = ['Off', 'On', 'Blinking', 'Flicker', 'Breathing', 'API']
 CONTACTOR_STATE = ['Not Live', 'Live']
 LOCK_STATE = ['Init', 'Open', 'Closing', 'Close', 'Opening', 'Error']
@@ -127,10 +127,10 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
                                                         None,
                                                         self.energy_meter_values_cb,
                                                         self.increase_error_count)
-        self.cbe_energy_meter_error = CallbackEmulator(self,
-                                                       self.evse.get_energy_meter_error,
+        self.cbe_energy_meter_errors = CallbackEmulator(self,
+                                                       self.evse.get_energy_meter_errors,
                                                        None,
-                                                       self.energy_meter_error_cb,
+                                                       self.energy_meter_errors_cb,
                                                        self.increase_error_count)
         self.cbe_all_charging_slots = CallbackEmulator(self,
                                                        self.evse.get_all_charging_slots,
@@ -143,7 +143,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.combo_shutdown_input.currentIndexChanged.connect(self.gpio_changed)
         self.button_dc_fault_reset.clicked.connect(self.dc_fault_reset_clicked)
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
-        self.button_energy_meter_detailed.clicked.connect(self.energy_meter_detailed_clicked)
+        self.button_energy_meter_all.clicked.connect(self.energy_meter_all_clicked)
         self.button_read_page.clicked.connect(self.read_page_clicked)
         self.combo_button_config.currentIndexChanged.connect(self.button_config_changed)
         self.button_set_indicator.clicked.connect(self.set_indicator_clicked)
@@ -204,8 +204,8 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         table.resize(500, 700)
         table.show()
 
-    def energy_meter_detailed_clicked(self):
-        values = self.evse.get_energy_meter_detailed_values()
+    def energy_meter_all_clicked(self):
+        values = self.evse.get_all_energy_meter_values()
         data = {}
         data['line_to_neutral_volts[SDM630_PHASE_NUM]']  = values[0], values[1], values[2]
         data['current[SDM630_PHASE_NUM]']                = values[3], values[4], values[5]
@@ -265,14 +265,11 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         table.resize(500, 700)
         table.show()
 
-    def max_charging_current_changed(self, current):
-        self.evse.set_max_charging_current(current)
-
     def dc_fault_reset_clicked(self):
-        self.evse.reset_dc_fault_current(0xDC42FA23)
+        self.evse.reset_dc_fault_current_state(0xDC42FA23)
 
     def energy_meter_reset_clicked(self):
-        self.evse.reset_energy_meter()
+        self.evse.reset_energy_meter_relative_energy()
 
     def gpio_changed(self):
         shutdown_input = self.combo_shutdown_input.currentIndex()
@@ -283,8 +280,8 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
 
-    def energy_meter_error_cb(self, eme):
-        self.label_energy_meter_error.setText('Error Counts: {0}'.format(str(eme)))
+    def energy_meter_errors_cb(self, eme):
+        self.label_energy_meter_errors.setText('Error Counts: {0}'.format(str(eme)))
 
     def all_charging_slots_cb(self, acs):
         for i in range(len(self.spin_slot_current)):
@@ -301,7 +298,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
     def state_cb(self, state):
         self.label_dc_fault_current_state.setText(str(state.dc_fault_current_state))
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
-        self.label_vehicle_state.setText(VEHICLE_STATE[state.vehicle_state])
+        self.label_charger_state.setText(CHARGER_STATE[state.charger_state])
         self.label_contactor_check.setText('Input: {0}, Output: {1}, Error: {2}'.format(CONTACTOR_STATE[state.contactor_state in (1, 3)], CONTACTOR_STATE[state.contactor_state in (2, 3)], state.contactor_error))
         self.label_lock_state.setText(LOCK_STATE[state.lock_state])
 
@@ -396,14 +393,14 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.cbe_state.set_period(100)
         self.cbe_low_level_state.set_period(100)
         self.cbe_energy_meter_values.set_period(100)
-        self.cbe_energy_meter_error.set_period(100)
+        self.cbe_energy_meter_errors.set_period(100)
         self.cbe_all_charging_slots.set_period(500)
 
     def stop(self):
         self.cbe_state.set_period(0)
         self.cbe_low_level_state.set_period(0)
         self.cbe_energy_meter_values.set_period(0)
-        self.cbe_energy_meter_error.set_period(0)
+        self.cbe_energy_meter_errors.set_period(0)
         self.cbe_all_charging_slots.set_period(0)
 
     def destroy(self):
