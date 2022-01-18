@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-09-23.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -13,7 +13,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReaderGetTagIDLowLevel = namedtuple('ReaderGetTagIDLowLevel', ['tag_type', 'tag_id_length', 'tag_id_data'])
@@ -224,6 +224,7 @@ class BrickletNFC(Device):
         * Card Emulation (Cardemu): Emulates a tag for other readers
         * Peer to Peer (P2P): Exchange data with other readers
         * Reader: Reads and writes tags
+        * Simple: Automatically reads tag IDs
 
         If you change a mode, the Bricklet will reconfigure the hardware for this mode.
         Therefore, you can only use functions corresponding to the current mode. For

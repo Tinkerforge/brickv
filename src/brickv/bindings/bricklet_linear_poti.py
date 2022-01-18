@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -13,7 +13,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetPositionCallbackThreshold = namedtuple('PositionCallbackThreshold', ['option', 'min', 'max'])
@@ -88,7 +88,7 @@ class BrickletLinearPoti(Device):
     def get_position(self):
         """
         Returns the position of the linear potentiometer. The value is
-        between 0 (slider down) and 100 (slider up).
+        between 0% (slider down) and 100% (slider up).
 
         If you want to get the position periodically, it is recommended to use the
         :cb:`Position` callback and set the period with

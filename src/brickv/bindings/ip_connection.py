@@ -25,7 +25,7 @@ except ImportError:
 if not 'INTERNAL_DEVICE_DISPLAY_NAMES' in globals():
     try:
         from .device_display_names import get_device_display_name
-    except ValueError:
+    except (ValueError, ImportError):
         from device_display_names import get_device_display_name
 
 # internal

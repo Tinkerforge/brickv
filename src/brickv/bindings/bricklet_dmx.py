@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -13,7 +13,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 ReadFrameLowLevel = namedtuple('ReadFrameLowLevel', ['frame_length', 'frame_chunk_offset', 'frame_chunk_data', 'frame_number'])
@@ -301,7 +301,7 @@ class BrickletDMX(Device):
         the :cb:`Frame` callback and :cb:`Frame Error Count` callback are disabled.
 
         If you want to use the :cb:`Frame` callback you can enable it and disable
-        the cb:`Frame Available` callback at the same time. It becomes redundant in
+        the :cb:`Frame Available` callback at the same time. It becomes redundant in
         this case.
         """
         self.check_validity()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-09-23.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -15,7 +15,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetCapabilities = namedtuple('Capabilities', ['tx_total_scheduler_jobs', 'tx_used_scheduler_jobs', 'rx_total_frame_filters', 'rx_used_frame_filters'])

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -15,7 +15,7 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetMotionConfiguration = namedtuple('MotionConfiguration', ['ramping_mode', 'velocity_start', 'acceleration_1', 'velocity_1', 'acceleration_max', 'velocity_max', 'deceleration_max', 'deceleration_1', 'velocity_stop', 'ramp_zero_wait'])

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-10-12.      #
+# This file was automatically generated on 2022-01-18.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -15,15 +15,18 @@ from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
-except ValueError:
+except (ValueError, ImportError):
     from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetState = namedtuple('State', ['iec61851_state', 'vehicle_state', 'contactor_state', 'contactor_error', 'charge_release', 'allowed_charging_current', 'error_state', 'lock_state', 'time_since_state_change', 'uptime'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch'])
-GetLowLevelState = namedtuple('LowLevelState', ['low_level_mode_enabled', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'hardware_version'])
+GetLowLevelState = namedtuple('LowLevelState', ['low_level_mode_enabled', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'hardware_version', 'charging_time'])
 GetMaxChargingCurrent = namedtuple('MaxChargingCurrent', ['max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable', 'max_current_managed'])
 GetUserCalibration = namedtuple('UserCalibration', ['user_calibration_active', 'voltage_diff', 'voltage_mul', 'voltage_div', 'resistance_2700', 'resistance_880'])
 GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
+GetButtonState = namedtuple('ButtonState', ['button_press_time', 'button_release_time', 'button_pressed'])
+GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'vehicle_state', 'contactor_state', 'contactor_error', 'charge_release', 'allowed_charging_current', 'error_state', 'lock_state', 'time_since_state_change', 'uptime', 'jumper_configuration', 'has_lock_switch', 'low_level_mode_enabled', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'hardware_version', 'charging_time', 'max_current_configured', 'max_current_incoming_cable', 'max_current_outgoing_cable', 'max_current_managed', 'autostart', 'managed'])
+GetAllData2 = namedtuple('AllData2', ['user_calibration_active', 'voltage_diff', 'voltage_mul', 'voltage_div', 'resistance_2700', 'resistance_880', 'indication', 'duration', 'button_press_time', 'button_release_time', 'button_pressed'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -57,6 +60,9 @@ class BrickletEVSE(Device):
     FUNCTION_SET_DATA_STORAGE = 17
     FUNCTION_GET_INDICATOR_LED = 18
     FUNCTION_SET_INDICATOR_LED = 19
+    FUNCTION_GET_BUTTON_STATE = 20
+    FUNCTION_GET_ALL_DATA_1 = 21
+    FUNCTION_GET_ALL_DATA_2 = 22
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -156,6 +162,9 @@ class BrickletEVSE(Device):
         self.response_expected[BrickletEVSE.FUNCTION_SET_DATA_STORAGE] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSE.FUNCTION_GET_INDICATOR_LED] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_INDICATOR_LED] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_BUTTON_STATE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_ALL_DATA_1] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_ALL_DATA_2] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -196,7 +205,7 @@ class BrickletEVSE(Device):
         """
         self.check_validity()
 
-        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 32, '! B H 2H 3h 2I 5! B'))
+        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 36, '! B H 2H 3h 2I 5! B I'))
 
     def set_max_charging_current(self, max_current):
         """
@@ -366,6 +375,30 @@ class BrickletEVSE(Device):
         duration = int(duration)
 
         return self.ipcon.send_request(self, BrickletEVSE.FUNCTION_SET_INDICATOR_LED, (indication, duration), 'h H', 9, 'B')
+
+    def get_button_state(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return GetButtonState(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_BUTTON_STATE, (), '', 17, 'I I !'))
+
+    def get_all_data_1(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return GetAllData1(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ALL_DATA_1, (), '', 65, 'B B B B B H B B I I B ! ! B H 2H 3h 2I 5! B I H H H H ! !'))
+
+    def get_all_data_2(self):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        return GetAllData2(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ALL_DATA_2, (), '', 58, '! h h h h 14h h H I I !'))
 
     def get_spitfp_error_count(self):
         """
