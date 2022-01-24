@@ -169,8 +169,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
                           [self.label_gravity_vector_11, self.label_gravity_vector_21, self.label_gravity_vector_22, self.label_gravity_vector_23, self.label_gravity_vector_41, self.label_gravity_vector_42, self.label_gravity_vector_43, self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z],
                           [self.label_temperature_11, self.label_temperature_21, self.label_temperature_41, self.label_temperature]]
 
-        even_color = QColor(240, 240, 240)
-        odd_color = QColor(255, 255, 255)
+        palette = QPalette()
+        even_color = palette.color(QPalette.AlternateBase)
+        odd_color = palette.color(QPalette.Base)
 
         self.data_color = [(Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
                            (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
