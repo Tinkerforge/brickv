@@ -172,16 +172,17 @@ class IMUV2(PluginBase, Ui_IMUV2):
         palette = QPalette()
         even_color = palette.color(QPalette.AlternateBase)
         odd_color = palette.color(QPalette.Base)
+        even_color_plot = QColor(240, 240, 240)
+        odd_color_plot = QColor(255, 255, 255)
 
-        self.data_color = [(Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
-                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
-                           (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
-                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
-                           (Qt.magenta, even_color), (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
-                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
-                           (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
-                           (Qt.magenta, odd_color)]
-
+        self.data_color = [(Qt.red, even_color_plot), (Qt.darkGreen, even_color_plot), (Qt.blue, even_color_plot),
+                           (Qt.red, odd_color_plot), (Qt.darkGreen, odd_color_plot), (Qt.blue, odd_color_plot),
+                           (Qt.red, even_color_plot), (Qt.darkGreen, even_color_plot), (Qt.blue, even_color_plot),
+                           (Qt.red, odd_color_plot), (Qt.darkGreen, odd_color_plot), (Qt.blue, odd_color_plot),
+                           (Qt.magenta, even_color_plot), (Qt.red, even_color_plot), (Qt.darkGreen, even_color_plot), (Qt.blue, even_color_plot),
+                           (Qt.red, odd_color_plot), (Qt.darkGreen, odd_color_plot), (Qt.blue, odd_color_plot),
+                           (Qt.red, even_color_plot), (Qt.darkGreen, even_color_plot), (Qt.blue, even_color_plot),
+                           (Qt.magenta, odd_color_plot)]
 
         even_palette = QPalette()
         even_palette.setColor(QPalette.Window, even_color)
