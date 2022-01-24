@@ -31,7 +31,7 @@ import time
 
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
-                        QPainterPath, QTransform, QPen, QFont
+                        QPainterPath, QTransform, QPen, QFont, QPalette
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                             QSizePolicy, QLabel, QSpinBox
 
@@ -147,10 +147,12 @@ class XScale(Scale):
     def draw(self, painter, width, factor, value_min, value_max):
         factor_int = int(factor)
 
+        palette = QPalette()
+
         pen = QPen()
         pen.setCosmetic(True)
         pen.setWidth(0)
-        pen.setColor(Qt.black)
+        pen.setColor(palette.color(QPalette.WindowText))
 
         painter.setPen(pen)
 
@@ -325,17 +327,19 @@ class YScale(Scale):
             self.total_width_changed.emit()
 
     def draw(self, painter, height, factor):
-        painter.save()
-        painter.translate(0, -CURVE_Y_OFFSET_COMPENSATION)
-        painter.scale(1, -factor)
-        painter.translate(0, -self.value_min)
+        palette = QPalette()
 
         pen = QPen()
         pen.setCosmetic(True)
         pen.setWidth(0)
-        pen.setColor(Qt.black)
+        pen.setColor(palette.color(QPalette.WindowText))
 
         painter.setPen(pen)
+
+        painter.save()
+        painter.translate(0, -CURVE_Y_OFFSET_COMPENSATION)
+        painter.scale(1, -factor)
+        painter.translate(0, -self.value_min)
 
         if DEBUG:
             painter.fillRect(QRectF(0, self.value_min,
@@ -415,6 +419,8 @@ class YScale(Scale):
             self.title_text_pixmap.fill(QColor(0, 0, 0, 0))
 
             title_painter = QPainter(self.title_text_pixmap)
+
+            title_painter.setPen(pen)
 
             if DEBUG:
                 title_painter.fillRect(50, 50, title_width * 2, title_height * 2, Qt.yellow)
