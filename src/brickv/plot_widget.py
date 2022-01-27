@@ -28,14 +28,15 @@ import functools
 import bisect
 from collections import namedtuple
 import time
+import queue
 
-from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF, QThread
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
                         QPainterPath, QTransform, QPen, QFont, QPalette
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                             QSizePolicy, QLabel, QSpinBox
 
-from brickv.utils import draw_rect
+from brickv.utils import draw_rect, get_main_window
 from brickv.fixed_size_label import FixedSizeLabel
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_wrapper value_formatter')
@@ -45,6 +46,13 @@ EPSILON = 0.000001
 DEBUG = False
 CURVE_Y_OFFSET_COMPENSATION = 0.5
 CURVE_HEIGHT_COMPENSATION = 1.0
+
+plot_timers = {} # by interval
+
+def stop_plot_timers():
+    for plot_timer in plot_timers.values():
+        plot_timer.stop()
+        plot_timer.wait(1000)
 
 def istr(i):
     return str(int(i))
@@ -65,6 +73,37 @@ def fuzzy_leq(a, b):
 
 def fuzzy_geq(a, b):
     return a > b or fuzzy_eq(a, b)
+
+class PlotTimer(QThread):
+    timeout = pyqtSignal()
+
+    def __init__(self, interval):
+        super().__init__(get_main_window())
+
+        self.interval = interval
+        self.stop_flag = False
+        self.stop_queue = queue.Queue()
+
+    def run(self):
+        monotonic_timestamp = time.monotonic()
+
+        while not self.stop_flag:
+            elapsed = time.monotonic() - monotonic_timestamp
+            remaining = max(self.interval - elapsed, 0)
+
+            try:
+                self.stop_queue.get(timeout=remaining)
+                break
+            except queue.Empty:
+                pass
+
+            monotonic_timestamp = time.monotonic()
+
+            self.timeout.emit()
+
+    def stop(self):
+        self.stop_flag = True
+        self.stop_queue.put(None)
 
 class CurveValueWrapper:
     def __init__(self):
@@ -1231,13 +1270,15 @@ class PlotWidget(QWidget):
 
             v2layout.addLayout(self.moving_average_layout)
 
-        if external_timer == None:
-            self.timer = QTimer(self)
-            self.timer.timeout.connect(self.add_new_data)
-            self.timer.start(int(self.update_interval * 1000))
-        else:
-            # assuming that the external timer runs with the configured interval
-            external_timer.timeout.connect(self.add_new_data)
+        self.timer = plot_timers.get(self.update_interval)
+
+        if self.timer == None:
+            self.timer = PlotTimer(self.update_interval)
+            self.timer.start()
+
+            plot_timers[self.update_interval] = self.timer
+
+        self.timer.timeout.connect(self.add_new_data)
 
     def update_y_scale_sibling(self, plot_widget): # internal
         total_unpadded_width_diff = plot_widget.plot.y_scale.total_unpadded_width - self.plot.y_scale.total_unpadded_width

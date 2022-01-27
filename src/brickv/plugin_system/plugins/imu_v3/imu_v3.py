@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QTimer, QSize
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QVBoxLayout, QDialog, QAction, QWidget
 from PyQt5.QtGui import QColor, QPalette
 
@@ -198,9 +198,6 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
 
                 label.setAutoFillBackground(True)
 
-        self.plot_timer = QTimer(self)
-        self.plot_timer.start(100)
-
         for i in range(23):
             self.data_plot_widget.append(PlotWidget("",
                                                     [("", self.data_color[i][0], self.sensor_data[i], str)],
@@ -210,7 +207,6 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
                                                     curve_outer_border_visible=False,
                                                     curve_motion='smooth',
                                                     canvas_color=self.data_color[i][1],
-                                                    external_timer=self.plot_timer,
                                                     curve_start='right',
                                                     key=None,
                                                     y_resolution=0.01))

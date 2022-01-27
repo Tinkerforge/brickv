@@ -47,6 +47,7 @@ from brickv.healthmonitor import HealthMonitorWindow
 from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.developer import DeveloperWindow
 from brickv.async_call import async_start_thread, async_next_session, async_call, async_stop_thread
+from brickv.plot_widget import stop_plot_timers
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
 
@@ -262,13 +263,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Stop firmware fetcher thread.
         self.disable_auto_search_for_updates()
+
         # Instead of calling .quit() on the thread, the firmware version fetcher could call
         # QThread.currentThread().exit(0). Both variants will stop the event loop of the
         # formware fetcher's QThread. However the fetcher currently does not
         # know if it is running in a QThread or a threading.Thread. So we stop it here instead.
         self.fw_version_fetcher_thread.quit()
+
         # Will wait for ~ 20 seconds if the fetcher just started downloading new versions.
         self.fw_version_fetcher_thread.wait()
+
+        # Stop global plot timers
+        stop_plot_timers()
 
         # Without this, the quit event seems to not reach the main loop under OSX.
         QApplication.quit()
