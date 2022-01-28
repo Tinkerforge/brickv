@@ -1149,9 +1149,12 @@ class PlotWidget(QWidget):
         self.key_items = []
         self.key_has_values = key.endswith('-value') if key != None else False
         self.first_show = True
-        self.plot_timestamp = 0 # seconds
+        self.zero_timestamp = None
+        self.stop_timestamp = None
+        self.stop_duration = 0
         self.update_interval = update_interval # seconds
         self.last_timestamp = [None] * len(self.curve_configs)
+        self.last_plot_timestamp = [None] * len(self.curve_configs)
         self.last_value = [None] * len(self.curve_configs)
 
         h1layout = QHBoxLayout()
@@ -1331,24 +1334,37 @@ class PlotWidget(QWidget):
 
     @stop.setter
     def stop(self, stop):
+        if self._stop == stop:
+            return
+
+        if stop:
+            self.add_new_data()
+
         for i, curve_config in enumerate(self.curve_configs):
             if curve_config.value_wrapper == None:
                 continue
 
             curve_config.value_wrapper.locked = stop
-            curve_config.value_wrapper.history = []
 
             if stop:
                 self.plot.add_jump(i)
 
         self._stop = stop
 
+        if not stop:
+            self.add_new_data()
+
     # internal
     def add_new_data(self):
         if self.stop:
-            return
+            if self.stop_timestamp == None:
+                # FIXME: in a multi curve plot the stop-timestamp should be
+                #        the min or max of all curves instead of the first one,
+                #        but the curves should normally be close enough in
+                #        sync that this does not matter
+                self.stop_timestamp = self.last_timestamp[0]
 
-        monotonic_timestamp = time.monotonic()
+            return
 
         for i, curve_config in enumerate(self.curve_configs):
             if curve_config.value_wrapper == None:
@@ -1357,7 +1373,7 @@ class PlotWidget(QWidget):
             history = curve_config.value_wrapper.history
             curve_config.value_wrapper.history = []
 
-            for value_timestamp, value in history:
+            for timestamp, value in history:
                 assert value != None
 
                 if len(self.key_items) > 0 and self.key_has_values:
@@ -1366,28 +1382,44 @@ class PlotWidget(QWidget):
                     else:
                         self.key_items[i].setText(curve_config.title + ': ' + curve_config.value_formatter(value))
 
-                timestamp = self.plot_timestamp - (monotonic_timestamp - value_timestamp)
+                if self.zero_timestamp == None:
+                    # FIXME: in a multi curve plot the zero-timestamp should be
+                    #        the min or max of all curves instead of the first one,
+                    #        but the curves should normally be close enough in
+                    #        sync that this does not matter
+                    self.zero_timestamp = timestamp
 
-                if timestamp < 0:
+                if self.stop_timestamp != None:
+                    self.stop_duration += timestamp - self.stop_timestamp
+                    self.stop_timestamp = None
+
+                plot_timestamp = timestamp - self.zero_timestamp - self.stop_duration
+
+                if plot_timestamp < 0:
                     continue
 
-                self.plot.add_data(i, timestamp, value)
+                self.plot.add_data(i, plot_timestamp, value)
 
                 self.last_timestamp[i] = timestamp
+                self.last_plot_timestamp[i] = plot_timestamp
                 self.last_value[i] = value
 
             # don't allow a gap of more than 0.5 seconds in the data to ensure proper curve motion
-            while self.last_timestamp[i] != None and self.plot_timestamp - self.last_timestamp[i] > 0.5:
+            while self.last_plot_timestamp[i] != None and \
+                  self.stop_timestamp == None and \
+                  time.monotonic() - self.zero_timestamp - self.stop_duration - self.last_plot_timestamp[i] > 0.5:
                 self.last_timestamp[i] += self.update_interval
+                self.last_plot_timestamp[i] += self.update_interval
 
                 # FIXME: maybe render this fake data in a different style/color
-                self.plot.add_data(i, self.last_timestamp[i], self.last_value[i])
-
-        self.plot_timestamp += self.update_interval
+                self.plot.add_data(i, self.last_plot_timestamp[i], self.last_value[i])
 
     # internal
     def clear_clicked(self):
         self.plot.clear_graph()
+        self.zero_timestamp = None
+        self.stop_timestamp = None
+        self.stop_duration = 0
         self.last_timestamp = [None] * len(self.curve_configs)
+        self.last_plot_timestamp = [None] * len(self.curve_configs)
         self.last_value = [None] * len(self.curve_configs)
-        self.plot_timestamp = 0
