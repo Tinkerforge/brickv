@@ -358,16 +358,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def tab_changed(self, i):
         if not hasattr(self.tab_widget.widget(i), '_info'):
-            new_current_device_info = None
+            new_device_info = None
         else:
-            new_current_device_info = self.tab_widget.widget(i)._info
-            new_current_device_info.plugin.start_plugin()
+            new_device_info = self.tab_widget.widget(i)._info
 
-        # stop the now deselected plugin, if there is one that's running
-        if self.current_device_info is not None:
-            self.current_device_info.plugin.stop_plugin()
+        # only stop/start the plugin if it really changes, because this function
+        # is also called when dragging a tab
+        if self.current_device_info != new_device_info:
+            if self.current_device_info != None:
+                self.current_device_info.plugin.stop_plugin()
 
-        self.current_device_info = new_current_device_info
+            if new_device_info != None:
+                new_device_info.plugin.start_plugin()
+
+        self.current_device_info = new_device_info
 
     def update_current_host_info(self):
         if self.host_index_changing:
