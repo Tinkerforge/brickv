@@ -46,6 +46,8 @@ EPSILON = 0.000001
 DEBUG = False
 CURVE_Y_OFFSET_COMPENSATION = 0.5
 CURVE_HEIGHT_COMPENSATION = 1.0
+CURVE_JUMP_COLOR = QColor(140, 140, 140)
+CANVAS_BORDER_COLOR = QColor(190, 190, 190)
 
 plot_timers = {} # by interval
 
@@ -593,10 +595,14 @@ class CurveArea(QWidget):
                     if start >= len(curve_x):
                         continue
 
+                    pen.setColor(CURVE_JUMP_COLOR)
+                    painter.setPen(pen)
+
                     moveTo(curve_x[start], curve_y[start])
 
                     for i in range(start + 1, len(curve_x)):
                         if curve_jump[i]:
+                            painter.drawLine(QPointF(curve_x[i], y_min_scale), QPointF(curve_x[i], y_max_scale))
                             moveTo(curve_x[i], curve_y[i])
                         else:
                             lineTo(curve_x[i], curve_y[i])
@@ -701,7 +707,7 @@ class Plot(QWidget):
 
         # draw canvas border
         if self.curve_outer_border > 0:
-            draw_rect(painter, canvas_x, canvas_y, canvas_width, canvas_height, 1, QColor(190, 190, 190))
+            draw_rect(painter, canvas_x, canvas_y, canvas_width, canvas_height, 1, CANVAS_BORDER_COLOR)
 
         if DEBUG:
             painter.fillRect(canvas_x + self.curve_outer_border,
