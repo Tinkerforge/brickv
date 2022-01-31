@@ -4217,6 +4217,77 @@ def get_security_info(esp, args):
         print('Api_Version: {}'.format(si["api_version"]))
 
 
+def check_efuses(esp, args):
+    blocks = [[], [], [], []]
+    blocks_bytes = [[], [], [], []]
+
+    for n in range(7):
+        efuse = esp.read_efuse(n)
+
+        blocks[0].append(efuse)
+        blocks_bytes[0] += list(efuse.to_bytes(4, 'little'))
+
+    for n in range(3 * 8):
+        efuse = esp.read_efuse(14 + n)
+
+        blocks[1 + n // 8].append(efuse)
+        blocks_bytes[1 + n // 8] += list(efuse.to_bytes(4, 'little'))
+
+    blocks_bytes_redacted = copy.deepcopy(blocks_bytes)
+
+    def redact(b, s, e):
+        assert s < e
+
+        b[s:e] = [None] * (e - s)
+
+    redact(blocks_bytes_redacted[3], 7, 10)
+    redact(blocks_bytes_redacted[3], 10, 12)
+    redact(blocks_bytes_redacted[3], 20, 21)
+    redact(blocks_bytes_redacted[3], 21, 23)
+    redact(blocks_bytes_redacted[3], 24, 25)
+    redact(blocks_bytes_redacted[3], 25, 28)
+
+    for b in range(4):
+        print('eFuse BLK{0}: {1}'.format(b, ' '.join([''.join('{0:02x}'.format(x) if x != None else 'xx' for x in blocks_bytes_redacted[b][i * 4:i * 4 + 4]) for i in range(8)])))
+
+    if any(b != 0 for b in blocks[1]):
+        print('WARNING: eFuse BLK1 is not empty')
+        return
+
+    if any(b != 0 for b in blocks[2]):
+        print('WARNING: eFuse BLK2 is not empty')
+        return
+
+    if blocks[0][4] & 0x0001c000 != 0x0001c000:
+        print('WARNING: Flash voltage eFuse in BLK0 is not set correctly')
+        return
+
+    """
+    from brickv.bindings.ip_connection import IPConnection, base58encode, base58decode, BASE58
+    block3_bytes = b''.join([r.to_bytes(4, 'little') for r in blocks[3]])
+    def block3_to_payload(block3):
+        passphrase_bytes_list = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        passphrase_bytes_list[0] = block3[7:10]
+        passphrase_bytes_list[1][0:2] = block3[10:12]
+        passphrase_bytes_list[1][2] = block3[20]
+        passphrase_bytes_list[2][0:2] = block3[21:23]
+        passphrase_bytes_list[2][2] = block3[24]
+        passphrase_bytes_list[3] = block3[25:28]
+        uid_bytes = bytes(block3[28:32])
+        passphrase_bytes_list = [bytes(chunk) for chunk in passphrase_bytes_list]
+        passphrase = [base58encode(int.from_bytes(chunk, 'little')) for chunk in passphrase_bytes_list]
+        uid = base58encode(int.from_bytes(uid_bytes, 'little'))
+        passphrase = '-'.join(passphrase)
+        return passphrase, uid
+
+    passphrase, uid = block3_to_payload(block3_bytes)
+    print('Passphrase:', passphrase)
+    print('UID:', uid)
+    """
+
+    print('eFuses are configured correctly')
+
+
 def merge_bin(args):
     try:
         chip_class = _chip_to_rom_loader(args.chip)
@@ -4527,6 +4598,8 @@ def main(argv=None, esp=None):
         'version', help='Print esptool version')
 
     subparsers.add_parser('get_security_info', help='Get some security-related data')
+
+    subparsers.add_parser('check_efuses')
 
     # internal sanity check - every operation matches a module function of the same name
     for operation in subparsers.choices.keys():

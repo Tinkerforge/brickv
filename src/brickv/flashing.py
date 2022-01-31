@@ -1080,11 +1080,26 @@ class FlashingWindow(QDialog, Ui_Flashing):
         dialog.resize(900, 600)
         dialog.show()
 
-        esptool_print_callback_ref[0] = lambda *args, end='\n': dialog.add_text.emit(' '.join(args) + end)
+        esptool_print_callback_ref[0] = lambda *args, end='\n': dialog.add_text.emit(' '.join([str(arg) for arg in args]) + end)
 
         def esptool_handler():
+            # Check efuses
+            dialog.add_text.emit('===== Checking eFuses =====\n\n')
+
+            try:
+                esptool_main(['--port', port.path,
+                              '--chip', 'esp32',
+                              'check_efuses'])
+            except BaseException as e:
+                dialog.add_text.emit('\nERROR: [{0}] {1}\n\n===== Failure ====='.format(e.__class__.__name__, e))
+                return
+
+            if 'eFuses are configured correctly' not in dialog.text:
+                dialog.add_text.emit('\nERROR: Could not check eFuses\n\n===== Failure =====')
+                return
+
             # Erase flash
-            dialog.add_text.emit('===== Erasing flash =====\n\n')
+            dialog.add_text.emit('\n===== Erasing flash =====\n\n')
 
             try:
                 esptool_main(['--port', port.path,
