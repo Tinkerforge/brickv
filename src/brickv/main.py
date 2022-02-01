@@ -4,7 +4,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2020-2021 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020-2022 Erik Fleckstein <erik@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
@@ -71,7 +71,7 @@ prepare_package('brickv')
 
 from PyQt5.Qt import PYQT_VERSION_STR
 from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR, QUrl
-from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtGui import QIcon, QDesktopServices, QPalette
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
                             QSplashScreen, QSizePolicy, QMessageBox
@@ -238,6 +238,12 @@ class BrickViewer(QApplication):
 
         self.object_creator_signal.connect(self.object_creator_slot)
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
+
+        if sys.platform == 'darwin' and config.get_use_fusion_gui_style():
+            #workaround macOS QTBUG-75321
+            p = self.palette()
+            p.setColor(QPalette.ButtonText, p.color(QPalette.WindowText))
+            self.setPalette(p)
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
