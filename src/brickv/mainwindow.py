@@ -232,6 +232,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_ui_state()
 
+    def get_last_host(self):
+        return self.last_host
+
     def disable_auto_search_for_updates(self):
         self.fw_version_fetcher.abort()
 

@@ -21,16 +21,24 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QDesktopServices
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.brick_esp32 import BrickESP32
+from brickv.plugin_system.plugins.esp32.ui_esp32 import Ui_ESP32
+from brickv.utils import get_main_window
 
-class ESP32(PluginBase):
+class ESP32(PluginBase, Ui_ESP32):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickESP32, *args)
 
-        QHBoxLayout(self)
+        self.setupUi(self)
+
+        self.button_open_web_interface.clicked.connect(self.open_web_interface)
+
+    def open_web_interface(self):
+        QDesktopServices.openUrl(QUrl('http://{0}'.format(get_main_window().get_last_host())))
 
     def start(self):
         pass
