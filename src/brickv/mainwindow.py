@@ -53,10 +53,12 @@ from brickv.bindings.brick_red import BrickRED
 from brickv.bindings.brick_hat import BrickHAT
 from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.bindings.bricklet_isolator import BrickletIsolator
+from brickv.bindings.brick_esp32 import BrickESP32
+from brickv.bindings.brick_esp32_ethernet import BrickESP32Ethernet
 from brickv import config
 from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
-                         BrickHATZeroInfo, BrickletIsolatorInfo, BrickInfo, \
-                         BrickletInfo, TNGInfo, get_version_string, inventory, UID_BRICKV
+                         BrickHATZeroInfo, BrickletIsolatorInfo, BrickESP32Info, BrickESP32EthernetInfo, \
+                         BrickInfo, BrickletInfo, TNGInfo, get_version_string, inventory, UID_BRICKV
 from brickv.tab_window import TabWindow, IconButton
 from brickv.plugin_system.comcu_bootloader import COMCUBootloader
 from brickv.load_pixmap import load_pixmap
@@ -893,6 +895,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = BrickHATZeroInfo()
                 elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
                     device_info = BrickletIsolatorInfo()
+                elif device_identifier == BrickESP32.DEVICE_IDENTIFIER:
+                    device_info = BrickESP32Info()
+                elif device_identifier == BrickESP32Ethernet.DEVICE_IDENTIFIER:
+                    device_info = BrickESP32EthernetInfo()
                 elif str(device_identifier).startswith('20'):
                     device_info = TNGInfo()
                 elif '0' <= position <= '9':

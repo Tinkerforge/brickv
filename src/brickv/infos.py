@@ -306,6 +306,12 @@ class BrickMasterInfo(BrickWithExtensions):
 class BrickletIsolatorInfo(BrickletInfo):
     bricklet_ports = ('z')
 
+class BrickESP32Info(BrickInfo):
+    bricklet_ports = ('a', 'b', 'c', 'd', 'e', 'f')
+
+class BrickESP32EthernetInfo(BrickInfo):
+    bricklet_ports = ('a', 'b', 'c', 'd', 'e', 'f')
+
 class BrickREDInfo(BrickWithExtensions):
     bricklet_ports = ()
     bindings_infos = None
