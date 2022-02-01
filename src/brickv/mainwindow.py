@@ -50,19 +50,8 @@ from brickv.async_call import async_start_thread, async_next_session, async_call
 from brickv.plot_widget import stop_plot_timers
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
-
-try:
-    from brickv.bindings.brick_hat import BrickHAT
-    hat_brick_supported = True
-except ImportError:
-    hat_brick_supported = False
-
-try:
-    from brickv.bindings.brick_hat_zero import BrickHATZero
-    hat_zero_brick_supported = True
-except ImportError:
-    hat_zero_brick_supported = False
-
+from brickv.bindings.brick_hat import BrickHAT
+from brickv.bindings.brick_hat_zero import BrickHATZero
 from brickv.bindings.bricklet_isolator import BrickletIsolator
 from brickv import config
 from brickv.infos import DeviceInfo, BrickMasterInfo, BrickREDInfo, BrickHATInfo, \
@@ -898,9 +887,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = BrickMasterInfo()
                 elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
                     device_info = BrickREDInfo()
-                elif hat_brick_supported and device_identifier == BrickHAT.DEVICE_IDENTIFIER:
+                elif device_identifier == BrickHAT.DEVICE_IDENTIFIER:
                     device_info = BrickHATInfo()
-                elif hat_zero_brick_supported and device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
+                elif device_identifier == BrickHATZero.DEVICE_IDENTIFIER:
                     device_info = BrickHATZeroInfo()
                 elif device_identifier == BrickletIsolator.DEVICE_IDENTIFIER:
                     device_info = BrickletIsolatorInfo()
