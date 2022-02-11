@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import pyqtSignal, Qt, QSize
 from PyQt5.QtWidgets import QVBoxLayout, QDialog, QAction, QWidget
 from PyQt5.QtGui import QColor, QPalette
 
@@ -128,6 +128,8 @@ class WrapperWidget(QWidget):
         return QSize(500, 500)
 
 class IMUV3(COMCUPluginBase, Ui_IMUV3):
+    qtcb_all_data_foreground = pyqtSignal(object)
+
     def __init__(self, *args):
         COMCUPluginBase.__init__(self, BrickletIMUV3, *args)
 
@@ -138,8 +140,11 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
         self.cbe_all_data = CallbackEmulator(self,
                                              self.imu.get_all_data,
                                              None,
-                                             self.cb_all_data,
-                                             self.increase_error_count)
+                                             self.cb_all_data_background,
+                                             self.increase_error_count,
+                                             use_result_signal=False)
+
+        self.qtcb_all_data_foreground.connect(self.cb_all_data_foreground)
 
         self.imu_gl = IMUV33DWidget(self)
         self.imu_gl.setFixedSize(200, 200)
@@ -209,7 +214,8 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
                                                     canvas_color=self.data_color[i][1],
                                                     curve_start='right',
                                                     key=None,
-                                                    y_resolution=0.01))
+                                                    y_resolution=0.01,
+                                                    multi_threading=True))
 
         for w in self.data_plot_widget:
             w.setMinimumHeight(15)
@@ -231,7 +237,8 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
 
         self.calibration = None
         self.alive = True
-        self.callback_counter = 0
+        self.background_counter = 0
+        self.foreground_counter = 0
 
     def save_orientation_clicked(self):
         self.imu_gl.save_orientation()
@@ -313,11 +320,11 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
 
         self.imu_gl_wrapper.show()
 
-    def cb_all_data(self, data):
-        self.callback_counter += 1
+    def cb_all_data_background(self, data):
+        self.background_counter += 1
 
-        if self.callback_counter == 2:
-            self.callback_counter = 0
+        if self.background_counter == 2:
+            self.background_counter = 0
 
             self.sensor_data[0].value  = data.acceleration[0] / 100.0
             self.sensor_data[1].value  = data.acceleration[1] / 100.0
@@ -343,19 +350,27 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
             self.sensor_data[21].value = data.gravity_vector[2] / 100.0
             self.sensor_data[22].value = data.temperature
 
+        self.qtcb_all_data_foreground.emit(data)
+
+    def cb_all_data_foreground(self, data):
+        self.foreground_counter += 1
+
+        if self.foreground_counter == 2:
+            self.foreground_counter = 0
+
             for i in range(23):
                 self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i].value))
 
             self.imu_gl.update_orientation(self.sensor_data[12].value,
-                               self.sensor_data[13].value,
-                               self.sensor_data[14].value,
-                               self.sensor_data[15].value)
+                                           self.sensor_data[13].value,
+                                           self.sensor_data[14].value,
+                                           self.sensor_data[15].value)
 
             if self.imu_gl_wrapper is not None:
                 self.imu_gl_wrapper.glWidget.update_orientation(self.sensor_data[12].value,
-                                                    self.sensor_data[13].value,
-                                                    self.sensor_data[14].value,
-                                                    self.sensor_data[15].value)
+                                                                self.sensor_data[13].value,
+                                                                self.sensor_data[14].value,
+                                                                self.sensor_data[15].value)
 
             cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
@@ -371,12 +386,12 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
                 self.calibration.sys_color.set_color(self.calibration_color[cal_sys])
         else:
             self.imu_gl.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
-                               data.quaternion[1] / (2 ** 14 - 1),
-                               data.quaternion[2] / (2 ** 14 - 1),
-                               data.quaternion[3] / (2 ** 14 - 1))
+                                           data.quaternion[1] / (2 ** 14 - 1),
+                                           data.quaternion[2] / (2 ** 14 - 1),
+                                           data.quaternion[3] / (2 ** 14 - 1))
 
             if self.imu_gl_wrapper is not None:
                 self.imu_gl_wrapper.glWidget.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
-                                                    data.quaternion[1] / (2 ** 14 - 1),
-                                                    data.quaternion[2] / (2 ** 14 - 1),
-                                                    data.quaternion[3] / (2 ** 14 - 1))
+                                                                data.quaternion[1] / (2 ** 14 - 1),
+                                                                data.quaternion[2] / (2 ** 14 - 1),
+                                                                data.quaternion[3] / (2 ** 14 - 1))

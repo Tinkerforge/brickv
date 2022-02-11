@@ -29,6 +29,7 @@ import bisect
 from collections import namedtuple
 import time
 import queue
+import threading
 
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF, QPoint, QPointF, QThread
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
@@ -107,9 +108,17 @@ class PlotTimer(QThread):
         self.stop_flag = True
         self.stop_queue.put(None)
 
+class FakeLock:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
 class CurveValueWrapper:
     def __init__(self):
-        self.locked = False
+        self.lock = FakeLock()
+        self.blocked = False
         self.history = []
         self._value = None
 
@@ -119,12 +128,13 @@ class CurveValueWrapper:
 
     @value.setter
     def value(self, value):
-        self._value = value
+        with self.lock:
+            self._value = value
 
-        if self.locked:
-            return
+            if self.blocked:
+                return
 
-        self.history.append((time.monotonic(), value))
+            self.history.append((time.monotonic(), value))
 
 class Scale(QObject):
     def __init__(self, tick_text_font, title_text_font, parent):
@@ -1126,7 +1136,8 @@ class PlotWidget(QWidget):
                  x_diff=20,
                  x_scale_skip_last_tick=True,
                  y_resolution=None,
-                 y_scale_shrinkable=True):
+                 y_scale_shrinkable=True,
+                 multi_threading=False):
         super().__init__(parent)
 
         assert update_interval < 0.5, update_interval
@@ -1139,11 +1150,19 @@ class PlotWidget(QWidget):
             y_diff_min = None
 
         self._stop = True
+
+        if multi_threading:
+            self.curve_value_wrapper_lock = threading.Lock()
+        else:
+            self.curve_value_wrapper_lock = FakeLock()
+
         self.curve_configs = [CurveConfig(*curve_config) for curve_config in curve_configs]
 
         for curve_config in self.curve_configs:
             if curve_config.value_wrapper != None:
                 assert isinstance(curve_config.value_wrapper, CurveValueWrapper)
+
+                curve_config.value_wrapper.lock = self.curve_value_wrapper_lock
 
         self.plot = Plot(self, x_scale_title_text, y_scale_title_text, x_scale_skip_last_tick,
                          self.curve_configs, x_scale_visible, y_scale_visible, curve_outer_border_visible,
@@ -1350,7 +1369,7 @@ class PlotWidget(QWidget):
             if curve_config.value_wrapper == None:
                 continue
 
-            curve_config.value_wrapper.locked = stop
+            curve_config.value_wrapper.blocked = stop
 
             if stop:
                 self.plot.add_jump(i)
@@ -1376,8 +1395,9 @@ class PlotWidget(QWidget):
             if curve_config.value_wrapper == None:
                 continue
 
-            history = curve_config.value_wrapper.history
-            curve_config.value_wrapper.history = []
+            with self.curve_value_wrapper_lock:
+                history = curve_config.value_wrapper.history
+                curve_config.value_wrapper.history = []
 
             for timestamp, value in history:
                 assert value != None
