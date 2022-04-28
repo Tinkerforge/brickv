@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickESP32(Device):
     """
-    TBD
+    ESP32 microcontroller based Brick with 6 Bricklet ports
     """
 
     DEVICE_IDENTIFIER = 113

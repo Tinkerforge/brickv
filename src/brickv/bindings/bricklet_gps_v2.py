@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-28.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -182,7 +182,7 @@ class BrickletGPSV2(Device):
 
     def get_status(self):
         """
-        Returns if a fix is currently available as well as the, the number of
+        Returns if a fix is currently available as well as the number of
         satellites that are in view.
 
         There is also a :ref:`green LED <gps_v2_bricklet_fix_led>` on the Bricklet that

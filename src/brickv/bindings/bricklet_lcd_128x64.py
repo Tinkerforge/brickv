@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -510,6 +510,8 @@ class BrickletLCD128x64(Device):
         Draws a text at the pixel position (x, y).
 
         You can use one of 9 different font sizes and draw the text in white or black.
+
+        The font conforms to code page 437.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
         """

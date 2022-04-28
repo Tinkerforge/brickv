@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-04-20.      #
+# This file was automatically generated on 2022-04-28.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -20,14 +20,14 @@ except (ValueError, ImportError):
 
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
-class BrickESP32Ethernet(Device):
-    """
-    ESP32 microcontroller based Brick with Ethernet and 6 Bricklet ports
+class BrickUnknownV2(Device):
     """
 
-    DEVICE_IDENTIFIER = 115
-    DEVICE_DISPLAY_NAME = 'ESP32 Ethernet Brick'
-    DEVICE_URL_PART = 'esp32_ethernet' # internal
+    """
+
+    DEVICE_IDENTIFIER = -11
+    DEVICE_DISPLAY_NAME = 'Unknown Brick 2.0'
+    DEVICE_URL_PART = 'unknown_v2' # internal
 
 
 
@@ -39,11 +39,11 @@ class BrickESP32Ethernet(Device):
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid, ipcon, BrickESP32Ethernet.DEVICE_IDENTIFIER, BrickESP32Ethernet.DEVICE_DISPLAY_NAME)
+        Device.__init__(self, uid, ipcon, BrickUnknownV2.DEVICE_IDENTIFIER, BrickUnknownV2.DEVICE_DISPLAY_NAME)
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickESP32Ethernet.FUNCTION_GET_IDENTITY] = BrickESP32Ethernet.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickUnknownV2.FUNCTION_GET_IDENTITY] = BrickUnknownV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
         ipcon.add_device(self)
@@ -59,6 +59,6 @@ class BrickESP32Ethernet(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickESP32Ethernet.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickUnknownV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
-ESP32Ethernet = BrickESP32Ethernet # for backward compatibility
+UnknownV2 = BrickUnknownV2 # for backward compatibility

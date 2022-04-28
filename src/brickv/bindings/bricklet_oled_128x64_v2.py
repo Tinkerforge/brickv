@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -224,6 +224,8 @@ class BrickletOLED128x64V2(Device):
 
         Automatic draw can be configured with the :func:`Set Display Configuration`
         function.
+
+        The font conforms to code page 437.
         """
         self.check_validity()
 

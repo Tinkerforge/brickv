@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -292,6 +292,8 @@ class BrickletEPaper296x128(Device):
 
         This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
         to the display use :func:`Draw`.
+
+        The font conforms to code page 437.
         """
         self.check_validity()
 

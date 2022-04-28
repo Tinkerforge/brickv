@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2021-05-11.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -28,6 +28,8 @@ DEVICE_DISPLAY_NAMES = {
     29: 'IO-4 Bricklet',
     111: 'HAT Brick',
     112: 'HAT Zero Brick',
+    113: 'ESP32 Brick',
+    115: 'ESP32 Ethernet Brick',
     210: 'Joystick Bricklet',
     211: 'LCD 16x2 Bricklet',
     212: 'LCD 20x4 Bricklet',

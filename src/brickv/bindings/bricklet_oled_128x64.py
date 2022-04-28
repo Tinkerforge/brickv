@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-01-18.      #
+# This file was automatically generated on 2022-04-20.      #
 #                                                           #
 # Python Bindings Version 2.1.29                            #
 #                                                           #
@@ -145,6 +145,8 @@ class BrickletOLED128x64(Device):
 
         The display uses a special 5x7 pixel charset. You can view the characters
         of the charset in Brick Viewer.
+
+        The font conforms to code page 437.
         """
         self.check_validity()
 
