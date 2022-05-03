@@ -49,12 +49,14 @@ def refresh_firmware_info(url_part, latest_version):
     elif name.endswith('_v3'):
         name = name.replace('_v3', '_3.0')
 
-    if name in ['dc', 'imu', 'imu_2.0']:
+    if name in ['dc', 'imu', 'imu_2.0', 'esp32']:
         name = name.upper()
     elif name.startswith('warp_'):
         name = name.replace('warp_', 'WARP_')
     elif name.startswith('warp2_'):
         name = name.replace('warp2_', 'WARP2_')
+    elif name.startswith('esp32_'):
+        name = name.replace('esp32_', 'ESP32_')
 
     words = name.split('_')
     parts = []
