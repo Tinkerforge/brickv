@@ -36,7 +36,7 @@ def main():
     try:
         XML_URL = 'file://{0}'.format(os.environ['SERVICEPROVIDERS_XML_PATH'])
     except KeyError:
-        XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
+        XML_URL = 'https://gitlab.gnome.org/GNOME/mobile-broadband-provider-info/-/raw/main/serviceproviders.xml'
     try:
         ISO3166_URL = 'file://{0}'.format(os.environ['ISOCODES_JSON_PATH'])
     except KeyError:
