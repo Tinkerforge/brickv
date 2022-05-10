@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-04-20.      #
+# This file was automatically generated on 2022-05-10.      #
 #                                                           #
-# Python Bindings Version 2.1.29                            #
+# Python Bindings Version 2.1.30                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -62,6 +62,7 @@ class BrickletEVSE(Device):
     FUNCTION_SET_INDICATOR_LED = 18
     FUNCTION_GET_BUTTON_STATE = 19
     FUNCTION_GET_ALL_DATA_1 = 20
+    FUNCTION_FACTORY_RESET = 21
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -159,6 +160,7 @@ class BrickletEVSE(Device):
         self.response_expected[BrickletEVSE.FUNCTION_SET_INDICATOR_LED] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BUTTON_STATE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_ALL_DATA_1] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_FACTORY_RESET] = BrickletEVSE.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -397,6 +399,16 @@ class BrickletEVSE(Device):
         self.check_validity()
 
         return GetAllData1(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ALL_DATA_1, (), '', 66, 'B B B B H B B B ! B B H 2H 3h 2I 5! I I I h H I I !'))
+
+    def factory_reset(self, password):
+        """
+        TODO
+        """
+        self.check_validity()
+
+        password = int(password)
+
+        self.ipcon.send_request(self, BrickletEVSE.FUNCTION_FACTORY_RESET, (password,), 'I', 0, '')
 
     def get_spitfp_error_count(self):
         """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-04-20.      #
+# This file was automatically generated on 2022-05-10.      #
 #                                                           #
-# Python Bindings Version 2.1.29                            #
+# Python Bindings Version 2.1.30                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -155,7 +155,8 @@ DEVICE_DISPLAY_NAMES = {
     2162: 'Industrial Dual AC Relay Bricklet',
     2164: 'Industrial PTC Bricklet',
     2165: 'DC Bricklet 2.0',
-    2166: 'Silent Stepper Bricklet 2.0'
+    2166: 'Silent Stepper Bricklet 2.0',
+    2171: 'GPS Bricklet 3.0'
 }
 
 def get_device_display_name(device_identifier):
