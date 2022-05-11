@@ -262,6 +262,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletGPSV2_found = False
     try:
+        from brickv.bindings.bricklet_gps_v3 import BrickletGPSV3
+        BrickletGPSV3_found = True
+    except ImportError:
+        BrickletGPSV3_found = False
+    try:
         from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
         BrickletHallEffect_found = True
     except ImportError:
@@ -877,6 +882,11 @@ else:
     except ImportError:
         BrickletGPSV2_found = False
     try:
+        from tinkerforge.bricklet_gps_v3 import BrickletGPSV3
+        BrickletGPSV3_found = True
+    except ImportError:
+        BrickletGPSV3_found = False
+    try:
         from tinkerforge.bricklet_hall_effect import BrickletHallEffect
         BrickletHallEffect_found = True
     except ImportError:
@@ -1373,6 +1383,25 @@ def special_get_gps_v2_altitude(device):
     return device.get_altitude()
 
 def special_get_gps_v2_motion(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix == device.FIX_NO_FIX:
+        raise Exception('No fix')
+
+    return device.get_motion()
+
+# BrickletGPSV3
+def special_get_gps_v3_coordinates(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix == device.FIX_NO_FIX:
+        raise Exception('No fix')
+
+    return device.get_coordinates()
+
+def special_get_gps_v3_altitude(device):
+    if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix != device.FIX_3D_FIX:
+        raise Exception('No 3D fix')
+
+    return device.get_altitude()
+
+def special_get_gps_v3_motion(device):
     if device.get_satellite_system_status(device.SATELLITE_SYSTEM_GPS).fix == device.FIX_NO_FIX:
         raise Exception('No fix')
 
@@ -2671,6 +2700,56 @@ if BrickletGPSV2_found:
             {
                 'name': 'Motion',
                 'getter': special_get_gps_v2_motion,
+                'subvalues': ['Course', 'Speed'],
+                'unit': ['deg/100', '10m/h'],
+                'advanced': False
+            },
+            {
+                'name': 'Date Time',
+                'getter': lambda device: device.get_date_time(),
+                'subvalues': ['Date', 'Time'],
+                'unit': ['ddmmyy', 'hhmmss|sss'],
+                'advanced': False
+            },
+            {
+                'name': 'Status',
+                'getter': lambda device: device.get_status(),
+                'subvalues': ['Fix', 'Satellites View'],
+                'unit': [None, None], # FIXME: fix constants?
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    }
+if BrickletGPSV3_found:
+    device_specs[BrickletGPSV3.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletGPSV3,
+        'values': [
+            {
+                'name': 'Coordinates',
+                'getter': special_get_gps_v3_coordinates,
+                'subvalues': ['Latitude', 'NS', 'Longitude', 'EW'],
+                'unit': ['deg/1000000', None, 'deg/1000000', None],
+                'advanced': False
+            },
+            {
+                'name': 'Altitude',
+                'getter': special_get_gps_v3_altitude,
+                'subvalues': ['Altitude', 'Geoidal Separation'],
+                'unit': ['cm', 'cm'],
+                'advanced': False
+            },
+            {
+                'name': 'Motion',
+                'getter': special_get_gps_v3_motion,
                 'subvalues': ['Course', 'Speed'],
                 'unit': ['deg/100', '10m/h'],
                 'advanced': False
