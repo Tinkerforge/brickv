@@ -75,3 +75,6 @@
 - Reuse thread in timer to avoid slow memory leak
 - Fix device list clearing on config loading
 - Fix slow memory leak in data tab
+
+2022-05-11: 2.1.9 (<unknown>)
+- Add support for GPS Bricklet 3.0
