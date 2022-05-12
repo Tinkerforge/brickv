@@ -149,6 +149,9 @@ InstallDirRegKey HKLM "Software\Tinkerforge\Brickv" "Install_Dir"
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
+; Make Windows 8.1 and newer not lie about its version number
+ManifestSupportedOS all
+
 ;--------------------------------
 
 !define BRICKV_VERSION <<VERSION>>
@@ -237,6 +240,30 @@ Section "Install/Update Brick Bootloader Driver"
   Push "$INSTDIR\drivers\bootloader\atm6124_cdc.inf"
   Push "USB\VID_03EB&PID_6124"
   Call InstallUpgradeDriver
+
+SectionEnd
+
+Section "Install/Update ESP32 Bootloader Driver"
+
+${If} ${AtLeastWin10}
+
+  ; Windows 10/11
+  Push "Bootloader"
+  Push "$INSTDIR\drivers\esp32\win10"
+  Push "$INSTDIR\drivers\esp32\win10\silabser.inf"
+  Push "USB\VID_10C4&PID_EA60"
+  Call InstallUpgradeDriver
+
+${Else}
+
+  ; Windows 7/8/8.1
+  Push "Bootloader"
+  Push "$INSTDIR\drivers\esp32\win7"
+  Push "$INSTDIR\drivers\esp32\win7\slabvcp.inf"
+  Push "USB\VID_10C4&PID_EA60"
+  Call InstallUpgradeDriver
+
+${EndIf}
 
 SectionEnd
 
