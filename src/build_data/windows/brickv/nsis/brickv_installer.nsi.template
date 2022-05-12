@@ -243,6 +243,10 @@ Section "Install/Update Brick Bootloader Driver"
 
 SectionEnd
 
+;--------------------------------
+
+!include "WinVer.nsh"
+
 Section "Install/Update ESP32 Bootloader Driver"
 
 ${If} ${AtLeastWin10}
@@ -270,7 +274,6 @@ SectionEnd
 ;--------------------------------
 
 !include "Sections.nsh"
-!include "WinVer.nsh"
 
 Function .onInit
 
