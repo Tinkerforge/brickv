@@ -235,7 +235,7 @@ SectionEnd
 
 Section "Install/Update Brick Bootloader Driver"
 
-  Push "Bootloader"
+  Push "Brick Bootloader"
   Push "$INSTDIR\drivers\bootloader"
   Push "$INSTDIR\drivers\bootloader\atm6124_cdc.inf"
   Push "USB\VID_03EB&PID_6124"
@@ -252,7 +252,7 @@ Section "Install/Update ESP32 Bootloader Driver"
 ${If} ${AtLeastWin10}
 
   ; Windows 10/11
-  Push "Bootloader"
+  Push "ESP32 Bootloader"
   Push "$INSTDIR\drivers\esp32\win10"
   Push "$INSTDIR\drivers\esp32\win10\silabser.inf"
   Push "USB\VID_10C4&PID_EA60"
@@ -261,7 +261,7 @@ ${If} ${AtLeastWin10}
 ${Else}
 
   ; Windows 7/8/8.1
-  Push "Bootloader"
+  Push "ESP32 Bootloader"
   Push "$INSTDIR\drivers\esp32\win7"
   Push "$INSTDIR\drivers\esp32\win7\slabvcp.inf"
   Push "USB\VID_10C4&PID_EA60"
