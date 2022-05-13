@@ -30,8 +30,7 @@ import zipfile
 from collections import namedtuple
 
 def system(command):
-        if subprocess.call(command) != 0:
-            sys.exit(1)
+    subprocess.check_call(command)
 
 def specialize_template(template_filename, destination_filename, replacements):
     lines = []
@@ -133,19 +132,18 @@ class BuildPkgUtils:
         if prepare_script is not None:
             print('calling ' + prepare_script)
 
-            if self.platform == 'windows':
-                system(['python', prepare_script])
-            else:
-                system(['python3', prepare_script])
+            system([sys.executable, prepare_script])
 
         pre_sdist()
 
         print('calling setup.py sdist')
 
+        setup_py_args = [sys.executable, os.path.join(self.root_path, 'setup.py'), 'sdist']
+
         if self.platform == 'windows':
-            system(['python', os.path.join(self.root_path, 'setup.py'), 'sdist', '--formats=zip'])
-        else:
-            system(['python3', os.path.join(self.root_path, 'setup.py'), 'sdist'])
+            setup_py_args.append('--formats=zip')
+
+        system(setup_py_args)
 
         if os.path.exists(egg_info_path):
             shutil.rmtree(egg_info_path)
