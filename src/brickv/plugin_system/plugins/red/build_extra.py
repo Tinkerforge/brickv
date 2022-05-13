@@ -25,14 +25,11 @@ Boston, MA 02111-1307, USA.
 
 import os
 import sys
+import subprocess
 
-def system(command):
-    if os.system(command) != 0:
-        exit(1)
-
-system(sys.executable + " build_scripts.py")
+subprocess.check_call([sys.executable, 'build_scripts.py'])
 
 if sys.platform.startswith("linux"):
-    system(sys.executable + " build_serviceproviders.py")
+    subprocess.check_call([sys.executable, 'build_serviceproviders.py'])
 else:
     print("Skipping build_serviceproviders.py")
