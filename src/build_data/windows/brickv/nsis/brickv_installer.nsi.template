@@ -233,7 +233,7 @@ SectionEnd
 
 ;--------------------------------
 
-Section "Install/Update Brick Bootloader Driver"
+Section /o "-Install/Update Brick Bootloader Driver" SEC_INSTALL_BRICK_BOOTLOADER_DRIVER
 
   Push "Brick Bootloader"
   Push "$INSTDIR\drivers\bootloader"
@@ -294,6 +294,15 @@ ${EndIf}
   SectionSetFlags ${SEC_UNINSTALL_OLD} $0
 
 not_installed:
+
+${IfNot} ${AtLeastWin8.1}
+
+  ; Install Brick bootloader driver only on systems < Windows 8.1
+  ; Windows >= 8.1 comes with a universal usbser.sys driver
+  SectionSetText ${SEC_INSTALL_BRICK_BOOTLOADER_DRIVER} "Install/Update Brick Bootloader Driver" ; make item visible
+  SectionSetFlags ${SEC_INSTALL_BRICK_BOOTLOADER_DRIVER} ${SF_SELECTED}
+
+${EndIf}
 
 FunctionEnd
 
