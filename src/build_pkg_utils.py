@@ -202,7 +202,7 @@ class BuildPkgUtils:
 
         if os.path.exists('/usr/bin/lintian'):
             print('checking Debian package')
-            system(['lintian', '--pedantic', deb_name])
+            system(['lintian', '--pedantic', '--suppress-tags', 'changelog-file-missing-in-native-package,no-copyright-file,binary-without-manpage', deb_name])
         else:
             print('skipping lintian check')
 
