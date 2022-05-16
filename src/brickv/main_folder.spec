@@ -83,8 +83,9 @@ patterns = ['qt5qml', 'qt5quick', 'qt5network', 'qt5dbus', 'qt5svg', 'qt5websock
             'qtqml', 'qtquick', 'qtnetwork', 'qwebp',
             'qjpeg', 'qminimal', 'qoffscreen', 'qwebgl']
 hiddenimports = []
+datas = [('../drivers', 'drivers')]
 
-a = Analysis(['main.py'], pathex=utils.pathex, excludes=excludes, hiddenimports=hiddenimports)
+a = Analysis(['main.py'], pathex=utils.pathex, excludes=excludes, hiddenimports=hiddenimports, datas=datas)
 
 binaries = utils.strip_binaries(a.binaries, patterns)
 

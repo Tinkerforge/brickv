@@ -98,7 +98,7 @@ class BuildPkgUtils:
     def copy_build_data(self):
         print('copying build data')
 
-        shutil.copytree(self.build_data_src_path, self.build_data_dest_path)
+        shutil.copytree(self.build_data_src_path, self.build_data_dest_path, dirs_exist_ok=True)
 
     def unpack_sdist(self):
         if self.platform == 'windows':

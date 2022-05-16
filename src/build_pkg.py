@@ -129,7 +129,7 @@ def build_pyinstaller_pkg():
     utils.exit_if_not_venv()
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
                                 pre_sdist=lambda: prepare_manifest(utils),
-                                pre_pyinstaller=lambda: write_marker_files_and_patch_plugins(utils))
+                                pre_pyinstaller=lambda: [write_marker_files_and_patch_plugins(utils), utils.copy_build_data()])
     utils.copy_build_artifact()
 
 BRICK_FLASH_VERSION = '1.0.2'
