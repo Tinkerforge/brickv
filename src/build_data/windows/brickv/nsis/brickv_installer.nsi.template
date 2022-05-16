@@ -68,7 +68,52 @@ ManifestSupportedOS all
 
   DetailPrint "Uninstall Brick Viewer..."
 
+  IfFileExists "$INSTDIR\*.*" 0 end
+  IfFileExists "$INSTDIR\uninstall.log" use_uninstall_log
+
+  ; no uninstall.log
+  ; FIXME: add brickv version check to only use wildcard removal for
+  ;        Brickv <= 2.4.21, that didn't create a uninstall.log yet
+  DetailPrint "Using wildcard removal"
   RMDir /R "$INSTDIR"
+  Goto common
+
+use_uninstall_log:
+
+  DetailPrint "Using $INSTDIR\uninstall.log"
+  FileOpen $0 "$INSTDIR\uninstall.log" r
+
+next:
+
+  ClearErrors
+  FileRead $0 $1
+
+  IfErrors 0 +2
+    Goto done
+
+  StrCpy $1 $1 -2
+
+  IfFileExists "$1\*.*" 0 +3
+    RMDir $1
+    Goto next
+
+  IfFileExists $1 0 +2
+    Delete $1
+
+  Goto next
+
+done:
+
+  FileClose $0
+
+  ; Remove uninstaller
+  Delete "$INSTDIR\uninstall.exe"
+  Delete "$INSTDIR\uninstall.log"
+
+  ; Remove now empty install directory
+  RMDir "$INSTDIR"
+
+common:
 
   ; Remove current user (for backward compatibility) and all users menu shortcuts
   SetShellVarContext current
@@ -83,6 +128,8 @@ ManifestSupportedOS all
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" ; Remove old key too
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv"
   DeleteRegKey HKLM "Software\Tinkerforge\Brickv"
+
+end:
 
 !macroend
 
@@ -112,7 +159,12 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   DetailPrint "Install Brick Viewer..."
 
   SetOutPath "$INSTDIR"
-  File /r /x nsis ..\*
+
+  FileOpen $0 "$INSTDIR\uninstall.log" w
+
+<<INSTALL_COMMANDS>>
+
+  FileClose $0
 
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"
@@ -129,7 +181,7 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   WriteUninstaller "uninstall.exe"
 
   ; Create start menu shortcut for all users
-  SetOutPath $INSTDIR\ ; set working directory for brickv.exe
+  SetOutPath "$INSTDIR" ; set working directory for brickv.exe
   SetShellVarContext all
   createDirectory "$SMPROGRAMS\Tinkerforge"
   createShortCut "$SMPROGRAMS\Tinkerforge\Brickv ${BRICKV_VERSION}.lnk" "$INSTDIR\brickv.exe"

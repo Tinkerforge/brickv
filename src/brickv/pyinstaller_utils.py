@@ -147,12 +147,32 @@ class PyinstallerUtils:
         return result
 
     def win_build_installer(self):
+        install_commands = []
+
+        for root, dirs, files in os.walk(self.dist_path, topdown=False):
+            if root == 'nsis':
+                continue
+
+            install_commands.append('  SetOutPath "{0}"'.format(os.path.normpath(os.path.join('$INSTDIR', os.path.relpath(root, self.dist_path)))))
+
+            for file_ in files:
+                path = os.path.normpath(os.path.relpath(os.path.join(root, file_), self.dist_path))
+
+                install_commands.append('  File "..\\{0}"'.format(path))
+                install_commands.append('  FileWrite $0 "$INSTDIR\\{0}$\\r$\\n"'.format(path))
+
+            for dir_ in dirs:
+                path = os.path.normpath(os.path.relpath(os.path.join(root, dir_), self.dist_path))
+
+                install_commands.append('  FileWrite $0 "$INSTDIR\\{0}$\\r$\\n"'.format(path))
+
         nsis_template_path = os.path.join(self.build_data_path, 'nsis', self.underscore_name + '_installer.nsi.template')
         nsis_path = os.path.join(self.dist_path, 'nsis', self.underscore_name + '.nsi')
 
         specialize_template(nsis_template_path, nsis_path,
                             {'<<VERSION>>': self.version,
-                             '<<UNDERSCORE_VERSION>>': self.underscore_version})
+                             '<<UNDERSCORE_VERSION>>': self.underscore_version,
+                             '<<INSTALL_COMMANDS>>': '\n'.join(install_commands)})
 
         system(['C:\\Program Files (x86)\\NSIS\\makensis.exe', nsis_path])
 
