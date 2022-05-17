@@ -645,3 +645,4 @@
 - Improve plot color palette for dark themes
 - Rework plot timing logic to greatly reduce jitter
 - Draw a vertical line to indicate time jumps in plots
+- Fix driver installation on Windows
