@@ -639,7 +639,7 @@
 - Improve compatibility with Python 3.10
 - Fix OpenGL problems on macOS 12
 
-2022-05-11: 2.4.22 (<unknown>)
+2022-05-11: 2.4.22 (7f8c208)
 - Add support for GPS Bricklet 3.0 and ESP32 (Ethernet) Brick
 - Add Data Logger support for GPS Bricklet 3.0
 - Improve plot color palette for dark themes

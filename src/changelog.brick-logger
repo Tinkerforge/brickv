@@ -76,5 +76,5 @@
 - Fix device list clearing on config loading
 - Fix slow memory leak in data tab
 
-2022-05-11: 2.1.9 (<unknown>)
+2022-05-11: 2.1.9 (7f8c208)
 - Add support for GPS Bricklet 3.0
