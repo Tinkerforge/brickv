@@ -338,8 +338,8 @@ class QHexeditWidget(QAbstractScrollArea):
             horn = 1
         else:
             horn = 0
-        self.verticalScrollBar().setMaximum(max(0, sz / bpr + horn - self.viewport().height() / self.font_height))
-        self.horizontalScrollBar().setMaximum(max(0, (self.line3() - self.viewport().width()) / self.font_width))
+        self.verticalScrollBar().setMaximum(int(max(0, sz / bpr + horn - self.viewport().height() / self.font_height)))
+        self.horizontalScrollBar().setMaximum(int(max(0, (self.line3() - self.viewport().width()) / self.font_width)))
         return
 
 
