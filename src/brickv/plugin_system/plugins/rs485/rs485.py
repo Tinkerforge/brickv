@@ -3,6 +3,7 @@
 RS485 Plugin
 Copyright (C) 2016 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2017 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2022 Erik Fleckstein <erik@tinkerforge.com>
 
 rs485.py: RS485 Plugin Implementation
 
@@ -216,6 +217,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         self.text_type_combobox.currentIndexChanged.connect(self.text_type_changed)
 
         # Modbus specific.
+        self.modbus_master_request_timeout_spinbox.valueChanged.connect(self.configuration_changed)
         self.modbus_slave_address_spinbox.valueChanged.connect(self.configuration_changed)
         self.modbus_master_function_combobox.currentIndexChanged.connect(self.modbus_master_function_changed)
 
