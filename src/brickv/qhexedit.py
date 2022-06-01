@@ -217,7 +217,7 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     def isInViewableArea(self, index):
         firstViewableWord = self.verticalScrollBar().value() * self.row_width
-        viewableLines = self.viewport().height() / self.font_height
+        viewableLines = self.viewport().height() // self.font_height
         viewableWords = viewableLines * self.row_width
         lastViewableWord = firstViewableWord + viewableWords
         return index >= firstViewableWord and index < lastViewableWord
@@ -268,7 +268,7 @@ class QHexeditWidget(QAbstractScrollArea):
     def line3(self):
         if self.show_ascii:
             elements = self.bytesPerRow()
-            return self.asciiDumpLeft() + (elements * self.font_width) + (self.font_width / 2)
+            return self.asciiDumpLeft() + (elements * self.font_width) + (self.font_width // 2)
         else:
             return self.line2()
 
@@ -279,7 +279,7 @@ class QHexeditWidget(QAbstractScrollArea):
     def line2(self):
         if self.show_hex:
             elements = self.row_width * (self.charsPerWord() + 1) - 1
-            return self.hexDumpLeft() + (elements * self.font_width) + (self.font_width / 2)
+            return self.hexDumpLeft() + (elements * self.font_width) + (self.font_width // 2)
         else:
             return self.line1()
 
@@ -290,7 +290,7 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     def line1(self):
         if self.show_address:
-            return self.addressLen() * self.font_width + 3*self.font_width/4
+            return self.addressLen() * self.font_width + 3 * self.font_width // 4
         else:
             return 0
 
@@ -300,14 +300,14 @@ class QHexeditWidget(QAbstractScrollArea):
     Desc: returns the x coordinate of the hex-dump field left edge
     '''
     def hexDumpLeft(self):
-        return self.line1() + (self.font_width / 2)
+        return self.line1() + (self.font_width // 2)
 
     '''
     Name: asciiDumpLeft() const
     Desc: returns the x coordinate of the ascii-dump field left edge
     '''
     def asciiDumpLeft(self):
-        return self.line2() + (self.font_width / 2)
+        return self.line2() + (self.font_width // 2)
 
     '''
     Name: charsPerWord() const
@@ -338,8 +338,8 @@ class QHexeditWidget(QAbstractScrollArea):
             horn = 1
         else:
             horn = 0
-        self.verticalScrollBar().setMaximum(int(max(0, sz / bpr + horn - self.viewport().height() / self.font_height)))
-        self.horizontalScrollBar().setMaximum(int(max(0, (self.line3() - self.viewport().width()) / self.font_width)))
+        self.verticalScrollBar().setMaximum(max(0, sz // bpr + horn - self.viewport().height() // self.font_height))
+        self.horizontalScrollBar().setMaximum(max(0, (self.line3() - self.viewport().width()) // self.font_width))
         return
 
 
@@ -350,7 +350,7 @@ class QHexeditWidget(QAbstractScrollArea):
     def scrollTo(self, offset):
         bpr = self.bytesPerRow()
         self.origin = offset % bpr
-        address = offset / bpr
+        address = offset // bpr
 
         self.updateScrollbars()
 
