@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from distutils.version import StrictVersion
+from pkg_resources import parse_version
 import json
 import queue
 import urllib.request
@@ -552,8 +552,8 @@ During the process it might look like being stuck on the Ruby bindings update. T
                 found = True
                 d['to'] = version_to
                 d['display_name'] = display_name
-                version_to = StrictVersion(d['to'].strip())
-                version_from = StrictVersion(d['from'].strip())
+                version_to = parse_version(d['to'].strip())
+                version_from = parse_version(d['from'].strip())
 
                 if version_to > version_from:
                     updates_available = True
@@ -790,8 +790,8 @@ During the process it might look like being stuck on the Ruby bindings update. T
                         if l_split[0] == 'tools' and l_split[1] == 'brickv':
                             update_info['brickv']['to'] = l_split[2]
                             update_info['brickv']['display_name'] = 'Brick Viewer'
-                            version_to = StrictVersion(l_split[2].strip())
-                            version_from = StrictVersion(update_info['brickv']['from'].strip())
+                            version_to = parse_version(l_split[2].strip())
+                            version_from = parse_version(update_info['brickv']['from'].strip())
 
                             if version_to > version_from:
                                 updates_available_main = True

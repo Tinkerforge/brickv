@@ -35,7 +35,7 @@ import struct
 import json
 import html
 from threading import Thread
-from distutils.version import StrictVersion
+from pkg_resources import parse_version
 
 from PyQt5.QtCore import Qt, pyqtSignal, QStandardPaths
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
@@ -424,7 +424,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                     return
                 # User wants to download whatever is in the AUR, fake that it is the correct version
                 aur_version = version
-            if StrictVersion(aur_version) != StrictVersion(version):
+            if parse_version(aur_version) != parse_version(version):
                 if QMessageBox.warning(self, "Updates / Flashing", "AUR package version was {}, but expected was {}. Download anyway?".format(aur_version, version), QMessageBox.Yes | QMessageBox.No) == QMessageBox.No:
                     return
                 # User wants to download whatever is in the AUR, override version, so that the progress dialog title shown when downloading is correct.
