@@ -323,7 +323,7 @@ def error_report_main():
 
     return app.exec_()
 
-def main():
+def main(dev_mode):
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
@@ -334,6 +334,9 @@ def main():
 
     if '--error-report' in sys.argv:
         sys.exit(error_report_main())
+
+    if '--no-dev-mode' not in sys.argv and dev_mode and not sys.flags.dev_mode:
+        sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error'] + sys.argv).returncode)
 
     # Catch all uncaught exceptions and show an error message for them.
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
@@ -403,4 +406,4 @@ def main():
     sys.exit(brick_viewer.exec_())
 
 if __name__ == "__main__":
-    main()
+    main(not hasattr(sys, 'frozen'))

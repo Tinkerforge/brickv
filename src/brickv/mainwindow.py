@@ -89,6 +89,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         title = 'Brick Viewer ' + config.BRICKV_FULL_VERSION
 
+        if sys.flags.dev_mode:
+            title += ' [Dev Mode]'
+
         self.setWindowTitle(title)
 
         self.delayed_update_tree_view_timer = QTimer(self)
