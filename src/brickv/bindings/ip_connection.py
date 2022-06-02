@@ -837,6 +837,8 @@ class IPConnection(object):
                 raise
 
         # create and connect socket
+        tmp = None
+
         try:
             tmp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             tmp.settimeout(5)
@@ -855,6 +857,12 @@ class IPConnection(object):
                 tmp.settimeout(None)
         except Exception as e:
             def cleanup1():
+                if tmp != None:
+                    try:
+                        tmp.close()
+                    except:
+                        pass
+
                 if self.auto_reconnect_internal:
                     if is_auto_reconnect:
                         return
