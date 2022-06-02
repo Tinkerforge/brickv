@@ -46,7 +46,7 @@ import time
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
-    if hasattr(sys, 'frozen'):
+    if getattr(sys, 'frozen', False):
         program_path = os.path.dirname(os.path.realpath(sys.executable))
     else:
         program_path = os.path.dirname(os.path.realpath(__file__))
@@ -62,7 +62,7 @@ def prepare_package(package_name):
         if head not in sys.path:
             sys.path.insert(0, head)
 
-        if not hasattr(sys, 'frozen'):
+        if not getattr(sys, 'frozen', False):
             # load and inject in modules list, this allows to have the source in a
             # directory named differently than '<package_name>'
             sys.modules[package_name] = __import__(tail, globals(), locals())
@@ -406,4 +406,4 @@ def main(dev_mode):
     sys.exit(brick_viewer.exec_())
 
 if __name__ == "__main__":
-    main(not hasattr(sys, 'frozen'))
+    main(not getattr(sys, 'frozen', False))
