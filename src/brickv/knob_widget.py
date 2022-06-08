@@ -200,7 +200,7 @@ class KnobWidget(QWidget):
                         painter.restore()
 
                     painter.drawText(int(p.x() - x - 30), int(p.y() - y - 30), 60, 60,
-                                     Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter,
+                                     int(Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter),
                                      str(value))
 
                 for i in range(1, self.scale_step_divisions):
@@ -220,7 +220,7 @@ class KnobWidget(QWidget):
         if self.title_text != None:
             painter.drawText(int(-knob_radius), int(knob_radius - 30),
                              int(knob_radius * 2), 60,
-                             Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter,
+                             int(Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignVCenter),
                              self.title_text)
 
     def recalculate_size(self):

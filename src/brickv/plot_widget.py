@@ -247,7 +247,7 @@ class XScale(Scale):
 
                 painter.drawText(tick_text_x, tick_text_y,
                                  tick_text_width, tick_text_height,
-                                 Qt.TextDontClip | Qt.AlignBottom | tick_text_alignment,
+                                 int(Qt.TextDontClip | Qt.AlignBottom | tick_text_alignment),
                                  self.tick_value_to_str(value))
 
             for i in range(1, self.step_subdivision_count):
@@ -290,7 +290,7 @@ class XScale(Scale):
         painter.setFont(self.title_text_font)
         painter.drawText(title_text_x, title_text_y,
                          title_text_width, title_text_height,
-                         Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom,
+                         int(Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom),
                          self.title_text)
 
 class YScale(Scale):
@@ -346,7 +346,7 @@ class YScale(Scale):
 
     def update_title_text_height(self, max_width):
         self.title_text_height = self.title_text_font_metrics.boundingRect(0, 0, max_width, 1000,
-                                                                           Qt.TextWordWrap | Qt.AlignHCenter | Qt.AlignTop,
+                                                                           int(Qt.TextWordWrap | Qt.AlignHCenter | Qt.AlignTop),
                                                                            self.title_text).height()
 
         self.update_total_width()
@@ -456,7 +456,7 @@ class YScale(Scale):
                                  Qt.yellow)
 
             painter.drawText(tick_text_x, tick_text_y, tick_text_width, tick_text_height,
-                             Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter,
+                             int(Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter),
                              self.tick_value_to_str(value))
 
         # title
@@ -481,7 +481,7 @@ class YScale(Scale):
 
             title_painter.setFont(title_text_font)
             title_painter.drawText(50, 50, title_width * 2, title_height * 2,
-                                   Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
+                                   int(Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop),
                                    self.title_text)
 
             title_painter = None
