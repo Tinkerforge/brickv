@@ -10,7 +10,7 @@ Supported Platforms
 -------------------
 
 * Linux
-* Windows 7 or newer
+* Windows 8.1 or newer
 * macOS 10.11 (El Capitan) or newer
 
 Using the Tinkerforge APT Repository

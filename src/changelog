@@ -646,3 +646,4 @@
 - Rework plot timing logic to greatly reduce jitter
 - Draw a vertical line to indicate time jumps in plots
 - Fix driver installation on Windows
+- Upgrade bundled Python to 3.9 on Windows (Windows 8.1 required)
