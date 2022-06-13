@@ -93,7 +93,7 @@ class SoundPressureLevel(COMCUPluginBase, Ui_SoundPressureLevel):
         self.thermo = TuningThermo()
 
         plots_spectrum = [('Spectrum', Qt.red, None, '{} °C'.format)]
-        self.plot_widget_spectrum = PlotWidget('Value [dB]', plots_spectrum, clear_button=None,
+        self.plot_widget_spectrum = PlotWidget('Value [dB]', plots_spectrum, clear_button=None, edit_scales_button=None,
                                                x_diff=20480, x_scale_title_text='Frequency [Hz]',
                                                x_scale_skip_last_tick=False, key=None, y_resolution=0.1,
                                                y_scale_shrinkable=False)

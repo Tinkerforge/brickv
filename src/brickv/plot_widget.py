@@ -35,10 +35,11 @@ from PyQt5.QtCore import pyqtSignal, Qt, QObject, QTimer, QSize, QRectF, QLineF,
 from PyQt5.QtGui import QPainter, QFontMetrics, QPixmap, QIcon, QColor, \
                         QPainterPath, QTransform, QPen, QFont, QPalette
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
-                            QSizePolicy, QLabel, QSpinBox
+                            QSizePolicy, QLabel, QSpinBox, QDialog
 
-from brickv.utils import draw_rect, get_main_window
+from brickv.utils import draw_rect, get_main_window, get_modeless_dialog_flags
 from brickv.fixed_size_label import FixedSizeLabel
+from brickv.ui_plotscaleconfig import Ui_PlotScaleConfig
 
 CurveConfig = namedtuple('CurveConfig', 'title color value_wrapper value_formatter')
 MovingAverageConfig = namedtuple('MovingAverageConfig', 'min_length max_length callback')
@@ -76,6 +77,59 @@ def fuzzy_leq(a, b):
 
 def fuzzy_geq(a, b):
     return a > b or fuzzy_eq(a, b)
+
+class PlotScaleConfigWindow(QDialog, Ui_PlotScaleConfig):
+    def __init__(self, parent, y_scale_title_text, x_scale_title_text):
+        super().__init__(parent, get_modeless_dialog_flags())
+
+        self.setupUi(self)
+
+        # FIXME: hide x-scale settings for now. the plot logic doesnt properly
+        #        support changing the x-scale at runtime yet
+        self.line.hide()
+        self.label_x_scale_title.hide()
+        self.label_x_scale_length.hide()
+        self.spin_x_scale_length.hide()
+
+        self.label_y_scale_title.setText(y_scale_title_text)
+        self.label_x_scale_title.setText(x_scale_title_text)
+
+        for label in [self.label_y_scale_title, self.label_x_scale_title]:
+            font = label.font()
+            font.setBold(True)
+            label.setFont(font)
+
+        self.button_close.clicked.connect(self.close)
+
+        self.check_automatic_scaling.setChecked(True)
+        self.check_automatic_scaling.stateChanged.connect(self.automatic_scaling_change)
+
+        self.spin_x_scale_length.valueChanged.connect(self.x_scale_change)
+
+        self.spin_y_scale_min.valueChanged.connect(self.y_scale_change)
+        self.spin_y_scale_max.valueChanged.connect(self.y_scale_change)
+
+        self.automatic_scaling_change()
+
+    def closeEvent(self, event):
+        self.parent().edit_scales_button.setEnabled(True)
+
+    def automatic_scaling_change(self):
+        enable = self.check_automatic_scaling.isChecked()
+
+        self.spin_y_scale_min.setEnabled(not enable)
+        self.spin_y_scale_max.setEnabled(not enable)
+
+        self.y_scale_change()
+
+    def y_scale_change(self):
+        if self.check_automatic_scaling.isChecked():
+            self.parent().plot.set_y_min_max_external(None, None)
+        else:
+            self.parent().plot.set_y_min_max_external(self.spin_y_scale_min.value(), self.spin_y_scale_max.value())
+
+    def x_scale_change(self):
+        self.parent().plot.set_x_diff(self.spin_x_scale_length.value())
 
 class PlotTimer(QThread):
     timeout = pyqtSignal()
@@ -657,6 +711,9 @@ class Plot(QWidget):
         self.title_text_font.setPointSize(round(self.title_text_font.pointSize() * 1.2))
         self.title_text_font.setBold(True)
 
+        self.y_min_external = None
+        self.y_max_external = None
+
         self.x_scale = XScale(self.tick_text_font, self.title_text_font, x_scale_title_text,
                               'center' if y_scale_visible else 'right', x_scale_skip_last_tick, self)
 
@@ -978,11 +1035,24 @@ class Plot(QWidget):
             self.update()
             self.curve_area.update()
 
+    def set_y_min_max_external(self, y_min_external, y_max_external):
+        if y_min_external != None and self.y_max_external != None and y_min_external > y_max_external:
+            y_min_external = y_max_external + (y_min_external - y_max_external) / 2
+            y_max_external = y_min_external
+
+        self.y_min_external = y_min_external
+        self.y_max_external = y_max_external
+
+        self.update_y_min_max_scale()
+
     def update_y_min_max_scale(self):
         if self.y_scale_fixed:
             return
 
-        if self.y_min == None or self.y_max == None:
+        if self.y_min_external != None and self.y_max_external != None:
+            y_min = self.y_min_external
+            y_max = self.y_max_external
+        elif self.y_min == None or self.y_max == None:
             y_min = 0.0
             y_max = 0.0
         else:
@@ -1060,6 +1130,13 @@ class Plot(QWidget):
         self.update()
         self.curve_area.update()
 
+    def set_x_diff(self, x_diff):
+        self.x_diff = x_diff
+
+        # FIXME: this is not enough to trigger a proper redraw
+        self.update()
+        self.curve_area.update()
+
     def show_curve(self, c, show):
         if self.curves_visible[c] == show:
             return
@@ -1120,6 +1197,7 @@ class PlotWidget(QWidget):
                  y_scale_title_text,
                  curve_configs,
                  clear_button='default',
+                 edit_scales_button='default',
                  parent=None,
                  x_scale_visible=True,
                  y_scale_visible=True,
@@ -1181,6 +1259,9 @@ class PlotWidget(QWidget):
         self.last_timestamp = [None] * len(self.curve_configs)
         self.last_plot_timestamp = [None] * len(self.curve_configs)
         self.last_value = [None] * len(self.curve_configs)
+        self.y_scale_title_text = y_scale_title_text
+        self.x_scale_title_text = x_scale_title_text
+        self.scale_config_window = None
 
         h1layout = QHBoxLayout()
         h1layout.setContentsMargins(0, 0, 0, 0)
@@ -1191,13 +1272,27 @@ class PlotWidget(QWidget):
             self.clear_button.setText('Clear Graph')
 
             h1layout.addWidget(self.clear_button)
-            h1layout.addStretch(1)
             h1layout_empty = False
         else:
             self.clear_button = clear_button
 
         if self.clear_button != None:
             self.clear_button.clicked.connect(self.clear_clicked)
+
+        if edit_scales_button == 'default':
+            self.edit_scales_button = QToolButton()
+            self.edit_scales_button.setText('Edit Scales')
+
+            h1layout.addWidget(self.edit_scales_button)
+            h1layout_empty = False
+        else:
+            self.edit_scales_button = edit_scales_button
+
+        if self.edit_scales_button != None:
+            self.edit_scales_button.clicked.connect(self.edit_scales_clicked)
+
+        if not h1layout_empty:
+            h1layout.addStretch(1)
 
         v1layout = None
 
@@ -1365,6 +1460,9 @@ class PlotWidget(QWidget):
         if stop:
             self.add_new_data()
 
+            if self.scale_config_window != None:
+                self.scale_config_window.close()
+
         for i, curve_config in enumerate(self.curve_configs):
             if curve_config.value_wrapper == None:
                 continue
@@ -1449,3 +1547,11 @@ class PlotWidget(QWidget):
         self.last_timestamp = [None] * len(self.curve_configs)
         self.last_plot_timestamp = [None] * len(self.curve_configs)
         self.last_value = [None] * len(self.curve_configs)
+
+    # internal
+    def edit_scales_clicked(self):
+        if self.scale_config_window == None:
+            self.scale_config_window = PlotScaleConfigWindow(self, self.y_scale_title_text, self.x_scale_title_text)
+
+        self.edit_scales_button.setEnabled(False)
+        self.scale_config_window.show()

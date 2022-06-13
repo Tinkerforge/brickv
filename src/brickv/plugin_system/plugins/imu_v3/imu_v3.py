@@ -207,6 +207,7 @@ class IMUV3(COMCUPluginBase, Ui_IMUV3):
             self.data_plot_widget.append(PlotWidget("",
                                                     [("", self.data_color[i][0], self.sensor_data[i], str)],
                                                     clear_button=self.clear_graphs,
+                                                    edit_scales_button=None,
                                                     x_scale_visible=False,
                                                     y_scale_visible=False,
                                                     curve_outer_border_visible=False,
