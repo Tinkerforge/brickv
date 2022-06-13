@@ -191,16 +191,6 @@ SectionEnd
 
 ;--------------------------------
 
-Section /o "-Install/Update Brick Bootloader Driver" SEC_INSTALL_BRICK_BOOTLOADER_DRIVER
-
-  Push "Brick Bootloader"
-  Push "$INSTDIR\drivers\bootloader\atm6124_cdc.inf"
-  Call InstallUpgradeDriver
-
-SectionEnd
-
-;--------------------------------
-
 Section "Install/Update ESP32 Bootloader Driver"
 
 ${If} ${AtLeastWin10}
@@ -212,9 +202,9 @@ ${If} ${AtLeastWin10}
 
 ${Else}
 
-  ; Windows 7/8/8.1
+  ; Windows 8.1
   Push "ESP32 Bootloader"
-  Push "$INSTDIR\drivers\esp32\win7\slabvcp.inf"
+  Push "$INSTDIR\drivers\esp32\win81\slabvcp.inf"
   Call InstallUpgradeDriver
 
 ${EndIf}
@@ -225,9 +215,9 @@ SectionEnd
 
 Function .onInit
 
-${IfNot} ${AtLeastWin7}
+${IfNot} ${AtLeastWin8.1}
 
-  MessageBox MB_OK|MB_ICONEXCLAMATION "Brick Viewer ${BRICKV_VERSION} requires Windows 7 or newer!"
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Brick Viewer ${BRICKV_VERSION} requires Windows 8.1 or newer!"
   Quit
 
 ${EndIf}
@@ -242,13 +232,6 @@ ${EndIf}
   SectionSetFlags ${SEC_UNINSTALL_OLD} $0
 
 not_installed:
-
-${IfNot} ${AtLeastWin8.1}
-
-  ; Install Brick bootloader driver only on systems < Windows 8.1
-  ; Windows >= 8.1 comes with a universal usbser.sys driver
-  SectionSetText ${SEC_INSTALL_BRICK_BOOTLOADER_DRIVER} "Install/Update Brick Bootloader Driver" ; make item visible
-  SectionSetFlags ${SEC_INSTALL_BRICK_BOOTLOADER_DRIVER} ${SF_SELECTED}
 
 ${EndIf}
 
