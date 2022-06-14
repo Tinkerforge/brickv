@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 
 from brickv.plugin_system.comcu_plugin_base import COMCUPluginBase
 from brickv.bindings.bricklet_air_quality import BrickletAirQuality
@@ -48,17 +48,19 @@ class AirQuality(COMCUPluginBase):
 
         self.iaq_accuracy_label = QLabel("(Accuracy: TBD)")
 
+        self.clear_graphs_button = QPushButton('Clear Graphs')
+
         plots_iaq_index = [('IAQ Index', Qt.red, self.current_iaq_index, '{}'.format)]
-        self.plot_widget_iaq_index = PlotWidget('IAQ Index', plots_iaq_index, extra_key_widgets=(self.iaq_accuracy_label,), y_resolution=1.0)
+        self.plot_widget_iaq_index = PlotWidget('IAQ Index', plots_iaq_index, clear_button=self.clear_graphs_button, extra_key_widgets=(self.iaq_accuracy_label,), y_resolution=1.0)
 
         plots_temperature = [('Temperature', Qt.red, self.current_temperature, '{} °C'.format)]
-        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, y_resolution=0.01)
+        self.plot_widget_temperature = PlotWidget('Temperature [°C]', plots_temperature, clear_button=self.clear_graphs_button, y_resolution=0.01)
 
         plots_humidity = [('Relative Humidity', Qt.red, self.current_humidity, '{} %RH'.format)]
-        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, y_resolution=0.01)
+        self.plot_widget_humidity = PlotWidget('Relative Humidity [%RH]', plots_humidity, clear_button=self.clear_graphs_button, y_resolution=0.01)
 
         plots_air_pressure = [('Air Pressure', Qt.red, self.current_air_pressure, '{} hPa (QFE)'.format)]
-        self.plot_widget_air_pressure = PlotWidget('Air Pressure [hPa]', plots_air_pressure, y_resolution=0.01)
+        self.plot_widget_air_pressure = PlotWidget('Air Pressure [hPa]', plots_air_pressure, clear_button=self.clear_graphs_button, y_resolution=0.01)
 
         layout_plot1 = QHBoxLayout()
         layout_plot1.addWidget(self.plot_widget_iaq_index)
@@ -71,6 +73,7 @@ class AirQuality(COMCUPluginBase):
         layout_main = QVBoxLayout(self)
         layout_main.addLayout(layout_plot1)
         layout_main.addLayout(layout_plot2)
+        layout_main.addWidget(self.clear_graphs_button)
 
     def cb_all_values(self, values):
         self.current_iaq_index.value = values.iaq_index
