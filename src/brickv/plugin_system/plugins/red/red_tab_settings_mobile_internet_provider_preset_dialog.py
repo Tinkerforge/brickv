@@ -74,6 +74,12 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QDialog, Ui_REDTabSetting
         else:
             self.populate_cbox_mi_presets_country()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def cbox_mi_presets_country_current_index_changed(self, index):
         self.populate_cbox_mi_presets_provider()
 

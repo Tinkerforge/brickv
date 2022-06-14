@@ -97,6 +97,12 @@ Please make sure that your internet connection is working.'
         self.pbutton_n.clicked.connect(self.pbutton_n_clicked)
         self.pbutton_p.clicked.connect(self.pbutton_p_clicked)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def cb_finished(self):
         self.dialog_session = False
         self.red_plugin.query_bindings_versions()

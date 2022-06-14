@@ -67,6 +67,12 @@ class Wifi2Status(QDialog, Ui_Wifi2Status):
         self.wifi_status_button_close.clicked.connect(self.close)
         self.update_status()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def get_wifi2_mesh_common_status_async(self, s):
         if s.status == 0:
             self.wifi_mesh_status.setText('Disabled')

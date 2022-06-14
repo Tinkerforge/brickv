@@ -120,6 +120,12 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                    (source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def save_content(self):
         filename = get_save_file_name(get_main_window(), 'Save Log', self.last_filename, 'Log(*.log)')
 

@@ -169,11 +169,14 @@ class ESPToolDialog(QDialog):
         self.add_text.connect(self.cb_add_text)
         self.button.clicked.connect(self.close)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def closeEvent(self, event):
         if not self.button.isEnabled():
             event.ignore()
-        else:
-            super().closeEvent(event)
+
+        # dont touch event to avoid closing using ESC key
 
     def cb_add_text(self, text):
         self.show()
@@ -281,6 +284,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_bricks()
         self.update_extensions()
+
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
 
     def download_file(self, url, name, filename=None, progress_dialog=None):
         downloading_text = 'Downloading {}'.format(name)

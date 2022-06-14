@@ -60,6 +60,12 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.button_recompile_all.setVisible(build_system_lazbuild)
         self.button_cancel.setEnabled(False)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def log(self, message, bold=False, pre=False):
         if bold:
             self.edit_log.appendHtml('<b>{0}</b>'.format(html.escape(message)))

@@ -111,7 +111,11 @@ class PlotScaleConfigWindow(QDialog, Ui_PlotScaleConfig):
 
         self.automatic_scaling_change()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent().edit_scales_button.setEnabled(True)
 
     def automatic_scaling_change(self):

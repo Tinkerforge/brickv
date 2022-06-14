@@ -69,6 +69,9 @@ class Calibration(QDialog, Ui_Calibration):
                                                 self.cb_temperature,
                                                 self.parent.increase_error_count)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def show(self):
         QDialog.show(self)
 
@@ -117,12 +120,12 @@ class Calibration(QDialog, Ui_Calibration):
         self.temperature = temperature / 100.0
         self.lbl_temperature.setText('{:.2f} °C'.format(self.temperature))
 
-    def closeEvent(self, _event):
+    def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.cbe_air_pressure.set_period(0)
         self.cbe_altitude.set_period(0)
         self.cbe_temperature.set_period(0)
         self.parent.btn_calibration.setEnabled(True)
-
 
 class BarometerV2(COMCUPluginBase):
     def __init__(self, *args):

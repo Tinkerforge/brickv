@@ -43,6 +43,12 @@ class ExtensionType(QDialog, Ui_ExtensionType):
 
         self.button_close.clicked.connect(self.close)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def popup_ok(self):
         QMessageBox.information(get_main_window(), "Extension Type", "Successfully saved extension type", QMessageBox.Ok)
 

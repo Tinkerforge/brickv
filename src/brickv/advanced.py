@@ -56,6 +56,12 @@ class AdvancedWindow(QDialog, Ui_Advanced):
 
         self.update_bricks()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def update_bricks(self):
         self.brick_infos = []
         self.combo_brick.clear()

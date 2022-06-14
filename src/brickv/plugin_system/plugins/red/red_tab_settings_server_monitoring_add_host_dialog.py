@@ -49,6 +49,12 @@ class REDTabSettingsServerMonitoringAddHostDialog(QDialog, Ui_REDTabSettingsServ
             self.label_sm_add_host_secret.hide()
             self.ledit_sm_add_host_secret.hide()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def slot_pbutton_sm_add_host_cancel_clicked(self):
         self.reject()
 

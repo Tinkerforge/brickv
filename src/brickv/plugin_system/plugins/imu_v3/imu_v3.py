@@ -89,6 +89,9 @@ during stabilization.</p>""")
         self.save_calibration.clicked.connect(self.save_calibration_clicked)
         self.button_close.clicked.connect(self.close)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def save_calibration_clicked(self):
         async_call(self.imu.save_calibration, None, self.save_calibration_async, self.parent.increase_error_count)
 
@@ -96,7 +99,8 @@ during stabilization.</p>""")
         if calibration_done:
             self.save_calibration.setText('Save Calibration Again')
 
-    def closeEvent(self, _event):
+    def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
 

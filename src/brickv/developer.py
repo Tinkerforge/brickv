@@ -50,6 +50,12 @@ class DeveloperWindow(QDialog, Ui_Developer):
 
         gc.callbacks.append(self.gc_callback)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def force_gc(self):
         gc.collect()
 

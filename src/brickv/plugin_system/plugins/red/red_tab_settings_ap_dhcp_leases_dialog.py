@@ -51,6 +51,12 @@ class REDTabSettingsAPDhcpLeasesDialog(QDialog, Ui_REDTabSettingsAPDhcpLeasesDia
         self.pbutton_ap_leases_refresh.clicked.connect(self.slot_pbutton_ap_leases_refresh_clicked)
         self.pbutton_ap_leases_close.clicked.connect(self.slot_pbutton_ap_leases_close_clicked)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def slot_pbutton_ap_leases_refresh_clicked(self):
         def cb_dnsmasq_leases_content(content):
             self.pbutton_ap_leases_refresh.setText('Refresh')

@@ -53,6 +53,9 @@ class Calibration(QDialog, Ui_Calibration):
                                             self.cb_voltage,
                                             self.parent.increase_error_count)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def show(self):
         QDialog.show(self)
 
@@ -94,6 +97,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_voltage.setText(str(value) + " mV")
 
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.calibration_button.setEnabled(True)
         self.cbe_voltage.set_period(0)
 

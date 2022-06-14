@@ -272,6 +272,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.update_ui_state()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def update_ui_state(self):
         index = self.combo_data_time_format.currentIndex()
 

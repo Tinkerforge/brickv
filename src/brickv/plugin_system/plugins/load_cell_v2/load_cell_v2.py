@@ -59,6 +59,9 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.button_close.clicked.connect(self.close)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def button_zero_clicked(self):
         self.lc.calibrate(0)
         self.button_weight.setEnabled(True)
@@ -74,6 +77,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_status.setText('The new calibration is now saved in the flash.')
 
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.button_calibration.setEnabled(True)
         self.parent.calibration = None
 

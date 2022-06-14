@@ -48,6 +48,12 @@ class ProgramInfoFilesPermissions(QDialog, Ui_ProgramInfoFilesPermissions):
         self.check_other_write.setChecked(permissions & 0o2)
         self.check_other_execute.setChecked(permissions & 0o1)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def get_permissions(self):
         permissions = 0
 

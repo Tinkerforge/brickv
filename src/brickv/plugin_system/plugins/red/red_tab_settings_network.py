@@ -209,6 +209,12 @@ class REDTabSettingsNetworkWirelessConnectHidden(QDialog,
         self.chkbox_wpa_key_show.stateChanged.connect(self.slot_chkbox_wpa_key_show_state_changed)
         self.cbox_encryption.currentIndexChanged.connect(self.slot_cbox_encryption_current_idx_changed)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def do_verify(self):
         if self.ledit_ssid.text() == '':
             QMessageBox.critical(get_main_window(),

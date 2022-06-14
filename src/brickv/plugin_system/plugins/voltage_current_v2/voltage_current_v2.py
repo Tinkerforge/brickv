@@ -82,6 +82,9 @@ class Calibration(QDialog, Ui_Calibration):
                                           self.cb_power,
                                           self.parent.increase_error_count)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def show(self):
         QDialog.show(self)
 
@@ -155,6 +158,7 @@ class Calibration(QDialog, Ui_Calibration):
             self.lbl_power.setText(str(self.power / 1000.0) + ' W')
 
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.cbe_voltage.set_period(0)
         self.cbe_current.set_period(0)
         self.cbe_power.set_period(0)

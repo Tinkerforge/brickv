@@ -86,6 +86,12 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         self.supported_item.sortChildren(0, Qt.AscendingOrder)
         self.supported_item.setExpanded(True)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def cb_connected(self, connect_reason):
         self.tree_widget.clearSelection()
         self.available_item.takeChildren()

@@ -41,6 +41,12 @@ class WifiStatus(QDialog, Ui_WifiStatus):
 
         self.update_status()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def get_wifi_status_async(self, mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state):
         self.wifi_status_mac.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % mac[::-1])
         self.wifi_status_bssid.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % bssid[::-1])

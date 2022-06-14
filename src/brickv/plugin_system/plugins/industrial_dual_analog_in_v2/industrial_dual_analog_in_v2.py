@@ -60,6 +60,9 @@ class Calibration(QDialog, Ui_Calibration):
                                                self.cb_adc_values,
                                                self.parent.increase_error_count)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def show(self):
         QDialog.show(self)
 
@@ -124,6 +127,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_adc1.setText(str(sum(self.values1)//10))
 
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.calibration_button.setEnabled(True)
         self.cbe_adc_values.set_period(0)
 

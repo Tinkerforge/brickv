@@ -138,6 +138,9 @@ class Calibration(QDialog, Ui_Calibration):
 
         self.button_close.clicked.connect(self.close)
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def show(self):
         QDialog.show(self)
 
@@ -210,6 +213,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_labels()
 
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.button_calibration.setEnabled(True)
         self.cbe_mfd.set_period(0)
 

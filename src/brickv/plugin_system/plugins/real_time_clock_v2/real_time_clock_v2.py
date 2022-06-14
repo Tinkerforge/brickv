@@ -180,7 +180,11 @@ class Calibration(QDialog, Ui_Calibration):
         self.measurment_thread = MeasurmentThread(self)
         self.measurment_thread.start()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         if self.measurment_thread != None:
             self.measurment_thread.running = False
 

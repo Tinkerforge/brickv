@@ -73,9 +73,12 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
 
         self.refresh_values()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
     def closeEvent(self, event):
+        # dont touch event to avoid closing using ESC key
         self.parent.start()
-        event.accept()
 
     def refresh_values(self):
         acc_gain = self.imu.get_calibration(self.TYPE_ACC_GAIN)

@@ -77,6 +77,12 @@ class HealthMonitorWindow(QDialog, Ui_HealthMonitor):
         self.refresh_tree_view()
         self.update_ui_state()
 
+    def reject(self):
+        pass # avoid closing using ESC key
+
+    def closeEvent(self, event):
+        pass # dont touch event to avoid closing using ESC key
+
     def delayed_refresh_tree_view(self):
         self.delayed_refresh_tree_view_timer.stop()
 
