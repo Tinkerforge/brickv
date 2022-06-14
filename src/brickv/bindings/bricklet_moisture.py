@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetMoistureCallbackThreshold = namedtuple('MoistureCallbackThreshold', ['option'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletMoisture(Device):
-    """
+    r"""
     Measures soil moisture
     """
 
@@ -50,7 +50,7 @@ class BrickletMoisture(Device):
     THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -75,7 +75,7 @@ class BrickletMoisture(Device):
         ipcon.add_device(self)
 
     def get_moisture_value(self):
-        """
+        r"""
         Returns the current moisture value.
         A small value corresponds to little moisture, a big
         value corresponds to much moisture.
@@ -89,7 +89,7 @@ class BrickletMoisture(Device):
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_VALUE, (), '', 10, 'H')
 
     def set_moisture_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Moisture` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -103,7 +103,7 @@ class BrickletMoisture(Device):
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOISTURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_moisture_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Moisture Callback Period`.
         """
         self.check_validity()
@@ -111,7 +111,7 @@ class BrickletMoisture(Device):
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_moisture_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Moisture Reached` callback.
 
         The following options are possible:
@@ -135,7 +135,7 @@ class BrickletMoisture(Device):
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOISTURE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_moisture_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Moisture Callback Threshold`.
         """
         self.check_validity()
@@ -143,7 +143,7 @@ class BrickletMoisture(Device):
         return GetMoistureCallbackThreshold(*self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOISTURE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callback
 
         * :cb:`Moisture Reached`
@@ -161,7 +161,7 @@ class BrickletMoisture(Device):
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -169,7 +169,7 @@ class BrickletMoisture(Device):
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_moving_average(self, average):
-        """
+        r"""
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the moisture value.
 
@@ -183,7 +183,7 @@ class BrickletMoisture(Device):
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', 0, '')
 
     def get_moving_average(self):
-        """
+        r"""
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
         self.check_validity()
@@ -191,7 +191,7 @@ class BrickletMoisture(Device):
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE, (), '', 9, 'B')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -206,7 +206,7 @@ class BrickletMoisture(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

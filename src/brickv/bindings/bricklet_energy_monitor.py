@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -25,7 +25,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletEnergyMonitor(Device):
-    """
+    r"""
     Measures Voltage, Current, Energy, Real/Apparent/Reactive Power, Power Factor and Frequency
     """
 
@@ -75,7 +75,7 @@ class BrickletEnergyMonitor(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -110,7 +110,7 @@ class BrickletEnergyMonitor(Device):
         ipcon.add_device(self)
 
     def get_energy_data(self):
-        """
+        r"""
         Returns all of the measurements that are done by the Energy Monitor Bricklet.
 
         * Voltage RMS
@@ -137,7 +137,7 @@ class BrickletEnergyMonitor(Device):
         return GetEnergyData(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_ENERGY_DATA, (), '', 36, 'i i i i i i H H'))
 
     def reset_energy(self):
-        """
+        r"""
         Sets the energy value (see :func:`Get Energy Data`) back to 0Wh.
         """
         self.check_validity()
@@ -145,7 +145,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_RESET_ENERGY, (), '', 0, '')
 
     def get_waveform_low_level(self):
-        """
+        r"""
         Returns a snapshot of the voltage and current waveform. The values
         in the returned array alternate between voltage and current. The data from
         one getter call contains 768 data points for voltage and current, which
@@ -162,7 +162,7 @@ class BrickletEnergyMonitor(Device):
         return GetWaveformLowLevel(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_WAVEFORM_LOW_LEVEL, (), '', 70, 'H 30h'))
 
     def get_transformer_status(self):
-        """
+        r"""
         Returns *true* if a voltage/current transformer is connected to the Bricklet.
         """
         self.check_validity()
@@ -170,7 +170,7 @@ class BrickletEnergyMonitor(Device):
         return GetTransformerStatus(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_STATUS, (), '', 10, '! !'))
 
     def set_transformer_calibration(self, voltage_ratio, current_ratio, phase_shift):
-        """
+        r"""
         Sets the transformer ratio for the voltage and current transformer in 1/100 form.
 
         Example: If your mains voltage is 230V, you use 9V voltage transformer and a
@@ -193,7 +193,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_SET_TRANSFORMER_CALIBRATION, (voltage_ratio, current_ratio, phase_shift), 'H H h', 0, '')
 
     def get_transformer_calibration(self):
-        """
+        r"""
         Returns the transformer calibration as set by :func:`Set Transformer Calibration`.
         """
         self.check_validity()
@@ -201,7 +201,7 @@ class BrickletEnergyMonitor(Device):
         return GetTransformerCalibration(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_TRANSFORMER_CALIBRATION, (), '', 14, 'H H h'))
 
     def calibrate_offset(self):
-        """
+        r"""
         Calling this function will start an offset calibration. The offset calibration will
         integrate the voltage and current waveform over a longer time period to find the 0
         transition point in the sine wave.
@@ -220,7 +220,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_CALIBRATE_OFFSET, (), '', 0, '')
 
     def set_energy_data_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Energy Data`
         callback is triggered periodically. A value of 0 turns the callback off.
 
@@ -239,7 +239,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_SET_ENERGY_DATA_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_energy_data_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by
         :func:`Set Energy Data Callback Configuration`.
         """
@@ -248,7 +248,7 @@ class BrickletEnergyMonitor(Device):
         return GetEnergyDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_ENERGY_DATA_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -266,7 +266,7 @@ class BrickletEnergyMonitor(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -284,7 +284,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -292,7 +292,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -307,7 +307,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -324,7 +324,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -340,7 +340,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -348,7 +348,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -361,7 +361,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -374,7 +374,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -388,7 +388,7 @@ class BrickletEnergyMonitor(Device):
         self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -397,7 +397,7 @@ class BrickletEnergyMonitor(Device):
         return self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -412,7 +412,7 @@ class BrickletEnergyMonitor(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletEnergyMonitor.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def get_waveform(self):
-        """
+        r"""
         Returns a snapshot of the voltage and current waveform. The values
         in the returned array alternate between voltage and current. The data from
         one getter call contains 768 data points for voltage and current, which
@@ -451,7 +451,7 @@ class BrickletEnergyMonitor(Device):
         return waveform_data[:waveform_length]
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

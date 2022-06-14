@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletARINC429(Device):
-    """
+    r"""
     ARINC429 single transmitter and dual receiver
     """
 
@@ -127,7 +127,7 @@ class BrickletARINC429(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -177,7 +177,7 @@ class BrickletARINC429(Device):
         ipcon.add_device(self)
 
     def get_capabilities(self):
-        """
+        r"""
         Gets the capabilities of the ARINC429 Bricklet as of the currently loaded firmware:
 
         * TX Total Scheduler Jobs: total number of job entries in the scheduling table.
@@ -190,7 +190,7 @@ class BrickletARINC429(Device):
         return GetCapabilities(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CAPABILITIES, (), '', 18, 'H H H 2H'))
 
     def set_heartbeat_callback_configuration(self, channel, enabled, value_has_to_change, period):
-        """
+        r"""
         Sets the bricklet heartbeat callback function which reports the statistics counters for processed frames and lost frames.
         The period is the period with which the :cb:`Heartbeat Message` callback is triggered periodically. A value of 0 turns the callback off.
         When 'Value Has To Change' is enabled, the heartbeat will only be sent if there is a change in the statistics numbers.
@@ -205,7 +205,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_HEARTBEAT_CALLBACK_CONFIGURATION, (channel, enabled, value_has_to_change, period), 'B ! ! H', 0, '')
 
     def get_heartbeat_callback_configuration(self, channel):
-        """
+        r"""
         Gets the current configuration of the bricklet heartbeat callback, see :func:`Set Heartbeat Callback Configuration`.
         """
         self.check_validity()
@@ -215,7 +215,7 @@ class BrickletARINC429(Device):
         return GetHeartbeatCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_HEARTBEAT_CALLBACK_CONFIGURATION, (channel,), 'B', 12, '! ! H'))
 
     def set_channel_configuration(self, channel, parity, speed):
-        """
+        r"""
         Sets the data transmission properties of the selected channel:
 
         * Channel: channel to configure
@@ -233,7 +233,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_CHANNEL_CONFIGURATION, (channel, parity, speed), 'B B B', 0, '')
 
     def get_channel_configuration(self, channel):
-        """
+        r"""
         Gets the data transmission properties of the selected channel. The channel parameter and the data returned use the same constants
         as the :func:`Set Channel Configuration`,  despite that the all-channels constants CHANNEL_TX and CHANNEL_RX can not be used.
         """
@@ -244,7 +244,7 @@ class BrickletARINC429(Device):
         return GetChannelConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CHANNEL_CONFIGURATION, (channel,), 'B', 10, 'B B'))
 
     def set_channel_mode(self, channel, mode):
-        """
+        r"""
         Sets the operating mode of the selected channel(s):
 
         * passive: TX channel: all transmissions are stopped and the hardware interface becomes high-Z. RX channels: all arriving frames will be discarded.
@@ -259,7 +259,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_CHANNEL_MODE, (channel, mode), 'B B', 0, '')
 
     def get_channel_mode(self, channel):
-        """
+        r"""
         Gets the operating mode of the selected channel.  The channel parameter and the  data returned use the same constants as the
         :func:`Set Channel Configuration`, despite that the all-channels constants CHANNEL_TX and CHANNEL_RX can not be used.
         """
@@ -270,7 +270,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CHANNEL_MODE, (channel,), 'B', 9, 'B')
 
     def clear_all_rx_filters(self, channel):
-        """
+        r"""
         Clears all receive filters on the selected RX channel(s). The RX channels will only process those Arinc429 frames that pass the
         input filtering stage. With this command, all filters are cleared, thus all incoming Arinc429 frames will be blocked from further
         processing.
@@ -282,7 +282,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_ALL_RX_FILTERS, (channel,), 'B', 0, '')
 
     def clear_rx_filter(self, channel, label, sdi):
-        """
+        r"""
         Clears a specific receive filter on the selected RX channel(s). The RX channels will only process those Arinc429 frames that pass
         the input filtering stage. With this command, an Arinc429 frame matching the given parameters will be blocked by the filter.
 
@@ -301,7 +301,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
 
     def set_rx_standard_filters(self, channel):
-        """
+        r"""
         Sets a receive filter for each label value (0-255 / 0o000-0o377) with the SDI bits set for data. Any previously existing filters will be overwritten.
         """
         self.check_validity()
@@ -311,7 +311,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_STANDARD_FILTERS, (channel,), 'B', 0, '')
 
     def set_rx_filter(self, channel, label, sdi):
-        """
+        r"""
         Sets a specific receive filter on the selected channel(s):
 
         * Channel: selected channel.
@@ -330,7 +330,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
 
     def get_rx_filter(self, channel, label, sdi):
-        """
+        r"""
         Queries if a filter for the given combination of label and SDI is set up or not:
 
         * Channel:    channel to query.
@@ -348,7 +348,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RX_FILTER, (channel, label, sdi), 'B B B', 9, '!')
 
     def read_frame(self, channel, label, sdi):
-        """
+        r"""
         Executes a direct read of an Arinc429 frame, i.e. without using the callback mechanism.
         In order to be able to do a direct read of a frame with a certain label and SDI combination, a respective receive filter needs to be set up beforehand.
 
@@ -371,7 +371,7 @@ class BrickletARINC429(Device):
         return ReadFrame(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_READ_FRAME, (channel, label, sdi), 'B B B', 15, '! I H'))
 
     def set_rx_callback_configuration(self, channel, enabled, value_has_to_change, timeout):
-        """
+        r"""
         Sets the configuration of the Arinc429 frame reception callback:
 
         * Channel:             selected RX channel.
@@ -392,7 +392,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_RX_CALLBACK_CONFIGURATION, (channel, enabled, value_has_to_change, timeout), 'B ! ! H', 0, '')
 
     def get_rx_callback_configuration(self, channel):
-        """
+        r"""
         Gets the configuration of the frame reception callback, see the :func:`Set RX Callback Configuration`.
         """
         self.check_validity()
@@ -402,7 +402,7 @@ class BrickletARINC429(Device):
         return GetRXCallbackConfiguration(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_RX_CALLBACK_CONFIGURATION, (channel,), 'B', 12, '! ! H'))
 
     def write_frame_direct(self, channel, frame):
-        """
+        r"""
         Immediately transmits an Arinc429 frame, given that the channel is in either ACTIVE or RUN mode. If the channel is in RUN mode and frames are sent
         as per programmed schedule, using this function will inject additional frames into the transmission, independent of the scheduler's activities.
 
@@ -426,7 +426,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FRAME_DIRECT, (channel, frame), 'B I', 0, '')
 
     def write_frame_scheduled(self, channel, frame_index, frame):
-        """
+        r"""
         Sets or updates an Arinc429 frame that is to be transmitted via the scheduler using the scheduler job types 'Single' or 'Cyclic'.
 
         * Channel:     selected transmit channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
@@ -450,7 +450,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FRAME_SCHEDULED, (channel, frame_index, frame), 'B H I', 0, '')
 
     def clear_schedule_entries(self, channel, job_index_first, job_index_last):
-        """
+        r"""
         Clears a range of transmit scheduler job table entries:
 
         * Channel: selected TX channel.
@@ -469,7 +469,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_CLEAR_SCHEDULE_ENTRIES, (channel, job_index_first, job_index_last), 'B H H', 0, '')
 
     def set_schedule_entry(self, channel, job_index, job, frame_index, dwell_time):
-        """
+        r"""
         Sets an entry in the transmit scheduler job table:
 
         * Channel:     selected TX channel, either CHANNEL_TX or CHANNEL_TX1 can be used as there is only one TX channel.
@@ -546,7 +546,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_SCHEDULE_ENTRY, (channel, job_index, job, frame_index, dwell_time), 'B H B H B', 0, '')
 
     def get_schedule_entry(self, channel, job_index):
-        """
+        r"""
         Gets the definition of a transmit scheduler job table entry, refer to the :func:`Set Schedule Entry`.
         """
         self.check_validity()
@@ -557,7 +557,7 @@ class BrickletARINC429(Device):
         return GetScheduleEntry(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_SCHEDULE_ENTRY, (channel, job_index), 'B H', 16, 'B H I B'))
 
     def restart(self):
-        """
+        r"""
         Reverts the whole bricklet into its power-up default state.
         """
         self.check_validity()
@@ -565,7 +565,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_RESTART, (), '', 0, '')
 
     def set_frame_mode(self, channel, frame_index, mode):
-        """
+        r"""
         Stops / resumes the transmission of a specific frame or trigger another single-transmit. This
         function only works on frames that are sent via the TX scheduler jobs 'single' and 'cyclic'.
 
@@ -582,7 +582,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_FRAME_MODE, (channel, frame_index, mode), 'B H B', 0, '')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -600,7 +600,7 @@ class BrickletARINC429(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -618,7 +618,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -626,7 +626,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -641,7 +641,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -658,7 +658,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -674,7 +674,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -682,7 +682,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -695,7 +695,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -708,7 +708,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -722,7 +722,7 @@ class BrickletARINC429(Device):
         self.ipcon.send_request(self, BrickletARINC429.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -731,7 +731,7 @@ class BrickletARINC429(Device):
         return self.ipcon.send_request(self, BrickletARINC429.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -746,7 +746,7 @@ class BrickletARINC429(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletARINC429.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

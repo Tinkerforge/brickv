@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 ReadFrame = namedtuple('ReadFrame', ['frame', 'frame_number'])
 
 class BrickletDMX(Device):
-    """
+    r"""
     DMX master and slave
     """
 
@@ -92,7 +92,7 @@ class BrickletDMX(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -135,7 +135,7 @@ class BrickletDMX(Device):
         ipcon.add_device(self)
 
     def set_dmx_mode(self, dmx_mode):
-        """
+        r"""
         Sets the DMX mode to either master or slave.
 
         Calling this function sets frame number to 0.
@@ -147,7 +147,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_DMX_MODE, (dmx_mode,), 'B', 0, '')
 
     def get_dmx_mode(self):
-        """
+        r"""
         Returns the DMX mode, as set by :func:`Set DMX Mode`.
         """
         self.check_validity()
@@ -155,7 +155,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_DMX_MODE, (), '', 9, 'B')
 
     def write_frame_low_level(self, frame_length, frame_chunk_offset, frame_chunk_data):
-        """
+        r"""
         Writes a DMX frame. The maximum frame size is 512 byte. Each byte represents one channel.
 
         The next frame can be written after the :cb:`Frame Started` callback was called. The frame
@@ -186,7 +186,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_length, frame_chunk_offset, frame_chunk_data), 'H H 60B', 0, '')
 
     def read_frame_low_level(self):
-        """
+        r"""
         Returns the last frame that was written by the DMX master. The size of the array
         is equivalent to the number of channels in the frame. Each byte represents one channel.
 
@@ -212,7 +212,7 @@ class BrickletDMX(Device):
         return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 72, 'H H 56B I'))
 
     def set_frame_duration(self, frame_duration):
-        """
+        r"""
         Sets the duration of a frame.
 
         Example: If you want to achieve 20 frames per second, you should
@@ -230,7 +230,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_DURATION, (frame_duration,), 'H', 0, '')
 
     def get_frame_duration(self):
-        """
+        r"""
         Returns the frame duration as set by :func:`Set Frame Duration`.
         """
         self.check_validity()
@@ -238,7 +238,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_DURATION, (), '', 10, 'H')
 
     def get_frame_error_count(self):
-        """
+        r"""
         Returns the current number of overrun and framing errors.
         """
         self.check_validity()
@@ -246,7 +246,7 @@ class BrickletDMX(Device):
         return GetFrameErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_ERROR_COUNT, (), '', 16, 'I I'))
 
     def set_communication_led_config(self, config):
-        """
+        r"""
         Sets the communication LED configuration. By default the LED shows
         communication traffic, it flickers once for every 10 received data packets.
 
@@ -261,7 +261,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_communication_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
         self.check_validity()
@@ -269,7 +269,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 9, 'B')
 
     def set_error_led_config(self, config):
-        """
+        r"""
         Sets the error LED configuration.
 
         By default the error LED turns on if there is any error (see :cb:`Frame Error Count`
@@ -287,7 +287,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Error LED Config`.
         """
         self.check_validity()
@@ -295,7 +295,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_frame_callback_config(self, frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled):
-        """
+        r"""
         Enables/Disables the different callbacks. By default the
         :cb:`Frame Started` callback and :cb:`Frame Available` callback are enabled while
         the :cb:`Frame` callback and :cb:`Frame Error Count` callback are disabled.
@@ -314,7 +314,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_FRAME_CALLBACK_CONFIG, (frame_started_callback_enabled, frame_available_callback_enabled, frame_callback_enabled, frame_error_count_callback_enabled), '! ! ! !', 0, '')
 
     def get_frame_callback_config(self):
-        """
+        r"""
         Returns the frame callback config as set by :func:`Set Frame Callback Config`.
         """
         self.check_validity()
@@ -322,7 +322,7 @@ class BrickletDMX(Device):
         return GetFrameCallbackConfig(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_FRAME_CALLBACK_CONFIG, (), '', 12, '! ! ! !'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -340,7 +340,7 @@ class BrickletDMX(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -358,7 +358,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -366,7 +366,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -381,7 +381,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -398,7 +398,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -414,7 +414,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -422,7 +422,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -435,7 +435,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -448,7 +448,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -462,7 +462,7 @@ class BrickletDMX(Device):
         self.ipcon.send_request(self, BrickletDMX.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -471,7 +471,7 @@ class BrickletDMX(Device):
         return self.ipcon.send_request(self, BrickletDMX.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -486,7 +486,7 @@ class BrickletDMX(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletDMX.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_frame(self, frame):
-        """
+        r"""
         Writes a DMX frame. The maximum frame size is 512 byte. Each byte represents one channel.
 
         The next frame can be written after the :cb:`Frame Started` callback was called. The frame
@@ -529,7 +529,7 @@ class BrickletDMX(Device):
         return ret
 
     def read_frame(self):
-        """
+        r"""
         Returns the last frame that was written by the DMX master. The size of the array
         is equivalent to the number of channels in the frame. Each byte represents one channel.
 
@@ -572,7 +572,7 @@ class BrickletDMX(Device):
         return ReadFrame(frame_data[:frame_length], ret.frame_number)
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -19,7 +19,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletPiezoBuzzer(Device):
-    """
+    r"""
     Creates 1kHz beep
     """
 
@@ -37,7 +37,7 @@ class BrickletPiezoBuzzer(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -55,7 +55,7 @@ class BrickletPiezoBuzzer(Device):
         ipcon.add_device(self)
 
     def beep(self, duration):
-        """
+        r"""
         Beeps for the given duration.
         """
         self.check_validity()
@@ -65,7 +65,7 @@ class BrickletPiezoBuzzer(Device):
         self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', 0, '')
 
     def morse_code(self, morse):
-        """
+        r"""
         Sets morse code that will be played by the piezo buzzer. The morse code
         is given as a string consisting of "." (dot), "-" (minus) and " " (space)
         for *dits*, *dahs* and *pauses*. Every other character is ignored.
@@ -81,7 +81,7 @@ class BrickletPiezoBuzzer(Device):
         self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', 0, '')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -96,7 +96,7 @@ class BrickletPiezoBuzzer(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

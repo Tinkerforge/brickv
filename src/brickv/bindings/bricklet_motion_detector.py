@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -19,7 +19,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletMotionDetector(Device):
-    """
+    r"""
     Passive infrared (PIR) motion sensor with 7m range
     """
 
@@ -43,7 +43,7 @@ class BrickletMotionDetector(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 2
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -62,7 +62,7 @@ class BrickletMotionDetector(Device):
         ipcon.add_device(self)
 
     def get_motion_detected(self):
-        """
+        r"""
         Returns 1 if a motion was detected. How long this returns 1 after a motion
         was detected can be adjusted with one of the small potentiometers on the
         Motion Detector Bricklet, see :ref:`here
@@ -76,7 +76,7 @@ class BrickletMotionDetector(Device):
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status led configuration.
 
         By default the status LED turns on if a motion is detected and off is no motion
@@ -93,7 +93,7 @@ class BrickletMotionDetector(Device):
         self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`.
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
@@ -103,7 +103,7 @@ class BrickletMotionDetector(Device):
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -118,7 +118,7 @@ class BrickletMotionDetector(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

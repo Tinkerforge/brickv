@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletDCV2(Device):
-    """
+    r"""
     Drives one brushed DC motor with up to 28V and 5A (peak)
     """
 
@@ -93,7 +93,7 @@ class BrickletDCV2(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -142,7 +142,7 @@ class BrickletDCV2(Device):
         ipcon.add_device(self)
 
     def set_enabled(self, enabled):
-        """
+        r"""
         Enables/Disables the driver chip. The driver parameters can be configured
         (velocity, acceleration, etc) before it is enabled.
         """
@@ -153,7 +153,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_ENABLED, (enabled,), '!', 0, '')
 
     def get_enabled(self):
-        """
+        r"""
         Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         self.check_validity()
@@ -161,7 +161,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_ENABLED, (), '', 9, '!')
 
     def set_velocity(self, velocity):
-        """
+        r"""
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
         0 is stop and 32767 is full speed forward. Depending on the
         acceleration (see :func:`Set Motion`), the motor is not immediately
@@ -179,7 +179,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_VELOCITY, (velocity,), 'h', 0, '')
 
     def get_velocity(self):
-        """
+        r"""
         Returns the velocity as set by :func:`Set Velocity`.
         """
         self.check_validity()
@@ -187,7 +187,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def get_current_velocity(self):
-        """
+        r"""
         Returns the *current* velocity of the motor. This value is different
         from :func:`Get Velocity` whenever the motor is currently accelerating
         to a goal set by :func:`Set Velocity`.
@@ -197,7 +197,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'h')
 
     def set_motion(self, acceleration, deceleration):
-        """
+        r"""
         Sets the acceleration and deceleration of the motor. It is given in *velocity/s*.
         An acceleration of 10000 means, that every second the velocity is increased
         by 10000 (or about 30% duty cycle).
@@ -217,7 +217,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_MOTION, (acceleration, deceleration), 'H H', 0, '')
 
     def get_motion(self):
-        """
+        r"""
         Returns the acceleration/deceleration as set by :func:`Set Motion`.
         """
         self.check_validity()
@@ -225,7 +225,7 @@ class BrickletDCV2(Device):
         return GetMotion(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_MOTION, (), '', 12, 'H H'))
 
     def full_brake(self):
-        """
+        r"""
         Executes an active full brake.
 
         .. warning::
@@ -240,7 +240,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_FULL_BRAKE, (), '', 0, '')
 
     def set_drive_mode(self, mode):
-        """
+        r"""
         Sets the drive mode. Possible modes are:
 
         * 0 = Drive/Brake
@@ -264,7 +264,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', 0, '')
 
     def get_drive_mode(self):
-        """
+        r"""
         Returns the drive mode, as set by :func:`Set Drive Mode`.
         """
         self.check_validity()
@@ -272,7 +272,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_DRIVE_MODE, (), '', 9, 'B')
 
     def set_pwm_frequency(self, frequency):
-        """
+        r"""
         Sets the frequency of the PWM with which the motor is driven.
         Often a high frequency
         is less noisy and the motor runs smoother. However, with a low frequency
@@ -289,7 +289,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', 0, '')
 
     def get_pwm_frequency(self):
-        """
+        r"""
         Returns the PWM frequency as set by :func:`Set PWM Frequency`.
         """
         self.check_validity()
@@ -297,7 +297,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_PWM_FREQUENCY, (), '', 10, 'H')
 
     def get_power_statistics(self):
-        """
+        r"""
         Returns input voltage and current usage of the driver.
         """
         self.check_validity()
@@ -305,7 +305,7 @@ class BrickletDCV2(Device):
         return GetPowerStatistics(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_POWER_STATISTICS, (), '', 12, 'H H'))
 
     def set_error_led_config(self, config):
-        """
+        r"""
         Configures the error LED to be either turned off, turned on, blink in
         heartbeat mode or show an error.
 
@@ -322,7 +322,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set Error LED Config`
         """
         self.check_validity()
@@ -330,7 +330,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_emergency_shutdown_callback_configuration(self, enabled):
-        """
+        r"""
         Enable/Disable :cb:`Emergency Shutdown` callback.
         """
         self.check_validity()
@@ -340,7 +340,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_emergency_shutdown_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by
         :func:`Set Emergency Shutdown Callback Configuration`.
         """
@@ -349,7 +349,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_EMERGENCY_SHUTDOWN_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_velocity_reached_callback_configuration(self, enabled):
-        """
+        r"""
         Enable/Disable :cb:`Velocity Reached` callback.
         """
         self.check_validity()
@@ -359,7 +359,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_VELOCITY_REACHED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_velocity_reached_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by
         :func:`Set Velocity Reached Callback Configuration`.
         """
@@ -368,7 +368,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_VELOCITY_REACHED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_current_velocity_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Current Velocity`
         callback is triggered periodically. A value of 0 turns the callback off.
 
@@ -387,7 +387,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_current_velocity_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by
         :func:`Set Current Velocity Callback Configuration`.
         """
@@ -396,7 +396,7 @@ class BrickletDCV2(Device):
         return GetCurrentVelocityCallbackConfiguration(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CURRENT_VELOCITY_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -414,7 +414,7 @@ class BrickletDCV2(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -432,7 +432,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -440,7 +440,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -455,7 +455,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -472,7 +472,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -488,7 +488,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -496,7 +496,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -509,7 +509,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -522,7 +522,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -536,7 +536,7 @@ class BrickletDCV2(Device):
         self.ipcon.send_request(self, BrickletDCV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -545,7 +545,7 @@ class BrickletDCV2(Device):
         return self.ipcon.send_request(self, BrickletDCV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -560,7 +560,7 @@ class BrickletDCV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletDCV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

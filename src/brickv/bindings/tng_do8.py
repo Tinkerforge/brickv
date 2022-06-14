@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetSelectedValue = namedtuple('SelectedValue', ['timestamp', 'value'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class TNGDO8(Device):
-    """
+    r"""
     TBD
     """
 
@@ -53,7 +53,7 @@ class TNGDO8(Device):
     COPY_STATUS_CRC_MISMATCH = 4
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -78,7 +78,7 @@ class TNGDO8(Device):
         ipcon.add_device(self)
 
     def set_values(self, timestamp, values):
-        """
+        r"""
         timestamp = 0 => now
         """
         self.check_validity()
@@ -89,7 +89,7 @@ class TNGDO8(Device):
         self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_VALUES, (timestamp, values), 'Q 8!', 0, '')
 
     def get_values(self):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -97,7 +97,7 @@ class TNGDO8(Device):
         return GetValues(*self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_VALUES, (), '', 17, 'Q 8!'))
 
     def set_selected_value(self, channel, timestamp, value):
-        """
+        r"""
         timestamp = 0 => now
         """
         self.check_validity()
@@ -109,7 +109,7 @@ class TNGDO8(Device):
         self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_SELECTED_VALUE, (channel, timestamp, value), 'B Q 8!', 0, '')
 
     def get_selected_value(self, channel):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -119,7 +119,7 @@ class TNGDO8(Device):
         return GetSelectedValue(*self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_SELECTED_VALUE, (channel,), 'B', 17, 'Q !'))
 
     def get_timestamp(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -127,7 +127,7 @@ class TNGDO8(Device):
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
 
     def copy_firmware(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -135,7 +135,7 @@ class TNGDO8(Device):
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -145,7 +145,7 @@ class TNGDO8(Device):
         self.ipcon.send_request(self, TNGDO8.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -155,7 +155,7 @@ class TNGDO8(Device):
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the TNG module. All configurations
         will be lost.
 
@@ -168,7 +168,7 @@ class TNGDO8(Device):
         self.ipcon.send_request(self, TNGDO8.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -182,7 +182,7 @@ class TNGDO8(Device):
         self.ipcon.send_request(self, TNGDO8.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -191,7 +191,7 @@ class TNGDO8(Device):
         return self.ipcon.send_request(self, TNGDO8.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

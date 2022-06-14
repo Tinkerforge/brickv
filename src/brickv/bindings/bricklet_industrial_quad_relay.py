@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIndustrialQuadRelay(Device):
-    """
+    r"""
     4 galvanically isolated solid state relays
     """
 
@@ -43,7 +43,7 @@ class BrickletIndustrialQuadRelay(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -66,7 +66,7 @@ class BrickletIndustrialQuadRelay(Device):
         ipcon.add_device(self)
 
     def set_value(self, value_mask):
-        """
+        r"""
         Sets the output value with a bitmask (16bit). A 1 in the bitmask means relay
         closed and a 0 means relay open.
 
@@ -89,7 +89,7 @@ class BrickletIndustrialQuadRelay(Device):
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE, (value_mask,), 'H', 0, '')
 
     def get_value(self):
-        """
+        r"""
         Returns the bitmask as set by :func:`Set Value`.
         """
         self.check_validity()
@@ -97,7 +97,7 @@ class BrickletIndustrialQuadRelay(Device):
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 10, 'H')
 
     def set_monoflop(self, selection_mask, value_mask, time):
-        """
+        r"""
         Configures a monoflop of the pins specified by the first parameter
         bitmask.
 
@@ -126,7 +126,7 @@ class BrickletIndustrialQuadRelay(Device):
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'H H I', 0, '')
 
     def get_monoflop(self, pin):
-        """
+        r"""
         Returns (for the given pin) the current value and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the value flips.
 
@@ -140,7 +140,7 @@ class BrickletIndustrialQuadRelay(Device):
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP, (pin,), 'B', 18, 'H I I'))
 
     def set_group(self, group):
-        """
+        r"""
         Sets a group of Quad Relay Bricklets that should work together. You can
         find Bricklets that can be grouped together with :func:`Get Available For Group`.
 
@@ -164,7 +164,7 @@ class BrickletIndustrialQuadRelay(Device):
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP, (group,), '4c', 0, '')
 
     def get_group(self):
-        """
+        r"""
         Returns the group as set by :func:`Set Group`
         """
         self.check_validity()
@@ -172,7 +172,7 @@ class BrickletIndustrialQuadRelay(Device):
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP, (), '', 12, '4c')
 
     def get_available_for_group(self):
-        """
+        r"""
         Returns a bitmask of ports that are available for grouping. For example the
         value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
@@ -182,7 +182,7 @@ class BrickletIndustrialQuadRelay(Device):
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 9, 'B')
 
     def set_selected_values(self, selection_mask, value_mask):
-        """
+        r"""
         Sets the output value with a bitmask, according to the selection mask.
         The bitmask is 16 bit long, *true* refers to a closed relay and
         *false* refers to an open relay.
@@ -208,7 +208,7 @@ class BrickletIndustrialQuadRelay(Device):
         self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'H H', 0, '')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -223,7 +223,7 @@ class BrickletIndustrialQuadRelay(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletAnalogOutV3(Device):
-    """
+    r"""
     Generates configurable DC voltage between 0V and 12V
     """
 
@@ -63,7 +63,7 @@ class BrickletAnalogOutV3(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -91,7 +91,7 @@ class BrickletAnalogOutV3(Device):
         ipcon.add_device(self)
 
     def set_output_voltage(self, voltage):
-        """
+        r"""
         Sets the voltage.
         """
         self.check_validity()
@@ -101,7 +101,7 @@ class BrickletAnalogOutV3(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_output_voltage(self):
-        """
+        r"""
         Returns the voltage as set by :func:`Set Output Voltage`.
         """
         self.check_validity()
@@ -109,7 +109,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_input_voltage(self):
-        """
+        r"""
         Returns the input voltage.
         """
         self.check_validity()
@@ -117,7 +117,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -135,7 +135,7 @@ class BrickletAnalogOutV3(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -153,7 +153,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -161,7 +161,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -176,7 +176,7 @@ class BrickletAnalogOutV3(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -193,7 +193,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -209,7 +209,7 @@ class BrickletAnalogOutV3(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -217,7 +217,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -230,7 +230,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -243,7 +243,7 @@ class BrickletAnalogOutV3(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -257,7 +257,7 @@ class BrickletAnalogOutV3(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -266,7 +266,7 @@ class BrickletAnalogOutV3(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV3.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

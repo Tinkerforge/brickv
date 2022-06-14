@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -21,7 +21,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCommonTest(Device):
-    """
+    r"""
 
     """
 
@@ -37,7 +37,7 @@ class BrickletCommonTest(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -53,7 +53,7 @@ class BrickletCommonTest(Device):
         ipcon.add_device(self)
 
     def set_int8_value(self, value):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -63,7 +63,7 @@ class BrickletCommonTest(Device):
         self.ipcon.send_request(self, BrickletCommonTest.FUNCTION_SET_INT8_VALUE, (value,), 'b', 0, '')
 
     def get_int8_value(self):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -71,7 +71,7 @@ class BrickletCommonTest(Device):
         return self.ipcon.send_request(self, BrickletCommonTest.FUNCTION_GET_INT8_VALUE, (), '', 9, 'b')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

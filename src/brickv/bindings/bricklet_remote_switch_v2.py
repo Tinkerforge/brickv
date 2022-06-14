@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletRemoteSwitchV2(Device):
-    """
+    r"""
     Controls remote mains switches and receives signals from remotes
     """
 
@@ -87,7 +87,7 @@ class BrickletRemoteSwitchV2(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -128,7 +128,7 @@ class BrickletRemoteSwitchV2(Device):
         ipcon.add_device(self)
 
     def get_switching_state(self):
-        """
+        r"""
         Returns the current switching state. If the current state is busy, the
         Bricklet is currently sending a code to switch a socket. It will not
         accept any calls of switch socket functions until the state changes to ready.
@@ -141,7 +141,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_SWITCHING_STATE, (), '', 9, 'B')
 
     def set_repeats(self, repeats):
-        """
+        r"""
         Sets the number of times the code is sent when one of the Switch Socket
         functions is called. The repeats basically correspond to the amount of time
         that a button of the remote is pressed.
@@ -156,7 +156,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_REPEATS, (repeats,), 'B', 0, '')
 
     def get_repeats(self):
-        """
+        r"""
         Returns the number of repeats as set by :func:`Set Repeats`.
         """
         self.check_validity()
@@ -164,7 +164,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REPEATS, (), '', 9, 'B')
 
     def switch_socket_a(self, house_code, receiver_code, switch_to):
-        """
+        r"""
         To switch a type A socket you have to give the house code, receiver code and the
         state (on or off) you want to switch to.
 
@@ -180,7 +180,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SWITCH_SOCKET_A, (house_code, receiver_code, switch_to), 'B B B', 0, '')
 
     def switch_socket_b(self, address, unit, switch_to):
-        """
+        r"""
         To switch a type B socket you have to give the address, unit and the state
         (on or off) you want to switch to.
 
@@ -198,7 +198,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SWITCH_SOCKET_B, (address, unit, switch_to), 'I B B', 0, '')
 
     def dim_socket_b(self, address, unit, dim_value):
-        """
+        r"""
         To control a type B dimmer you have to give the address, unit and the
         dim value you want to set the dimmer to.
 
@@ -214,7 +214,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_DIM_SOCKET_B, (address, unit, dim_value), 'I B B', 0, '')
 
     def switch_socket_c(self, system_code, device_code, switch_to):
-        """
+        r"""
         To switch a type C socket you have to give the system code, device code and the
         state (on or off) you want to switch to.
 
@@ -230,7 +230,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SWITCH_SOCKET_C, (system_code, device_code, switch_to), 'c B B', 0, '')
 
     def set_remote_configuration(self, remote_type, minimum_repeats, callback_enabled):
-        """
+        r"""
         Sets the configuration for **receiving** data from a remote of type A, B or C.
 
         * Remote Type: A, B or C depending on the type of remote you want to receive.
@@ -248,7 +248,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_REMOTE_CONFIGURATION, (remote_type, minimum_repeats, callback_enabled), 'B H !', 0, '')
 
     def get_remote_configuration(self):
-        """
+        r"""
         Returns the remote configuration as set by :func:`Set Remote Configuration`
         """
         self.check_validity()
@@ -256,7 +256,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetRemoteConfiguration(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_CONFIGURATION, (), '', 12, 'B H !'))
 
     def get_remote_status_a(self):
-        """
+        r"""
         Returns the house code, receiver code, switch state (on/off) and number of
         repeats for remote type A.
 
@@ -273,7 +273,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetRemoteStatusA(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_A, (), '', 13, 'B B B H'))
 
     def get_remote_status_b(self):
-        """
+        r"""
         Returns the address (unique per remote), unit (button number), switch state
         (on/off) and number of repeats for remote type B.
 
@@ -291,7 +291,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetRemoteStatusB(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_B, (), '', 17, 'I B B B H'))
 
     def get_remote_status_c(self):
-        """
+        r"""
         Returns the system code, device code, switch state (on/off) and number of repeats for
         remote type C.
 
@@ -307,7 +307,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetRemoteStatusC(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_REMOTE_STATUS_C, (), '', 13, 'c B B H'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -325,7 +325,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -343,7 +343,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -351,7 +351,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -366,7 +366,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -383,7 +383,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -399,7 +399,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -407,7 +407,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -420,7 +420,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -433,7 +433,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -447,7 +447,7 @@ class BrickletRemoteSwitchV2(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -456,7 +456,7 @@ class BrickletRemoteSwitchV2(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -471,7 +471,7 @@ class BrickletRemoteSwitchV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletRemoteSwitchV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

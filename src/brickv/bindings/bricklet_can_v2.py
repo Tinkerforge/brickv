@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -28,7 +28,7 @@ GetQueueConfiguration = namedtuple('QueueConfiguration', ['write_buffer_size', '
 GetErrorLog = namedtuple('ErrorLog', ['transceiver_state', 'transceiver_write_error_level', 'transceiver_read_error_level', 'transceiver_stuffing_error_count', 'transceiver_format_error_count', 'transceiver_ack_error_count', 'transceiver_bit1_error_count', 'transceiver_bit0_error_count', 'transceiver_crc_error_count', 'write_buffer_timeout_error_count', 'read_buffer_overflow_error_count', 'read_buffer_overflow_error_occurred', 'read_backlog_overflow_error_count'])
 
 class BrickletCANV2(Device):
-    """
+    r"""
     Communicates with CAN bus devices
     """
 
@@ -114,7 +114,7 @@ class BrickletCANV2(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -162,7 +162,7 @@ class BrickletCANV2(Device):
         ipcon.add_device(self)
 
     def write_frame_low_level(self, frame_type, identifier, data_length, data_data):
-        """
+        r"""
         Writes a data or remote frame to the write queue to be transmitted over the
         CAN transceiver.
 
@@ -202,7 +202,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FRAME_LOW_LEVEL, (frame_type, identifier, data_length, data_data), 'B I B 15B', 9, '!')
 
     def read_frame_low_level(self):
-        """
+        r"""
         Tries to read the next data or remote frame from the read queue and returns it.
         If a frame was successfully read, then the ``success`` return value is set to
         *true* and the other return values contain the frame. If the read queue is
@@ -231,7 +231,7 @@ class BrickletCANV2(Device):
         return ReadFrameLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_FRAME_LOW_LEVEL, (), '', 30, '! B I B 15B'))
 
     def set_frame_read_callback_configuration(self, enabled):
-        """
+        r"""
         Enables and disables the :cb:`Frame Read` callback.
 
         By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Readable` callback.
@@ -243,7 +243,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READ_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_frame_read_callback_configuration(self):
-        """
+        r"""
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
         self.check_validity()
@@ -251,7 +251,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READ_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_transceiver_configuration(self, baud_rate, sample_point, transceiver_mode):
-        """
+        r"""
         Sets the transceiver configuration for the CAN bus communication.
 
         The CAN transceiver has three different modes:
@@ -273,7 +273,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_TRANSCEIVER_CONFIGURATION, (baud_rate, sample_point, transceiver_mode), 'I H B', 0, '')
 
     def get_transceiver_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Transceiver Configuration`.
         """
         self.check_validity()
@@ -281,7 +281,7 @@ class BrickletCANV2(Device):
         return GetTransceiverConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_TRANSCEIVER_CONFIGURATION, (), '', 15, 'I H B'))
 
     def set_queue_configuration_low_level(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size):
-        """
+        r"""
         Sets the write and read queue configuration.
 
         The CAN transceiver has 32 buffers in total in hardware for transmitting and
@@ -342,7 +342,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_QUEUE_CONFIGURATION_LOW_LEVEL, (write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size), 'B i H B 32b H', 0, '')
 
     def get_queue_configuration_low_level(self):
-        """
+        r"""
         Returns the queue configuration as set by :func:`Set Queue Configuration`.
         """
         self.check_validity()
@@ -350,7 +350,7 @@ class BrickletCANV2(Device):
         return GetQueueConfigurationLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_QUEUE_CONFIGURATION_LOW_LEVEL, (), '', 50, 'B i H B 32b H'))
 
     def set_read_filter_configuration(self, buffer_index, filter_mode, filter_mask, filter_identifier):
-        """
+        r"""
         Set the read filter configuration for the given read buffer index. This can be
         used to define which frames should be received by the CAN transceiver and put
         into the read buffer.
@@ -420,7 +420,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_READ_FILTER_CONFIGURATION, (buffer_index, filter_mode, filter_mask, filter_identifier), 'B B I I', 0, '')
 
     def get_read_filter_configuration(self, buffer_index):
-        """
+        r"""
         Returns the read filter configuration as set by :func:`Set Read Filter Configuration`.
         """
         self.check_validity()
@@ -430,7 +430,7 @@ class BrickletCANV2(Device):
         return GetReadFilterConfiguration(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_READ_FILTER_CONFIGURATION, (buffer_index,), 'B', 17, 'B I I'))
 
     def get_error_log_low_level(self):
-        """
+        r"""
         Returns information about different kinds of errors.
 
         The write and read error levels indicate the current level of stuffing, form,
@@ -472,7 +472,7 @@ class BrickletCANV2(Device):
         return GetErrorLogLowLevel(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LOG_LOW_LEVEL, (), '', 52, 'B B B I I I I I I I I B 32! I'))
 
     def set_communication_led_config(self, config):
-        """
+        r"""
         Sets the communication LED configuration. By default the LED shows
         CAN-Bus traffic, it flickers once for every 40 transmitted or received frames.
 
@@ -487,7 +487,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_communication_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
         self.check_validity()
@@ -495,7 +495,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 9, 'B')
 
     def set_error_led_config(self, config):
-        """
+        r"""
         Sets the error LED configuration.
 
         By default (show-transceiver-state) the error LED turns on if the CAN
@@ -517,7 +517,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Error LED Config`.
         """
         self.check_validity()
@@ -525,7 +525,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_frame_readable_callback_configuration(self, enabled):
-        """
+        r"""
         Enables and disables the :cb:`Frame Readable` callback.
 
         By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Read` callback.
@@ -539,7 +539,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_frame_readable_callback_configuration(self):
-        """
+        r"""
         Returns *true* if the :cb:`Frame Readable` callback is enabled, *false* otherwise.
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
@@ -549,7 +549,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def set_error_occurred_callback_configuration(self, enabled):
-        """
+        r"""
         Enables and disables the :cb:`Error Occurred` callback.
 
         By default the callback is disabled.
@@ -563,7 +563,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_error_occurred_callback_configuration(self):
-        """
+        r"""
         Returns *true* if the :cb:`Error Occurred` callback is enabled, *false* otherwise.
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
@@ -573,7 +573,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_ERROR_OCCURRED_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -591,7 +591,7 @@ class BrickletCANV2(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -609,7 +609,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -617,7 +617,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -632,7 +632,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -649,7 +649,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -665,7 +665,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -673,7 +673,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -686,7 +686,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -699,7 +699,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -713,7 +713,7 @@ class BrickletCANV2(Device):
         self.ipcon.send_request(self, BrickletCANV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -722,7 +722,7 @@ class BrickletCANV2(Device):
         return self.ipcon.send_request(self, BrickletCANV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -737,7 +737,7 @@ class BrickletCANV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletCANV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_frame(self, frame_type, identifier, data):
-        """
+        r"""
         Writes a data or remote frame to the write queue to be transmitted over the
         CAN transceiver.
 
@@ -783,7 +783,7 @@ class BrickletCANV2(Device):
         return self.write_frame_low_level(frame_type, identifier, data_length, data_data)
 
     def read_frame(self):
-        """
+        r"""
         Tries to read the next data or remote frame from the read queue and returns it.
         If a frame was successfully read, then the ``success`` return value is set to
         *true* and the other return values contain the frame. If the read queue is
@@ -812,7 +812,7 @@ class BrickletCANV2(Device):
         return ReadFrame(ret.success, ret.frame_type, ret.identifier, ret.data_data[:ret.data_length])
 
     def set_queue_configuration(self, write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes, read_backlog_size):
-        """
+        r"""
         Sets the write and read queue configuration.
 
         The CAN transceiver has 32 buffers in total in hardware for transmitting and
@@ -879,7 +879,7 @@ class BrickletCANV2(Device):
         return self.set_queue_configuration_low_level(write_buffer_size, write_buffer_timeout, write_backlog_size, read_buffer_sizes_length, read_buffer_sizes_data, read_backlog_size)
 
     def get_queue_configuration(self):
-        """
+        r"""
         Returns the queue configuration as set by :func:`Set Queue Configuration`.
         """
         ret = self.get_queue_configuration_low_level()
@@ -887,7 +887,7 @@ class BrickletCANV2(Device):
         return GetQueueConfiguration(ret.write_buffer_size, ret.write_buffer_timeout, ret.write_backlog_size, ret.read_buffer_sizes_data[:ret.read_buffer_sizes_length], ret.read_backlog_size)
 
     def get_error_log(self):
-        """
+        r"""
         Returns information about different kinds of errors.
 
         The write and read error levels indicate the current level of stuffing, form,
@@ -929,7 +929,7 @@ class BrickletCANV2(Device):
         return GetErrorLog(ret.transceiver_state, ret.transceiver_write_error_level, ret.transceiver_read_error_level, ret.transceiver_stuffing_error_count, ret.transceiver_format_error_count, ret.transceiver_ack_error_count, ret.transceiver_bit1_error_count, ret.transceiver_bit0_error_count, ret.transceiver_crc_error_count, ret.write_buffer_timeout_error_count, ret.read_buffer_overflow_error_count, ret.read_buffer_overflow_error_occurred_data[:ret.read_buffer_overflow_error_occurred_length], ret.read_backlog_overflow_error_count)
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

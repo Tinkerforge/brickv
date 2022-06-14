@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetErrorLog = namedtuple('ErrorLog', ['write_error_level', 'read_error_level', '
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCAN(Device):
-    """
+    r"""
     Communicates with CAN bus devices
     """
 
@@ -71,7 +71,7 @@ class BrickletCAN(Device):
     FILTER_MODE_MATCH_EXTENDED = 4
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -99,7 +99,7 @@ class BrickletCAN(Device):
         ipcon.add_device(self)
 
     def write_frame(self, frame_type, identifier, data, length):
-        """
+        r"""
         Writes a data or remote frame to the write buffer to be transmitted over the
         CAN transceiver.
 
@@ -132,7 +132,7 @@ class BrickletCAN(Device):
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_WRITE_FRAME, (frame_type, identifier, data, length), 'B I 8B B', 9, '!')
 
     def read_frame(self):
-        """
+        r"""
         Tries to read the next data or remote frame from the read buffer and return it.
         If a frame was successfully read, then the ``success`` return value is set to
         *true* and the other return values contain the frame. If the read buffer is
@@ -156,7 +156,7 @@ class BrickletCAN(Device):
         return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', 23, '! B I 8B B'))
 
     def enable_frame_read_callback(self):
-        """
+        r"""
         Enables the :cb:`Frame Read` callback.
 
         By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Readable` callback.
@@ -166,7 +166,7 @@ class BrickletCAN(Device):
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_ENABLE_FRAME_READ_CALLBACK, (), '', 0, '')
 
     def disable_frame_read_callback(self):
-        """
+        r"""
         Disables the :cb:`Frame Read` callback.
 
         By default the callback is disabled.
@@ -176,7 +176,7 @@ class BrickletCAN(Device):
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_DISABLE_FRAME_READ_CALLBACK, (), '', 0, '')
 
     def is_frame_read_callback_enabled(self):
-        """
+        r"""
         Returns *true* if the :cb:`Frame Read` callback is enabled, *false* otherwise.
         """
         self.check_validity()
@@ -184,7 +184,7 @@ class BrickletCAN(Device):
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', 9, '!')
 
     def set_configuration(self, baud_rate, transceiver_mode, write_timeout):
-        """
+        r"""
         Sets the configuration for the CAN bus communication.
 
         The baud rate can be configured in steps between 10 and 1000 kbit/s.
@@ -219,7 +219,7 @@ class BrickletCAN(Device):
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_CONFIGURATION, (baud_rate, transceiver_mode, write_timeout), 'B B i', 0, '')
 
     def get_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Configuration`.
         """
         self.check_validity()
@@ -227,7 +227,7 @@ class BrickletCAN(Device):
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_CONFIGURATION, (), '', 14, 'B B i'))
 
     def set_read_filter(self, mode, mask, filter1, filter2):
-        """
+        r"""
         Set the read filter configuration. This can be used to define which frames
         should be received by the CAN transceiver and put into the read buffer.
 
@@ -291,7 +291,7 @@ class BrickletCAN(Device):
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_READ_FILTER, (mode, mask, filter1, filter2), 'B I I I', 0, '')
 
     def get_read_filter(self):
-        """
+        r"""
         Returns the read filter as set by :func:`Set Read Filter`.
         """
         self.check_validity()
@@ -299,7 +299,7 @@ class BrickletCAN(Device):
         return GetReadFilter(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_READ_FILTER, (), '', 21, 'B I I I'))
 
     def get_error_log(self):
-        """
+        r"""
         Returns information about different kinds of errors.
 
         The write and read error levels indicate the current level of checksum,
@@ -339,7 +339,7 @@ class BrickletCAN(Device):
         return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', 23, 'B B ! I I I'))
 
     def set_frame_readable_callback_configuration(self, enabled):
-        """
+        r"""
         Enables/disables the :cb:`Frame Readable` callback.
 
         By default the callback is disabled. Enabling this callback will disable the :cb:`Frame Read` callback.
@@ -353,7 +353,7 @@ class BrickletCAN(Device):
         self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_FRAME_READABLE_CALLBACK_CONFIGURATION, (enabled,), '!', 0, '')
 
     def get_frame_readable_callback_configuration(self):
-        """
+        r"""
         Returns *true* if the :cb:`Frame Readable` callback is enabled, *false* otherwise.
 
         .. versionadded:: 2.0.1$nbsp;(Plugin)
@@ -363,7 +363,7 @@ class BrickletCAN(Device):
         return self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_FRAME_READABLE_CALLBACK_CONFIGURATION, (), '', 9, '!')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -378,7 +378,7 @@ class BrickletCAN(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

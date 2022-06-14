@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -26,7 +26,7 @@ GetSelectedCurrent = namedtuple('SelectedCurrent', ['timestamp', 'current'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class TNGAI4U4I(Device):
-    """
+    r"""
     TBD
     """
 
@@ -57,7 +57,7 @@ class TNGAI4U4I(Device):
     COPY_STATUS_CRC_MISMATCH = 4
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -83,7 +83,7 @@ class TNGAI4U4I(Device):
         ipcon.add_device(self)
 
     def get_values(self):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -91,7 +91,7 @@ class TNGAI4U4I(Device):
         return GetValues(*self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_VALUES, (), '', 48, 'Q 4i 4i'))
 
     def get_voltages(self):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -99,7 +99,7 @@ class TNGAI4U4I(Device):
         return GetVoltages(*self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_VOLTAGES, (), '', 32, 'Q 4i'))
 
     def get_currents(self):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -107,7 +107,7 @@ class TNGAI4U4I(Device):
         return GetCurrents(*self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_CURRENTS, (), '', 32, 'Q 4i'))
 
     def get_selected_voltage(self, channel):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -117,7 +117,7 @@ class TNGAI4U4I(Device):
         return GetSelectedVoltage(*self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_SELECTED_VOLTAGE, (channel,), 'B', 20, 'Q i'))
 
     def get_selected_current(self, channel):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -127,7 +127,7 @@ class TNGAI4U4I(Device):
         return GetSelectedCurrent(*self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_SELECTED_CURRENT, (channel,), 'B', 20, 'Q i'))
 
     def get_timestamp(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -135,7 +135,7 @@ class TNGAI4U4I(Device):
         return self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_GET_TIMESTAMP, (), '', 16, 'Q')
 
     def copy_firmware(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -143,7 +143,7 @@ class TNGAI4U4I(Device):
         return self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_COPY_FIRMWARE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -153,7 +153,7 @@ class TNGAI4U4I(Device):
         self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -163,7 +163,7 @@ class TNGAI4U4I(Device):
         return self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the TNG module. All configurations
         will be lost.
 
@@ -176,7 +176,7 @@ class TNGAI4U4I(Device):
         self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -190,7 +190,7 @@ class TNGAI4U4I(Device):
         self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -199,7 +199,7 @@ class TNGAI4U4I(Device):
         return self.ipcon.send_request(self, TNGAI4U4I.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

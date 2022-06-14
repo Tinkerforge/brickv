@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletEPaper296x128(Device):
-    """
+    r"""
     Three color 296x128 e-paper display
     """
 
@@ -105,7 +105,7 @@ class BrickletEPaper296x128(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -147,7 +147,7 @@ class BrickletEPaper296x128(Device):
         ipcon.add_device(self)
 
     def draw(self):
-        """
+        r"""
         Draws the current black/white and red or gray buffer to the e-paper display.
 
         The Bricklet does not have any double-buffering. You should not call
@@ -158,7 +158,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW, (), '', 0, '')
 
     def get_draw_status(self):
-        """
+        r"""
         Returns one of three draw statuses:
 
         * Idle
@@ -174,7 +174,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DRAW_STATUS, (), '', 9, 'B')
 
     def write_black_white_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
-        """
+        r"""
         Writes black/white pixels to the specified window into the buffer.
 
         The pixels are written into the window line by line top to bottom
@@ -201,7 +201,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', 0, '')
 
     def read_black_white_low_level(self, x_start, y_start, x_end, y_end):
-        """
+        r"""
         Returns the current content of the black/white pixel buffer for the specified window.
 
         The pixels are read into the window line by line top to bottom and
@@ -221,7 +221,7 @@ class BrickletEPaper296x128(Device):
         return ReadBlackWhiteLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_BLACK_WHITE_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 70, 'H H 464!'))
 
     def write_color_low_level(self, x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data):
-        """
+        r"""
         The E-Paper 296x128 Bricklet is available with the colors black/white/red and
         black/white/gray. Depending on the model this function writes either red or
         gray pixels to the specified window into the buffer.
@@ -251,7 +251,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end, pixels_length, pixels_chunk_offset, pixels_chunk_data), 'H B H B H H 432!', 0, '')
 
     def read_color_low_level(self, x_start, y_start, x_end, y_end):
-        """
+        r"""
         Returns the current content of the red or gray pixel buffer for the specified window.
 
         The pixels are written into the window line by line top to bottom
@@ -271,7 +271,7 @@ class BrickletEPaper296x128(Device):
         return ReadColorLowLevel(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_COLOR_LOW_LEVEL, (x_start, y_start, x_end, y_end), 'H B H B', 70, 'H H 464!'))
 
     def fill_display(self, color):
-        """
+        r"""
         Fills the complete content of the display with the given color.
 
         This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
@@ -284,7 +284,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_FILL_DISPLAY, (color,), 'B', 0, '')
 
     def draw_text(self, position_x, position_y, font, color, orientation, text):
-        """
+        r"""
         Draws a text with up to 50 characters at the pixel position (x, y).
 
         You can use one of 9 different font sizes and draw the text in
@@ -307,7 +307,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_TEXT, (position_x, position_y, font, color, orientation, text), 'H B B B B 50s', 0, '')
 
     def draw_line(self, position_x_start, position_y_start, position_x_end, position_y_end, color):
-        """
+        r"""
         Draws a line from (x, y)-start to (x, y)-end in the given color.
 
         This function writes the pixels into the black/white/red|gray pixel buffer, to draw the buffer
@@ -324,7 +324,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_LINE, (position_x_start, position_y_start, position_x_end, position_y_end, color), 'H B H B B', 0, '')
 
     def draw_box(self, position_x_start, position_y_start, position_x_end, position_y_end, fill, color):
-        """
+        r"""
         Draws a box from (x, y)-start to (x, y)-end in the given color.
 
         If you set fill to true, the box will be filled with the
@@ -345,7 +345,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_DRAW_BOX, (position_x_start, position_y_start, position_x_end, position_y_end, fill, color), 'H B H B ! B', 0, '')
 
     def set_update_mode(self, update_mode):
-        """
+        r"""
         .. note::
          The default update mode corresponds to the default e-paper display
          manufacturer settings. All of the other modes are experimental and
@@ -388,7 +388,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_UPDATE_MODE, (update_mode,), 'B', 0, '')
 
     def get_update_mode(self):
-        """
+        r"""
         Returns the update mode as set by :func:`Set Update Mode`.
         """
         self.check_validity()
@@ -396,7 +396,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_UPDATE_MODE, (), '', 9, 'B')
 
     def set_display_type(self, display_type):
-        """
+        r"""
         Sets the type of the display. The e-paper display is available
         in black/white/red and black/white/gray. This will be factory set
         during the flashing and testing phase. The value is saved in
@@ -409,7 +409,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_TYPE, (display_type,), 'B', 0, '')
 
     def get_display_type(self):
-        """
+        r"""
         Returns the type of the e-paper display. It can either be
         black/white/red or black/white/gray.
         """
@@ -418,7 +418,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_TYPE, (), '', 9, 'B')
 
     def set_display_driver(self, display_driver):
-        """
+        r"""
         Sets the type of display driver. The Bricklet can currently support
         SSD1675A and SSD1680. This will be factory set
         during the flashing and testing phase. The value is saved in
@@ -433,7 +433,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_DISPLAY_DRIVER, (display_driver,), 'B', 0, '')
 
     def get_display_driver(self):
-        """
+        r"""
         Returns the e-paper display driver.
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
@@ -443,7 +443,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_DISPLAY_DRIVER, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -461,7 +461,7 @@ class BrickletEPaper296x128(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -479,7 +479,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -487,7 +487,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -502,7 +502,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -519,7 +519,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -535,7 +535,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -543,7 +543,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -556,7 +556,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -569,7 +569,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -583,7 +583,7 @@ class BrickletEPaper296x128(Device):
         self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -592,7 +592,7 @@ class BrickletEPaper296x128(Device):
         return self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -607,7 +607,7 @@ class BrickletEPaper296x128(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletEPaper296x128.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def write_black_white(self, x_start, y_start, x_end, y_end, pixels):
-        """
+        r"""
         Writes black/white pixels to the specified window into the buffer.
 
         The pixels are written into the window line by line top to bottom
@@ -646,7 +646,7 @@ class BrickletEPaper296x128(Device):
         return ret
 
     def read_black_white(self, x_start, y_start, x_end, y_end):
-        """
+        r"""
         Returns the current content of the black/white pixel buffer for the specified window.
 
         The pixels are read into the window line by line top to bottom and
@@ -683,7 +683,7 @@ class BrickletEPaper296x128(Device):
         return pixels_data[:pixels_length]
 
     def write_color(self, x_start, y_start, x_end, y_end, pixels):
-        """
+        r"""
         The E-Paper 296x128 Bricklet is available with the colors black/white/red and
         black/white/gray. Depending on the model this function writes either red or
         gray pixels to the specified window into the buffer.
@@ -725,7 +725,7 @@ class BrickletEPaper296x128(Device):
         return ret
 
     def read_color(self, x_start, y_start, x_end, y_end):
-        """
+        r"""
         Returns the current content of the red or gray pixel buffer for the specified window.
 
         The pixels are written into the window line by line top to bottom
@@ -762,7 +762,7 @@ class BrickletEPaper296x128(Device):
         return pixels_data[:pixels_length]
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

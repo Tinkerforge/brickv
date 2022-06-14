@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_versio
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickDC(Device):
-    """
+    r"""
     Drives one brushed DC motor with up to 28V and 5A (peak)
     """
 
@@ -84,7 +84,7 @@ class BrickDC(Device):
     COMMUNICATION_METHOD_WIFI_V2 = 7
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -136,7 +136,7 @@ class BrickDC(Device):
         ipcon.add_device(self)
 
     def set_velocity(self, velocity):
-        """
+        r"""
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
         0 is stop and 32767 is full speed forward. Depending on the
         acceleration (see :func:`Set Acceleration`), the motor is not immediately
@@ -154,7 +154,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', 0, '')
 
     def get_velocity(self):
-        """
+        r"""
         Returns the velocity as set by :func:`Set Velocity`.
         """
         self.check_validity()
@@ -162,7 +162,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def get_current_velocity(self):
-        """
+        r"""
         Returns the *current* velocity of the motor. This value is different
         from :func:`Get Velocity` whenever the motor is currently accelerating
         to a goal set by :func:`Set Velocity`.
@@ -172,7 +172,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 10, 'h')
 
     def set_acceleration(self, acceleration):
-        """
+        r"""
         Sets the acceleration of the motor. It is given in *velocity/s*. An
         acceleration of 10000 means, that every second the velocity is increased
         by 10000 (or about 30% duty cycle).
@@ -191,7 +191,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', 0, '')
 
     def get_acceleration(self):
-        """
+        r"""
         Returns the acceleration as set by :func:`Set Acceleration`.
         """
         self.check_validity()
@@ -199,7 +199,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_ACCELERATION, (), '', 10, 'H')
 
     def set_pwm_frequency(self, frequency):
-        """
+        r"""
         Sets the frequency of the PWM with which the motor is driven.
         Often a high frequency
         is less noisy and the motor runs smoother. However, with a low frequency
@@ -216,7 +216,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', 0, '')
 
     def get_pwm_frequency(self):
-        """
+        r"""
         Returns the PWM frequency as set by :func:`Set PWM Frequency`.
         """
         self.check_validity()
@@ -224,7 +224,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 10, 'H')
 
     def full_brake(self):
-        """
+        r"""
         Executes an active full brake.
 
         .. warning::
@@ -239,7 +239,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', 0, '')
 
     def get_stack_input_voltage(self):
-        """
+        r"""
         Returns the stack input voltage. The stack input voltage is the
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
@@ -249,7 +249,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_external_input_voltage(self):
-        """
+        r"""
         Returns the external input voltage. The external input voltage is
         given via the black power input connector on the DC Brick.
 
@@ -268,7 +268,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_current_consumption(self):
-        """
+        r"""
         Returns the current consumption of the motor.
         """
         self.check_validity()
@@ -276,7 +276,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 10, 'H')
 
     def enable(self):
-        """
+        r"""
         Enables the driver chip. The driver parameters can be configured (velocity,
         acceleration, etc) before it is enabled.
         """
@@ -285,7 +285,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE, (), '', 0, '')
 
     def disable(self):
-        """
+        r"""
         Disables the driver chip. The configurations are kept (velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
 
@@ -302,7 +302,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE, (), '', 0, '')
 
     def is_enabled(self):
-        """
+        r"""
         Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         self.check_validity()
@@ -310,7 +310,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', 9, '!')
 
     def set_minimum_voltage(self, voltage):
-        """
+        r"""
         Sets the minimum voltage, below which the :cb:`Under Voltage` callback
         is triggered. The minimum possible value that works with the DC Brick is 6V.
         You can use this function to detect the discharge of a battery that is used
@@ -324,7 +324,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_minimum_voltage(self):
-        """
+        r"""
         Returns the minimum voltage as set by :func:`Set Minimum Voltage`
         """
         self.check_validity()
@@ -332,7 +332,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 10, 'H')
 
     def set_drive_mode(self, mode):
-        """
+        r"""
         Sets the drive mode. Possible modes are:
 
         * 0 = Drive/Brake
@@ -356,7 +356,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', 0, '')
 
     def get_drive_mode(self):
-        """
+        r"""
         Returns the drive mode, as set by :func:`Set Drive Mode`.
         """
         self.check_validity()
@@ -364,7 +364,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_DRIVE_MODE, (), '', 9, 'B')
 
     def set_current_velocity_period(self, period):
-        """
+        r"""
         Sets a period with which the :cb:`Current Velocity` callback is triggered.
         A period of 0 turns the callback off.
         """
@@ -375,7 +375,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', 0, '')
 
     def get_current_velocity_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Current Velocity Period`.
         """
         self.check_validity()
@@ -383,7 +383,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 10, 'H')
 
     def set_spitfp_baudrate_config(self, enable_dynamic_baudrate, minimum_dynamic_baudrate):
-        """
+        r"""
         The SPITF protocol can be used with a dynamic baudrate. If the dynamic baudrate is
         enabled, the Brick will try to adapt the baudrate for the communication
         between Bricks and Bricklets according to the amount of data that is transferred.
@@ -413,7 +413,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE_CONFIG, (enable_dynamic_baudrate, minimum_dynamic_baudrate), '! I', 0, '')
 
     def get_spitfp_baudrate_config(self):
-        """
+        r"""
         Returns the baudrate config, see :func:`Set SPITFP Baudrate Config`.
 
         .. versionadded:: 2.3.5$nbsp;(Firmware)
@@ -423,7 +423,7 @@ class BrickDC(Device):
         return GetSPITFPBaudrateConfig(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE_CONFIG, (), '', 13, '! I'))
 
     def get_send_timeout_count(self, communication_method):
-        """
+        r"""
         Returns the timeout count for the different communication methods.
 
         The methods 0-2 are available for all Bricks, 3-7 only for Master Bricks.
@@ -440,7 +440,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SEND_TIMEOUT_COUNT, (communication_method,), 'B', 12, 'I')
 
     def set_spitfp_baudrate(self, bricklet_port, baudrate):
-        """
+        r"""
         Sets the baudrate for a specific Bricklet port.
 
         If you want to increase the throughput of Bricklets you can increase
@@ -465,7 +465,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_SPITFP_BAUDRATE, (bricklet_port, baudrate), 'c I', 0, '')
 
     def get_spitfp_baudrate(self, bricklet_port):
-        """
+        r"""
         Returns the baudrate for a given Bricklet port, see :func:`Set SPITFP Baudrate`.
 
         .. versionadded:: 2.3.3$nbsp;(Firmware)
@@ -477,7 +477,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_BAUDRATE, (bricklet_port,), 'c', 12, 'I')
 
     def get_spitfp_error_count(self, bricklet_port):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -499,7 +499,7 @@ class BrickDC(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_SPITFP_ERROR_COUNT, (bricklet_port,), 'c', 24, 'I I I I'))
 
     def enable_status_led(self):
-        """
+        r"""
         Enables the status LED.
 
         The status LED is the blue LED next to the USB connector. If enabled is is
@@ -514,7 +514,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', 0, '')
 
     def disable_status_led(self):
-        """
+        r"""
         Disables the status LED.
 
         The status LED is the blue LED next to the USB connector. If enabled is is
@@ -529,7 +529,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', 0, '')
 
     def is_status_led_enabled(self):
-        """
+        r"""
         Returns *true* if the status LED is enabled, *false* otherwise.
 
         .. versionadded:: 2.3.1$nbsp;(Firmware)
@@ -539,7 +539,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', 9, '!')
 
     def get_protocol1_bricklet_name(self, port):
-        """
+        r"""
         Returns the firmware and protocol version and the name of the Bricklet for a
         given port.
 
@@ -553,7 +553,7 @@ class BrickDC(Device):
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 52, 'B 3B 40s'))
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -566,7 +566,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
 
@@ -579,7 +579,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_RESET, (), '', 0, '')
 
     def write_bricklet_plugin(self, port, offset, chunk):
-        """
+        r"""
         Writes 32 bytes of firmware to the bricklet attached at the given port.
         The bytes are written to the position offset * 32.
 
@@ -595,7 +595,7 @@ class BrickDC(Device):
         self.ipcon.send_request(self, BrickDC.FUNCTION_WRITE_BRICKLET_PLUGIN, (port, offset, chunk), 'c B 32B', 0, '')
 
     def read_bricklet_plugin(self, port, offset):
-        """
+        r"""
         Reads 32 bytes of firmware from the bricklet attached at the given port.
         The bytes are read starting at the position offset * 32.
 
@@ -610,7 +610,7 @@ class BrickDC(Device):
         return self.ipcon.send_request(self, BrickDC.FUNCTION_READ_BRICKLET_PLUGIN, (port, offset), 'c B', 40, '32B')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Brick is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -623,7 +623,7 @@ class BrickDC(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

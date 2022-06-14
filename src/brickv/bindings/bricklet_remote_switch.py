@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -19,7 +19,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletRemoteSwitch(Device):
-    """
+    r"""
     Controls remote mains switches
     """
 
@@ -46,7 +46,7 @@ class BrickletRemoteSwitch(Device):
     SWITCHING_STATE_BUSY = 1
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -69,7 +69,7 @@ class BrickletRemoteSwitch(Device):
         ipcon.add_device(self)
 
     def switch_socket(self, house_code, receiver_code, switch_to):
-        """
+        r"""
         This function is deprecated, use :func:`Switch Socket A` instead.
         """
         self.check_validity()
@@ -81,7 +81,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET, (house_code, receiver_code, switch_to), 'B B B', 0, '')
 
     def get_switching_state(self):
-        """
+        r"""
         Returns the current switching state. If the current state is busy, the
         Bricklet is currently sending a code to switch a socket. It will not
         accept any requests to switch sockets until the state changes to ready.
@@ -94,7 +94,7 @@ class BrickletRemoteSwitch(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE, (), '', 9, 'B')
 
     def set_repeats(self, repeats):
-        """
+        r"""
         Sets the number of times the code is sent when one of the switch socket
         functions is called. The repeats basically correspond to the amount of time
         that a button of the remote is pressed.
@@ -109,7 +109,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_REPEATS, (repeats,), 'B', 0, '')
 
     def get_repeats(self):
-        """
+        r"""
         Returns the number of repeats as set by :func:`Set Repeats`.
         """
         self.check_validity()
@@ -117,7 +117,7 @@ class BrickletRemoteSwitch(Device):
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_REPEATS, (), '', 9, 'B')
 
     def switch_socket_a(self, house_code, receiver_code, switch_to):
-        """
+        r"""
         To switch a type A socket you have to give the house code, receiver code and the
         state (on or off) you want to switch to.
 
@@ -135,7 +135,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_A, (house_code, receiver_code, switch_to), 'B B B', 0, '')
 
     def switch_socket_b(self, address, unit, switch_to):
-        """
+        r"""
         To switch a type B socket you have to give the address, unit and the state
         (on or off) you want to switch to.
 
@@ -155,7 +155,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_B, (address, unit, switch_to), 'I B B', 0, '')
 
     def dim_socket_b(self, address, unit, dim_value):
-        """
+        r"""
         To control a type B dimmer you have to give the address, unit and the
         dim value you want to set the dimmer to.
 
@@ -173,7 +173,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_DIM_SOCKET_B, (address, unit, dim_value), 'I B B', 0, '')
 
     def switch_socket_c(self, system_code, device_code, switch_to):
-        """
+        r"""
         To switch a type C socket you have to give the system code, device code and the
         state (on or off) you want to switch to.
 
@@ -191,7 +191,7 @@ class BrickletRemoteSwitch(Device):
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_C, (system_code, device_code, switch_to), 'c B B', 0, '')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -206,7 +206,7 @@ class BrickletRemoteSwitch(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetMonoflop = namedtuple('Monoflop', ['state', 'time', 'time_remaining'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletSolidStateRelay(Device):
-    """
+    r"""
     Controls AC and DC Solid State Relays
     """
 
@@ -39,7 +39,7 @@ class BrickletSolidStateRelay(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -58,7 +58,7 @@ class BrickletSolidStateRelay(Device):
         ipcon.add_device(self)
 
     def set_state(self, state):
-        """
+        r"""
         Sets the state of the relays *true* means on and *false* means off.
 
         A running monoflop timer will be aborted if this function is called.
@@ -70,7 +70,7 @@ class BrickletSolidStateRelay(Device):
         self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_STATE, (state,), '!', 0, '')
 
     def get_state(self):
-        """
+        r"""
         Returns the state of the relay, *true* means on and *false* means off.
         """
         self.check_validity()
@@ -78,7 +78,7 @@ class BrickletSolidStateRelay(Device):
         return self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_STATE, (), '', 9, '!')
 
     def set_monoflop(self, state, time):
-        """
+        r"""
         The first parameter  is the desired state of the relay (*true* means on
         and *false* means off). The second parameter indicates the time that
         the relay should hold the state.
@@ -100,7 +100,7 @@ class BrickletSolidStateRelay(Device):
         self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_SET_MONOFLOP, (state, time), '! I', 0, '')
 
     def get_monoflop(self):
-        """
+        r"""
         Returns the current state and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the state flips.
 
@@ -112,7 +112,7 @@ class BrickletSolidStateRelay(Device):
         return GetMonoflop(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_MONOFLOP, (), '', 17, '! I I'))
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -127,7 +127,7 @@ class BrickletSolidStateRelay(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletSolidStateRelay.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

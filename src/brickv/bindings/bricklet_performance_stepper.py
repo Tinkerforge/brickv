@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -32,7 +32,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletPerformanceStepper(Device):
-    """
+    r"""
     TBD
     """
 
@@ -196,7 +196,7 @@ class BrickletPerformanceStepper(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -265,7 +265,7 @@ class BrickletPerformanceStepper(Device):
         ipcon.add_device(self)
 
     def set_motion_configuration(self, ramping_mode, velocity_start, acceleration_1, velocity_1, acceleration_max, velocity_max, deceleration_max, deceleration_1, velocity_stop, ramp_zero_wait):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -284,7 +284,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_MOTION_CONFIGURATION, (ramping_mode, velocity_start, acceleration_1, velocity_1, acceleration_max, velocity_max, deceleration_max, deceleration_1, velocity_stop, ramp_zero_wait), 'B i i i i i i i i i', 0, '')
 
     def get_motion_configuration(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -292,7 +292,7 @@ class BrickletPerformanceStepper(Device):
         return GetMotionConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_MOTION_CONFIGURATION, (), '', 45, 'B i i i i i i i i i'))
 
     def set_current_position(self, position):
-        """
+        r"""
         Sets the current steps of the internal step counter. This can be used to
         set the current position to 0 when some kind of starting position
         is reached (e.g. when a CNC machine reaches a corner).
@@ -304,7 +304,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_CURRENT_POSITION, (position,), 'i', 0, '')
 
     def get_current_position(self):
-        """
+        r"""
         Returns the current position of the stepper motor in steps. On startup
         the position is 0. The steps are counted with all possible driving
         functions (:func:`Set Target Position`, :func:`Set Steps`).
@@ -316,7 +316,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_CURRENT_POSITION, (), '', 12, 'i')
 
     def get_current_velocity(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -324,7 +324,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_CURRENT_VELOCITY, (), '', 12, 'i')
 
     def set_target_position(self, position):
-        """
+        r"""
         Sets the target position of the stepper motor in steps. For example,
         if the current position of the motor is 500 and :func:`Set Target Position` is
         called with 1000, the stepper motor will drive 500 steps forward. It will
@@ -342,7 +342,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_TARGET_POSITION, (position,), 'i', 0, '')
 
     def get_target_position(self):
-        """
+        r"""
         Returns the last target position as set by :func:`Set Target Position`.
         """
         self.check_validity()
@@ -350,7 +350,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_TARGET_POSITION, (), '', 12, 'i')
 
     def set_steps(self, steps):
-        """
+        r"""
         Sets the number of steps the stepper motor should run. Positive values
         will drive the motor forward and negative values backward.
         The velocity, acceleration and deacceleration as set by
@@ -363,7 +363,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_STEPS, (steps,), 'i', 0, '')
 
     def get_steps(self):
-        """
+        r"""
         Returns the last steps as set by :func:`Set Steps`.
         """
         self.check_validity()
@@ -371,7 +371,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_STEPS, (), '', 12, 'i')
 
     def get_remaining_steps(self):
-        """
+        r"""
         Returns the remaining steps of the last call of :func:`Set Steps`.
         For example, if :func:`Set Steps` is called with 2000 and
         :func:`Get Remaining Steps` is called after the motor has run for 500 steps,
@@ -382,7 +382,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 12, 'i')
 
     def set_step_configuration(self, step_resolution, interpolation):
-        """
+        r"""
         Sets the step resolution from full-step up to 1/256-step.
 
         If interpolation is turned on, the Silent Stepper Brick will always interpolate
@@ -403,7 +403,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_STEP_CONFIGURATION, (step_resolution, interpolation), 'B !', 0, '')
 
     def get_step_configuration(self):
-        """
+        r"""
         Returns the step mode as set by :func:`Set Step Configuration`.
         """
         self.check_validity()
@@ -411,7 +411,7 @@ class BrickletPerformanceStepper(Device):
         return GetStepConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_STEP_CONFIGURATION, (), '', 10, 'B !'))
 
     def set_motor_current(self, current):
-        """
+        r"""
         Sets the current with which the motor will be driven.
 
         .. warning::
@@ -425,7 +425,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', 0, '')
 
     def get_motor_current(self):
-        """
+        r"""
         Returns the current as set by :func:`Set Motor Current`.
         """
         self.check_validity()
@@ -433,7 +433,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_MOTOR_CURRENT, (), '', 10, 'H')
 
     def set_enabled(self, enabled):
-        """
+        r"""
         Enables the driver chip. The driver parameters can be configured (maximum velocity,
         acceleration, etc) before it is enabled.
         """
@@ -444,7 +444,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_ENABLED, (enabled,), '!', 0, '')
 
     def get_enabled(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -452,7 +452,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_ENABLED, (), '', 9, '!')
 
     def set_basic_configuration(self, standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode):
-        """
+        r"""
         Sets the basic configuration parameters for the different modes (Stealth, Coolstep, Classic).
 
         * Standstill Current: This value can be used to lower the current during stand still. This might
@@ -507,7 +507,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_BASIC_CONFIGURATION, (standstill_current, motor_run_current, standstill_delay_time, power_down_time, stealth_threshold, coolstep_threshold, classic_threshold, high_velocity_chopper_mode), 'H H H H H H H !', 0, '')
 
     def get_basic_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Basic Configuration`.
         """
         self.check_validity()
@@ -515,7 +515,7 @@ class BrickletPerformanceStepper(Device):
         return GetBasicConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_BASIC_CONFIGURATION, (), '', 23, 'H H H H H H H !'))
 
     def set_spreadcycle_configuration(self, slow_decay_duration, high_velocity_fullstep, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sine_wave_offset, chopper_mode, comparator_blank_time, fast_decay_without_comparator):
-        """
+        r"""
         Note: If you don't know what any of this means you can very likely keep all of
         the values as default!
 
@@ -570,7 +570,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_SPREADCYCLE_CONFIGURATION, (slow_decay_duration, high_velocity_fullstep, fast_decay_duration, hysteresis_start_value, hysteresis_end_value, sine_wave_offset, chopper_mode, comparator_blank_time, fast_decay_without_comparator), 'B ! B B b b B B !', 0, '')
 
     def get_spreadcycle_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Basic Configuration`.
         """
         self.check_validity()
@@ -578,7 +578,7 @@ class BrickletPerformanceStepper(Device):
         return GetSpreadcycleConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_SPREADCYCLE_CONFIGURATION, (), '', 18, 'B ! ! B B b b B B !'))
 
     def set_stealth_configuration(self, enable_stealth, offset, gradient, enable_autoscale, enable_autogradient, freewheel_mode, regulation_loop_gradient, amplitude_limit):
-        """
+        r"""
         Note: If you don't know what any of this means you can very likely keep all of
         the values as default!
 
@@ -616,7 +616,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_STEALTH_CONFIGURATION, (enable_stealth, offset, gradient, enable_autoscale, enable_autogradient, freewheel_mode, regulation_loop_gradient, amplitude_limit), '! B B ! ! B B B', 0, '')
 
     def get_stealth_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Stealth Configuration`.
         """
         self.check_validity()
@@ -624,7 +624,7 @@ class BrickletPerformanceStepper(Device):
         return GetStealthConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_STEALTH_CONFIGURATION, (), '', 16, '! B B ! ! B B B'))
 
     def set_coolstep_configuration(self, minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode):
-        """
+        r"""
         Note: If you don't know what any of this means you can very likely keep all of
         the values as default!
 
@@ -666,7 +666,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_COOLSTEP_CONFIGURATION, (minimum_stallguard_value, maximum_stallguard_value, current_up_step_width, current_down_step_width, minimum_current, stallguard_threshold_value, stallguard_mode), 'B B B B B b B', 0, '')
 
     def get_coolstep_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Coolstep Configuration`.
         """
         self.check_validity()
@@ -674,7 +674,7 @@ class BrickletPerformanceStepper(Device):
         return GetCoolstepConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_COOLSTEP_CONFIGURATION, (), '', 15, 'B B B B B b B'))
 
     def set_short_configuration(self, disable_short_to_voltage_protection, disable_short_to_ground_protection, short_to_voltage_level, short_to_ground_level, spike_filter_bandwidth, short_detection_delay, filter_time):
-        """
+        r"""
         Note: If you don't know what any of this means you can very likely keep all of
         the values as default!
 
@@ -698,7 +698,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_SHORT_CONFIGURATION, (disable_short_to_voltage_protection, disable_short_to_ground_protection, short_to_voltage_level, short_to_ground_level, spike_filter_bandwidth, short_detection_delay, filter_time), '! ! B B B ! B', 0, '')
 
     def get_short_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Short Configuration`.
         """
         self.check_validity()
@@ -706,7 +706,7 @@ class BrickletPerformanceStepper(Device):
         return GetShortConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_SHORT_CONFIGURATION, (), '', 15, '! ! B B B ! B'))
 
     def get_driver_status(self):
-        """
+        r"""
         Returns the current driver status.
 
         * Open Load: Indicates if an open load is present on phase A, B or both. This could mean that there is a problem
@@ -740,7 +740,7 @@ class BrickletPerformanceStepper(Device):
         return GetDriverStatus(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_DRIVER_STATUS, (), '', 16, 'B B B ! B ! B B'))
 
     def get_input_voltage(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -748,7 +748,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_temperature(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -756,7 +756,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_TEMPERATURE, (), '', 10, 'h')
 
     def set_gpio_configuration(self, debounce, stop_deceleration):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -767,7 +767,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_GPIO_CONFIGURATION, (debounce, stop_deceleration), 'H i', 0, '')
 
     def get_gpio_configuration(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -775,7 +775,7 @@ class BrickletPerformanceStepper(Device):
         return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_GPIO_CONFIGURATION, (), '', 14, 'H i'))
 
     def set_gpio_action(self, channel, action):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -786,7 +786,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_GPIO_ACTION, (channel, action), 'B I', 0, '')
 
     def get_gpio_action(self, channel):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -796,7 +796,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_GPIO_ACTION, (channel,), 'B', 12, 'I')
 
     def get_gpio_state(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -804,7 +804,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_GPIO_STATE, (), '', 9, '2!')
 
     def set_error_led_config(self, config):
-        """
+        r"""
         Configures the touch LED to be either turned off, turned on, blink in
         heartbeat mode or show TBD.
 
@@ -821,7 +821,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_ERROR_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_error_led_config(self):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set Error LED Config`
         """
         self.check_validity()
@@ -829,7 +829,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_ERROR_LED_CONFIG, (), '', 9, 'B')
 
     def set_enable_led_config(self, config):
-        """
+        r"""
         Configures the touch LED to be either turned off, turned on, blink in
         heartbeat mode or show TBD.
         """
@@ -840,7 +840,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_ENABLE_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_enable_led_config(self):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set Enable LED Config`
         """
         self.check_validity()
@@ -848,7 +848,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_ENABLE_LED_CONFIG, (), '', 9, 'B')
 
     def set_steps_led_config(self, config):
-        """
+        r"""
         Configures the touch LED to be either turned off, turned on, blink in
         heartbeat mode or show TBD.
         """
@@ -859,7 +859,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_STEPS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_steps_led_config(self):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set Steps LED Config`
         """
         self.check_validity()
@@ -867,7 +867,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_STEPS_LED_CONFIG, (), '', 9, 'B')
 
     def set_gpio_led_config(self, channel, config):
-        """
+        r"""
         Configures the touch LED to be either turned off, turned on, blink in
         heartbeat mode or show TBD.
         """
@@ -879,7 +879,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_GPIO_LED_CONFIG, (channel, config), 'B B', 0, '')
 
     def get_gpio_led_config(self, channel):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set GPIO LED Config`
         """
         self.check_validity()
@@ -889,7 +889,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_GPIO_LED_CONFIG, (channel,), 'B', 9, 'B')
 
     def write_register(self, register, value):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -900,7 +900,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_WRITE_REGISTER, (register, value), 'B I', 9, 'B')
 
     def read_register(self, register):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -910,7 +910,7 @@ class BrickletPerformanceStepper(Device):
         return ReadRegister(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_READ_REGISTER, (register,), 'B', 13, 'B I'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -928,7 +928,7 @@ class BrickletPerformanceStepper(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -946,7 +946,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -954,7 +954,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -969,7 +969,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -986,7 +986,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -1002,7 +1002,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -1010,7 +1010,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -1023,7 +1023,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -1036,7 +1036,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -1050,7 +1050,7 @@ class BrickletPerformanceStepper(Device):
         self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -1059,7 +1059,7 @@ class BrickletPerformanceStepper(Device):
         return self.ipcon.send_request(self, BrickletPerformanceStepper.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

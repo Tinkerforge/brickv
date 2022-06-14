@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetConfig = namedtuple('Config', ['cursor', 'blinking'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLCD16x2(Device):
-    """
+    r"""
     16x2 character alphanumeric display with blue backlight
     """
 
@@ -46,7 +46,7 @@ class BrickletLCD16x2(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -72,7 +72,7 @@ class BrickletLCD16x2(Device):
         ipcon.add_device(self)
 
     def write_line(self, line, position, text):
-        """
+        r"""
         Writes text to a specific line with a specific position.
         The text can have a maximum of 16 characters.
 
@@ -94,7 +94,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_WRITE_LINE, (line, position, text), 'B B 16s', 0, '')
 
     def clear_display(self):
-        """
+        r"""
         Deletes all characters from the display.
         """
         self.check_validity()
@@ -102,7 +102,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_CLEAR_DISPLAY, (), '', 0, '')
 
     def backlight_on(self):
-        """
+        r"""
         Turns the backlight on.
         """
         self.check_validity()
@@ -110,7 +110,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_BACKLIGHT_ON, (), '', 0, '')
 
     def backlight_off(self):
-        """
+        r"""
         Turns the backlight off.
         """
         self.check_validity()
@@ -118,7 +118,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_BACKLIGHT_OFF, (), '', 0, '')
 
     def is_backlight_on(self):
-        """
+        r"""
         Returns *true* if the backlight is on and *false* otherwise.
         """
         self.check_validity()
@@ -126,7 +126,7 @@ class BrickletLCD16x2(Device):
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON, (), '', 9, '!')
 
     def set_config(self, cursor, blinking):
-        """
+        r"""
         Configures if the cursor (shown as "_") should be visible and if it
         should be blinking (shown as a blinking block). The cursor position
         is one character behind the the last text written with
@@ -140,7 +140,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CONFIG, (cursor, blinking), '! !', 0, '')
 
     def get_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Config`.
         """
         self.check_validity()
@@ -148,7 +148,7 @@ class BrickletLCD16x2(Device):
         return GetConfig(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CONFIG, (), '', 10, '! !'))
 
     def is_button_pressed(self, button):
-        """
+        r"""
         Returns *true* if the button is pressed.
 
         If you want to react on button presses and releases it is recommended to use the
@@ -161,7 +161,7 @@ class BrickletLCD16x2(Device):
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', 9, '!')
 
     def set_custom_character(self, index, character):
-        """
+        r"""
         The LCD 16x2 Bricklet can store up to 8 custom characters. The characters
         consist of 5x8 pixels and can be addressed with the index 0-7. To describe
         the pixels, the first 5 bits of 8 bytes are used. For example, to make
@@ -196,7 +196,7 @@ class BrickletLCD16x2(Device):
         self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', 0, '')
 
     def get_custom_character(self, index):
-        """
+        r"""
         Returns the custom character for a given index, as set with
         :func:`Set Custom Character`.
 
@@ -209,7 +209,7 @@ class BrickletLCD16x2(Device):
         return self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', 16, '8B')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -224,7 +224,7 @@ class BrickletLCD16x2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletLCD16x2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

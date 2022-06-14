@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -21,7 +21,7 @@ GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['o
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletRotaryPoti(Device):
-    """
+    r"""
     300° rotary potentiometer
     """
 
@@ -56,7 +56,7 @@ class BrickletRotaryPoti(Device):
     THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -86,7 +86,7 @@ class BrickletRotaryPoti(Device):
         ipcon.add_device(self)
 
     def get_position(self):
-        """
+        r"""
         Returns the position of the rotary potentiometer. The value is
         between -150° (turned left) and 150° (turned right).
 
@@ -99,7 +99,7 @@ class BrickletRotaryPoti(Device):
         return self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_POSITION, (), '', 10, 'h')
 
     def get_analog_value(self):
-        """
+        r"""
         Returns the value as read by a 12-bit analog-to-digital converter.
 
         .. note::
@@ -117,7 +117,7 @@ class BrickletRotaryPoti(Device):
         return self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_ANALOG_VALUE, (), '', 10, 'H')
 
     def set_position_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Position` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -131,7 +131,7 @@ class BrickletRotaryPoti(Device):
         self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_position_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Position Callback Period`.
         """
         self.check_validity()
@@ -139,7 +139,7 @@ class BrickletRotaryPoti(Device):
         return self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_analog_value_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -153,7 +153,7 @@ class BrickletRotaryPoti(Device):
         self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_analog_value_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         self.check_validity()
@@ -161,7 +161,7 @@ class BrickletRotaryPoti(Device):
         return self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_position_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Position Reached` callback.
 
         The following options are possible:
@@ -185,7 +185,7 @@ class BrickletRotaryPoti(Device):
         self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_position_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Position Callback Threshold`.
         """
         self.check_validity()
@@ -193,7 +193,7 @@ class BrickletRotaryPoti(Device):
         return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
 
         The following options are possible:
@@ -217,7 +217,7 @@ class BrickletRotaryPoti(Device):
         self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_analog_value_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         self.check_validity()
@@ -225,7 +225,7 @@ class BrickletRotaryPoti(Device):
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callbacks
 
         * :cb:`Position Reached`,
@@ -245,7 +245,7 @@ class BrickletRotaryPoti(Device):
         self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -253,7 +253,7 @@ class BrickletRotaryPoti(Device):
         return self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -268,7 +268,7 @@ class BrickletRotaryPoti(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletRotaryPoti.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

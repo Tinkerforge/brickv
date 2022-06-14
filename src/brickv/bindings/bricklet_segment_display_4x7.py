@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetSegments = namedtuple('Segments', ['segments', 'brightness', 'colon'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletSegmentDisplay4x7(Device):
-    """
+    r"""
     Four 7-segment displays with switchable colon
     """
 
@@ -39,7 +39,7 @@ class BrickletSegmentDisplay4x7(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -58,7 +58,7 @@ class BrickletSegmentDisplay4x7(Device):
         ipcon.add_device(self)
 
     def set_segments(self, segments, brightness, colon):
-        """
+        r"""
         The 7-segment display can be set with bitmaps. Every bit controls one
         segment:
 
@@ -82,7 +82,7 @@ class BrickletSegmentDisplay4x7(Device):
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B !', 0, '')
 
     def get_segments(self):
-        """
+        r"""
         Returns the segment, brightness and color data as set by
         :func:`Set Segments`.
         """
@@ -91,7 +91,7 @@ class BrickletSegmentDisplay4x7(Device):
         return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', 14, '4B B !'))
 
     def start_counter(self, value_from, value_to, increment, length):
-        """
+        r"""
         Starts a counter with the *from* value that counts to the *to*
         value with the each step incremented by *increment*.
         *length* is the pause between each increment.
@@ -114,7 +114,7 @@ class BrickletSegmentDisplay4x7(Device):
         self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', 0, '')
 
     def get_counter_value(self):
-        """
+        r"""
         Returns the counter value that is currently shown on the display.
 
         If there is no counter running a 0 will be returned.
@@ -124,7 +124,7 @@ class BrickletSegmentDisplay4x7(Device):
         return self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE, (), '', 10, 'H')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -139,7 +139,7 @@ class BrickletSegmentDisplay4x7(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

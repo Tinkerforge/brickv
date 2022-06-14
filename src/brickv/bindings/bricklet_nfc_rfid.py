@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -21,7 +21,7 @@ GetState = namedtuple('State', ['state', 'idle'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletNFCRFID(Device):
-    """
+    r"""
     Reads and writes NFC and RFID tags
     """
 
@@ -63,7 +63,7 @@ class BrickletNFCRFID(Device):
     KEY_B = 1
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -85,7 +85,7 @@ class BrickletNFCRFID(Device):
         ipcon.add_device(self)
 
     def request_tag_id(self, tag_type):
-        """
+        r"""
         To read or write a tag that is in proximity of the NFC/RFID Bricklet you
         first have to call this function with the expected tag type as parameter.
         It is no problem if you don't know the tag type. You can cycle through
@@ -122,7 +122,7 @@ class BrickletNFCRFID(Device):
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', 0, '')
 
     def get_tag_id(self):
-        """
+        r"""
         Returns the tag type, tag ID and the length of the tag ID
         (4 or 7 bytes are possible length). This function can only be called if the
         NFC/RFID is currently in one of the *Ready* states. The returned ID
@@ -140,7 +140,7 @@ class BrickletNFCRFID(Device):
         return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 17, 'B B 7B'))
 
     def get_state(self):
-        """
+        r"""
         Returns the current state of the NFC/RFID Bricklet.
 
         On startup the Bricklet will be in the *Initialization* state. The
@@ -161,7 +161,7 @@ class BrickletNFCRFID(Device):
         return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 10, 'B !'))
 
     def authenticate_mifare_classic_page(self, page, key_number, key):
-        """
+        r"""
         Mifare Classic tags use authentication. If you want to read from or write to
         a Mifare Classic page you have to authenticate it beforehand.
         Each page can be authenticated with two keys: A (``key_number`` = 0) and B
@@ -190,7 +190,7 @@ class BrickletNFCRFID(Device):
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', 0, '')
 
     def write_page(self, page, data):
-        """
+        r"""
         Writes 16 bytes starting from the given page. How many pages are written
         depends on the tag type. The page sizes are as follows:
 
@@ -220,7 +220,7 @@ class BrickletNFCRFID(Device):
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_WRITE_PAGE, (page, data), 'H 16B', 0, '')
 
     def request_page(self, page):
-        """
+        r"""
         Reads 16 bytes starting from the given page and stores them into a buffer.
         The buffer can then be read out with :func:`Get Page`.
         How many pages are read depends on the tag type. The page sizes are
@@ -252,7 +252,7 @@ class BrickletNFCRFID(Device):
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', 0, '')
 
     def get_page(self):
-        """
+        r"""
         Returns 16 bytes of data from an internal buffer. To fill the buffer
         with specific pages you have to call :func:`Request Page` beforehand.
         """
@@ -261,7 +261,7 @@ class BrickletNFCRFID(Device):
         return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', 24, '16B')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -276,7 +276,7 @@ class BrickletNFCRFID(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

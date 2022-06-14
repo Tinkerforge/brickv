@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetConfig = namedtuple('Config', ['cursor', 'blinking'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLCD20x4(Device):
-    """
+    r"""
     20x4 character alphanumeric display with blue backlight
     """
 
@@ -50,7 +50,7 @@ class BrickletLCD20x4(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -80,7 +80,7 @@ class BrickletLCD20x4(Device):
         ipcon.add_device(self)
 
     def write_line(self, line, position, text):
-        """
+        r"""
         Writes text to a specific line with a specific position.
         The text can have a maximum of 20 characters.
 
@@ -102,7 +102,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_WRITE_LINE, (line, position, text), 'B B 20s', 0, '')
 
     def clear_display(self):
-        """
+        r"""
         Deletes all characters from the display.
         """
         self.check_validity()
@@ -110,7 +110,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_CLEAR_DISPLAY, (), '', 0, '')
 
     def backlight_on(self):
-        """
+        r"""
         Turns the backlight on.
         """
         self.check_validity()
@@ -118,7 +118,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_BACKLIGHT_ON, (), '', 0, '')
 
     def backlight_off(self):
-        """
+        r"""
         Turns the backlight off.
         """
         self.check_validity()
@@ -126,7 +126,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_BACKLIGHT_OFF, (), '', 0, '')
 
     def is_backlight_on(self):
-        """
+        r"""
         Returns *true* if the backlight is on and *false* otherwise.
         """
         self.check_validity()
@@ -134,7 +134,7 @@ class BrickletLCD20x4(Device):
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BACKLIGHT_ON, (), '', 9, '!')
 
     def set_config(self, cursor, blinking):
-        """
+        r"""
         Configures if the cursor (shown as "_") should be visible and if it
         should be blinking (shown as a blinking block). The cursor position
         is one character behind the the last text written with
@@ -148,7 +148,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '! !', 0, '')
 
     def get_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Config`.
         """
         self.check_validity()
@@ -156,7 +156,7 @@ class BrickletLCD20x4(Device):
         return GetConfig(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CONFIG, (), '', 10, '! !'))
 
     def is_button_pressed(self, button):
-        """
+        r"""
         Returns *true* if the button (0 to 2 or 0 to 3 since hardware version 1.2)
         is pressed.
 
@@ -170,7 +170,7 @@ class BrickletLCD20x4(Device):
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', 9, '!')
 
     def set_custom_character(self, index, character):
-        """
+        r"""
         The LCD 20x4 Bricklet can store up to 8 custom characters. The characters
         consist of 5x8 pixels and can be addressed with the index 0-7. To describe
         the pixels, the first 5 bits of 8 bytes are used. For example, to make
@@ -205,7 +205,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', 0, '')
 
     def get_custom_character(self, index):
-        """
+        r"""
         Returns the custom character for a given index, as set with
         :func:`Set Custom Character`.
 
@@ -218,7 +218,7 @@ class BrickletLCD20x4(Device):
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', 16, '8B')
 
     def set_default_text(self, line, text):
-        """
+        r"""
         Sets the default text for lines 0-3. The max number of characters
         per line is 20.
 
@@ -235,7 +235,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT, (line, text), 'B 20s', 0, '')
 
     def get_default_text(self, line):
-        """
+        r"""
         Returns the default text for a given line (0-3) as set by
         :func:`Set Default Text`.
 
@@ -248,7 +248,7 @@ class BrickletLCD20x4(Device):
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT, (line,), 'B', 28, '20s')
 
     def set_default_text_counter(self, counter):
-        """
+        r"""
         Sets the default text counter. This counter is decremented each
         ms by the LCD firmware. If the counter reaches 0, the default text
         (see :func:`Set Default Text`) is shown on the LCD.
@@ -272,7 +272,7 @@ class BrickletLCD20x4(Device):
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER, (counter,), 'i', 0, '')
 
     def get_default_text_counter(self):
-        """
+        r"""
         Returns the current value of the default text counter.
 
         .. versionadded:: 2.0.2$nbsp;(Plugin)
@@ -282,7 +282,7 @@ class BrickletLCD20x4(Device):
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT_COUNTER, (), '', 12, 'i')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -297,7 +297,7 @@ class BrickletLCD20x4(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

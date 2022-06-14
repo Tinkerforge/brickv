@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -19,7 +19,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletAnalogOutV2(Device):
-    """
+    r"""
     Generates configurable DC voltage between 0V and 12V
     """
 
@@ -36,7 +36,7 @@ class BrickletAnalogOutV2(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -53,7 +53,7 @@ class BrickletAnalogOutV2(Device):
         ipcon.add_device(self)
 
     def set_output_voltage(self, voltage):
-        """
+        r"""
         Sets the voltage.
         """
         self.check_validity()
@@ -63,7 +63,7 @@ class BrickletAnalogOutV2(Device):
         self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', 0, '')
 
     def get_output_voltage(self):
-        """
+        r"""
         Returns the voltage as set by :func:`Set Output Voltage`.
         """
         self.check_validity()
@@ -71,7 +71,7 @@ class BrickletAnalogOutV2(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_input_voltage(self):
-        """
+        r"""
         Returns the input voltage.
         """
         self.check_validity()
@@ -79,7 +79,7 @@ class BrickletAnalogOutV2(Device):
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 10, 'H')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

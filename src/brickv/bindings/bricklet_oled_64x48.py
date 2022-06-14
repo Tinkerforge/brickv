@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetDisplayConfiguration = namedtuple('DisplayConfiguration', ['contrast', 'inver
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletOLED64x48(Device):
-    """
+    r"""
     1.68cm (0.66") OLED display with 64x48 pixels
     """
 
@@ -40,7 +40,7 @@ class BrickletOLED64x48(Device):
 
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -60,7 +60,7 @@ class BrickletOLED64x48(Device):
         ipcon.add_device(self)
 
     def write(self, data):
-        """
+        r"""
         Appends 64 byte of data to the window as set by :func:`New Window`.
 
         Each row has a height of 8 pixels which corresponds to one byte of data.
@@ -88,7 +88,7 @@ class BrickletOLED64x48(Device):
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE, (data,), '64B', 0, '')
 
     def new_window(self, column_from, column_to, row_from, row_to):
-        """
+        r"""
         Sets the window in which you can write with :func:`Write`. One row
         has a height of 8 pixels.
         """
@@ -102,7 +102,7 @@ class BrickletOLED64x48(Device):
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_NEW_WINDOW, (column_from, column_to, row_from, row_to), 'B B B B', 0, '')
 
     def clear_display(self):
-        """
+        r"""
         Clears the current content of the window as set by :func:`New Window`.
         """
         self.check_validity()
@@ -110,7 +110,7 @@ class BrickletOLED64x48(Device):
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', 0, '')
 
     def set_display_configuration(self, contrast, invert):
-        """
+        r"""
         Sets the configuration of the display.
 
         You can set a contrast value from 0 to 255 and you can invert the color
@@ -124,7 +124,7 @@ class BrickletOLED64x48(Device):
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_SET_DISPLAY_CONFIGURATION, (contrast, invert), 'B !', 0, '')
 
     def get_display_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Display Configuration`.
         """
         self.check_validity()
@@ -132,7 +132,7 @@ class BrickletOLED64x48(Device):
         return GetDisplayConfiguration(*self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_GET_DISPLAY_CONFIGURATION, (), '', 10, 'B !'))
 
     def write_line(self, line, position, text):
-        """
+        r"""
         Writes text to a specific line with a specific position.
         The text can have a maximum of 13 characters.
 
@@ -156,7 +156,7 @@ class BrickletOLED64x48(Device):
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_WRITE_LINE, (line, position, text), 'B B 13s', 0, '')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.

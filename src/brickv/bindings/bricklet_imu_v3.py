@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -38,7 +38,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIMUV3(Device):
-    """
+    r"""
     Full fledged AHRS with 9 degrees of freedom
     """
 
@@ -156,7 +156,7 @@ class BrickletIMUV3(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -222,7 +222,7 @@ class BrickletIMUV3(Device):
         ipcon.add_device(self)
 
     def get_acceleration(self):
-        """
+        r"""
         Returns the calibrated acceleration from the accelerometer for the
         x, y and z axis. The acceleration is in the range configured with
         :func:`Set Sensor Configuration`.
@@ -236,7 +236,7 @@ class BrickletIMUV3(Device):
         return GetAcceleration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ACCELERATION, (), '', 14, 'h h h'))
 
     def get_magnetic_field(self):
-        """
+        r"""
         Returns the calibrated magnetic field from the magnetometer for the
         x, y and z axis.
 
@@ -249,7 +249,7 @@ class BrickletIMUV3(Device):
         return GetMagneticField(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_MAGNETIC_FIELD, (), '', 14, 'h h h'))
 
     def get_angular_velocity(self):
-        """
+        r"""
         Returns the calibrated angular velocity from the gyroscope for the
         x, y and z axis. The angular velocity is in the range configured with
         :func:`Set Sensor Configuration`.
@@ -263,7 +263,7 @@ class BrickletIMUV3(Device):
         return GetAngularVelocity(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 14, 'h h h'))
 
     def get_temperature(self):
-        """
+        r"""
         Returns the temperature of the IMU Brick.
         The temperature is measured in the core of the BNO055 IC, it is not the
         ambient temperature
@@ -273,7 +273,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_TEMPERATURE, (), '', 9, 'b')
 
     def get_orientation(self):
-        """
+        r"""
         Returns the current orientation (heading, roll, pitch) of the IMU Brick as
         independent Euler angles. Note that Euler angles always
         experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
@@ -289,7 +289,7 @@ class BrickletIMUV3(Device):
         return GetOrientation(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ORIENTATION, (), '', 14, 'h h h'))
 
     def get_linear_acceleration(self):
-        """
+        r"""
         Returns the linear acceleration of the IMU Brick for the
         x, y and z axis. The acceleration is in the range configured with
         :func:`Set Sensor Configuration`.
@@ -309,7 +309,7 @@ class BrickletIMUV3(Device):
         return GetLinearAcceleration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_LINEAR_ACCELERATION, (), '', 14, 'h h h'))
 
     def get_gravity_vector(self):
-        """
+        r"""
         Returns the current gravity vector of the IMU Brick for the
         x, y and z axis.
 
@@ -328,7 +328,7 @@ class BrickletIMUV3(Device):
         return GetGravityVector(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_GRAVITY_VECTOR, (), '', 14, 'h h h'))
 
     def get_quaternion(self):
-        """
+        r"""
         Returns the current orientation (w, x, y, z) of the IMU Brick as
         `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
 
@@ -344,7 +344,7 @@ class BrickletIMUV3(Device):
         return GetQuaternion(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_QUATERNION, (), '', 16, 'h h h h'))
 
     def get_all_data(self):
-        """
+        r"""
         Return all of the available data of the IMU Brick.
 
         * acceleration (see :func:`Get Acceleration`)
@@ -381,7 +381,7 @@ class BrickletIMUV3(Device):
         return GetAllData(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ALL_DATA, (), '', 54, '3h 3h 3h 3h 4h 3h 3h b B'))
 
     def save_calibration(self):
-        """
+        r"""
         A call of this function saves the current calibration to be used
         as a starting point for the next restart of continuous calibration
         of the IMU Brick.
@@ -398,7 +398,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SAVE_CALIBRATION, (), '', 9, '!')
 
     def set_sensor_configuration(self, magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth):
-        """
+        r"""
         Sets the available sensor configuration for the Magnetometer, Gyroscope and
         Accelerometer. The Accelerometer Range is user selectable in all fusion modes,
         all other configurations are auto-controlled in fusion mode.
@@ -414,7 +414,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_SENSOR_CONFIGURATION, (magnetometer_rate, gyroscope_range, gyroscope_bandwidth, accelerometer_range, accelerometer_bandwidth), 'B B B B B', 0, '')
 
     def get_sensor_configuration(self):
-        """
+        r"""
         Returns the sensor configuration as set by :func:`Set Sensor Configuration`.
         """
         self.check_validity()
@@ -422,7 +422,7 @@ class BrickletIMUV3(Device):
         return GetSensorConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_SENSOR_CONFIGURATION, (), '', 13, 'B B B B B'))
 
     def set_sensor_fusion_mode(self, mode):
-        """
+        r"""
         If the fusion mode is turned off, the functions :func:`Get Acceleration`,
         :func:`Get Magnetic Field` and :func:`Get Angular Velocity` return uncalibrated
         and uncompensated sensor data. All other sensor data getters return no data.
@@ -445,7 +445,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_SENSOR_FUSION_MODE, (mode,), 'B', 0, '')
 
     def get_sensor_fusion_mode(self):
-        """
+        r"""
         Returns the sensor fusion mode as set by :func:`Set Sensor Fusion Mode`.
         """
         self.check_validity()
@@ -453,7 +453,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_SENSOR_FUSION_MODE, (), '', 9, 'B')
 
     def set_acceleration_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Acceleration` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -472,7 +472,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_ACCELERATION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_acceleration_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Acceleration Callback Configuration`.
         """
         self.check_validity()
@@ -480,7 +480,7 @@ class BrickletIMUV3(Device):
         return GetAccelerationCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ACCELERATION_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_magnetic_field_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Magnetic Field` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -499,7 +499,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_MAGNETIC_FIELD_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_magnetic_field_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Magnetic Field Callback Configuration`.
         """
         self.check_validity()
@@ -507,7 +507,7 @@ class BrickletIMUV3(Device):
         return GetMagneticFieldCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_MAGNETIC_FIELD_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_angular_velocity_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Angular Velocity` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -526,7 +526,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_ANGULAR_VELOCITY_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_angular_velocity_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Angular Velocity Callback Configuration`.
         """
         self.check_validity()
@@ -534,7 +534,7 @@ class BrickletIMUV3(Device):
         return GetAngularVelocityCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ANGULAR_VELOCITY_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_temperature_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Temperature` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -553,7 +553,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_TEMPERATURE_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_temperature_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Temperature Callback Configuration`.
         """
         self.check_validity()
@@ -561,7 +561,7 @@ class BrickletIMUV3(Device):
         return GetTemperatureCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_TEMPERATURE_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_orientation_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Orientation` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -580,7 +580,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_ORIENTATION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_orientation_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Orientation Callback Configuration`.
         """
         self.check_validity()
@@ -588,7 +588,7 @@ class BrickletIMUV3(Device):
         return GetOrientationCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ORIENTATION_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_linear_acceleration_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Linear Acceleration` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -607,7 +607,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_LINEAR_ACCELERATION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_linear_acceleration_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Linear Acceleration Callback Configuration`.
         """
         self.check_validity()
@@ -615,7 +615,7 @@ class BrickletIMUV3(Device):
         return GetLinearAccelerationCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_LINEAR_ACCELERATION_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_gravity_vector_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Gravity Vector` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -634,7 +634,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_GRAVITY_VECTOR_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_gravity_vector_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Gravity Vector Callback Configuration`.
         """
         self.check_validity()
@@ -642,7 +642,7 @@ class BrickletIMUV3(Device):
         return GetGravityVectorCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_GRAVITY_VECTOR_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_quaternion_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`Quaternion` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -661,7 +661,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_QUATERNION_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_quaternion_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Quaternion Callback Configuration`.
         """
         self.check_validity()
@@ -669,7 +669,7 @@ class BrickletIMUV3(Device):
         return GetQuaternionCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_QUATERNION_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def set_all_data_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`All Data` callback
         is triggered periodically. A value of 0 turns the callback off.
 
@@ -688,7 +688,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_ALL_DATA_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_all_data_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set All Data Callback Configuration`.
         """
         self.check_validity()
@@ -696,7 +696,7 @@ class BrickletIMUV3(Device):
         return GetAllDataCallbackConfiguration(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_ALL_DATA_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -714,7 +714,7 @@ class BrickletIMUV3(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -732,7 +732,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -740,7 +740,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -755,7 +755,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -772,7 +772,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -788,7 +788,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -796,7 +796,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -809,7 +809,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -822,7 +822,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -836,7 +836,7 @@ class BrickletIMUV3(Device):
         self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -845,7 +845,7 @@ class BrickletIMUV3(Device):
         return self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -860,7 +860,7 @@ class BrickletIMUV3(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletIMUV3.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

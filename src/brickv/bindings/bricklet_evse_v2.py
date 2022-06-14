@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -35,7 +35,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletEVSEV2(Device):
-    """
+    r"""
     TBD
     """
 
@@ -165,7 +165,7 @@ class BrickletEVSEV2(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -220,7 +220,7 @@ class BrickletEVSEV2(Device):
         ipcon.add_device(self)
 
     def get_state(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -228,7 +228,7 @@ class BrickletEVSEV2(Device):
         return GetState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_STATE, (), '', 17, 'B B B B H B B B'))
 
     def get_hardware_configuration(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -236,7 +236,7 @@ class BrickletEVSEV2(Device):
         return GetHardwareConfiguration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_HARDWARE_CONFIGURATION, (), '', 12, 'B ! B B'))
 
     def get_low_level_state(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -244,7 +244,7 @@ class BrickletEVSEV2(Device):
         return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 62, 'B H 7H 7h 2I 24! I I I'))
 
     def set_charging_slot(self, slot, max_current, active, clear_on_disconnect):
-        """
+        r"""
         fixed slots:
         0: incoming cable (read-only, configured through slide switch)
         1: outgoing cable (read-only, configured through resistor)
@@ -262,7 +262,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_SLOT, (slot, max_current, active, clear_on_disconnect), 'B H ! !', 0, '')
 
     def set_charging_slot_max_current(self, slot, max_current):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -273,7 +273,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_SLOT_MAX_CURRENT, (slot, max_current), 'B H', 0, '')
 
     def set_charging_slot_active(self, slot, active):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -284,7 +284,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_SLOT_ACTIVE, (slot, active), 'B !', 0, '')
 
     def set_charging_slot_clear_on_disconnect(self, slot, clear_on_disconnect):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -295,7 +295,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_SLOT_CLEAR_ON_DISCONNECT, (slot, clear_on_disconnect), 'B !', 0, '')
 
     def get_charging_slot(self, slot):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -305,7 +305,7 @@ class BrickletEVSEV2(Device):
         return GetChargingSlot(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CHARGING_SLOT, (slot,), 'B', 12, 'H ! !'))
 
     def get_all_charging_slots(self):
-        """
+        r"""
         packed getter
         """
         self.check_validity()
@@ -313,7 +313,7 @@ class BrickletEVSEV2(Device):
         return GetAllChargingSlots(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_CHARGING_SLOTS, (), '', 68, '20H 20B'))
 
     def set_charging_slot_default(self, slot, max_current, active, clear_on_disconnect):
-        """
+        r"""
         fixed slots:
         0: incoming cable (read-only, configured through slide switch)
         1: outgoing cable (read-only, configured through resistor)
@@ -330,7 +330,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CHARGING_SLOT_DEFAULT, (slot, max_current, active, clear_on_disconnect), 'B H ! !', 0, '')
 
     def get_charging_slot_default(self, slot):
-        """
+        r"""
 
         """
         self.check_validity()
@@ -340,7 +340,7 @@ class BrickletEVSEV2(Device):
         return GetChargingSlotDefault(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CHARGING_SLOT_DEFAULT, (slot,), 'B', 12, 'H ! !'))
 
     def get_energy_meter_values(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -348,7 +348,7 @@ class BrickletEVSEV2(Device):
         return GetEnergyMeterValues(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_VALUES, (), '', 22, 'f f f 3! 3!'))
 
     def get_all_energy_meter_values_low_level(self):
-        """
+        r"""
         TBD
         """
         self.check_validity()
@@ -356,7 +356,7 @@ class BrickletEVSEV2(Device):
         return GetAllEnergyMeterValuesLowLevel(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_ENERGY_METER_VALUES_LOW_LEVEL, (), '', 70, 'H 15f'))
 
     def get_energy_meter_errors(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -364,7 +364,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ENERGY_METER_ERRORS, (), '', 32, '6I')
 
     def reset_energy_meter_relative_energy(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -372,7 +372,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET_ENERGY_METER_RELATIVE_ENERGY, (), '', 0, '')
 
     def reset_dc_fault_current_state(self, password):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -382,7 +382,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET_DC_FAULT_CURRENT_STATE, (password,), 'I', 0, '')
 
     def set_gpio_configuration(self, shutdown_input_configuration, input_configuration, output_configuration):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -394,7 +394,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_GPIO_CONFIGURATION, (shutdown_input_configuration, input_configuration, output_configuration), 'B B B', 0, '')
 
     def get_gpio_configuration(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -402,7 +402,7 @@ class BrickletEVSEV2(Device):
         return GetGPIOConfiguration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_GPIO_CONFIGURATION, (), '', 11, 'B B B'))
 
     def get_data_storage(self, page):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -412,7 +412,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_DATA_STORAGE, (page,), 'B', 71, '63B')
 
     def set_data_storage(self, page, data):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -423,7 +423,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_DATA_STORAGE, (page, data), 'B 63B', 0, '')
 
     def get_indicator_led(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -431,7 +431,7 @@ class BrickletEVSEV2(Device):
         return GetIndicatorLED(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_INDICATOR_LED, (), '', 12, 'h H'))
 
     def set_indicator_led(self, indication, duration):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -442,7 +442,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_INDICATOR_LED, (indication, duration), 'h H', 9, 'B')
 
     def set_button_configuration(self, button_configuration):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -452,7 +452,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_BUTTON_CONFIGURATION, (button_configuration,), 'B', 0, '')
 
     def get_button_configuration(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -460,7 +460,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_CONFIGURATION, (), '', 9, 'B')
 
     def get_button_state(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -468,7 +468,7 @@ class BrickletEVSEV2(Device):
         return GetButtonState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_STATE, (), '', 17, 'I I !'))
 
     def set_control_pilot_configuration(self, control_pilot):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -478,7 +478,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CONTROL_PILOT_CONFIGURATION, (control_pilot,), 'B', 0, '')
 
     def get_control_pilot_configuration(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -486,7 +486,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CONTROL_PILOT_CONFIGURATION, (), '', 9, 'B')
 
     def get_all_data_1(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -494,7 +494,7 @@ class BrickletEVSEV2(Device):
         return GetAllData1(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_1, (), '', 59, 'B B B B H B B B B ! B B f f f 3! 3! 6I'))
 
     def get_all_data_2(self):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -502,7 +502,7 @@ class BrickletEVSEV2(Device):
         return GetAllData2(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2, (), '', 26, 'B B B h H B I I ! B'))
 
     def factory_reset(self, password):
-        """
+        r"""
         TODO
         """
         self.check_validity()
@@ -512,7 +512,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_FACTORY_RESET, (password,), 'I', 0, '')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -530,7 +530,7 @@ class BrickletEVSEV2(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -548,7 +548,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -556,7 +556,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -571,7 +571,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -588,7 +588,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -604,7 +604,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -612,7 +612,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -625,7 +625,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -638,7 +638,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -652,7 +652,7 @@ class BrickletEVSEV2(Device):
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -661,7 +661,7 @@ class BrickletEVSEV2(Device):
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -676,7 +676,7 @@ class BrickletEVSEV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def get_all_energy_meter_values(self):
-        """
+        r"""
         TBD
         """
         values_length = 85

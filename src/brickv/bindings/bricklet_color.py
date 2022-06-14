@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetConfig = namedtuple('Config', ['gain', 'integration_time'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletColor(Device):
-    """
+    r"""
     Measures color (RGB value), illuminance and color temperature
     """
 
@@ -74,7 +74,7 @@ class BrickletColor(Device):
     INTEGRATION_TIME_700MS = 4
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -110,7 +110,7 @@ class BrickletColor(Device):
         ipcon.add_device(self)
 
     def get_color(self):
-        """
+        r"""
         Returns the measured color of the sensor.
 
         The red (r), green (g), blue (b) and clear (c) colors are measured
@@ -132,7 +132,7 @@ class BrickletColor(Device):
         return GetColor(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR, (), '', 16, 'H H H H'))
 
     def set_color_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Color` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -146,7 +146,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_color_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Color Callback Period`.
         """
         self.check_validity()
@@ -154,7 +154,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_color_callback_threshold(self, option, min_r, max_r, min_g, max_g, min_b, max_b, min_c, max_c):
-        """
+        r"""
         Sets the thresholds for the :cb:`Color Reached` callback.
 
         The following options are possible:
@@ -184,7 +184,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_THRESHOLD, (option, min_r, max_r, min_g, max_g, min_b, max_b, min_c, max_c), 'c H H H H H H H H', 0, '')
 
     def get_color_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Color Callback Threshold`.
         """
         self.check_validity()
@@ -192,7 +192,7 @@ class BrickletColor(Device):
         return GetColorCallbackThreshold(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_CALLBACK_THRESHOLD, (), '', 25, 'c H H H H H H H H'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callback
 
         * :cb:`Color Reached`
@@ -210,7 +210,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -218,7 +218,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def light_on(self):
-        """
+        r"""
         Turns the LED on.
         """
         self.check_validity()
@@ -226,7 +226,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_LIGHT_ON, (), '', 0, '')
 
     def light_off(self):
-        """
+        r"""
         Turns the LED off.
         """
         self.check_validity()
@@ -234,7 +234,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_LIGHT_OFF, (), '', 0, '')
 
     def is_light_on(self):
-        """
+        r"""
         Returns the state of the LED. Possible values are:
 
         * 0: On
@@ -245,7 +245,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_IS_LIGHT_ON, (), '', 9, 'B')
 
     def set_config(self, gain, integration_time):
-        """
+        r"""
         Sets the configuration of the sensor. Gain and integration time
         can be configured in this way.
 
@@ -280,7 +280,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_CONFIG, (gain, integration_time), 'B B', 0, '')
 
     def get_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Config`.
         """
         self.check_validity()
@@ -288,7 +288,7 @@ class BrickletColor(Device):
         return GetConfig(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_CONFIG, (), '', 10, 'B B'))
 
     def get_illuminance(self):
-        """
+        r"""
         Returns the illuminance affected by the gain and integration time as
         set by :func:`Set Config`. To get the illuminance in Lux apply this formula::
 
@@ -304,7 +304,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE, (), '', 12, 'I')
 
     def get_color_temperature(self):
-        """
+        r"""
         Returns the color temperature.
 
         To get a correct color temperature measurement make sure that the color
@@ -317,7 +317,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE, (), '', 10, 'H')
 
     def set_illuminance_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Illuminance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -331,7 +331,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_illuminance_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Illuminance Callback Period`.
         """
         self.check_validity()
@@ -339,7 +339,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_color_temperature_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Color Temperature` callback is
         triggered periodically. A value of 0 turns the callback off.
 
@@ -353,7 +353,7 @@ class BrickletColor(Device):
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_color_temperature_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Color Temperature Callback Period`.
         """
         self.check_validity()
@@ -361,7 +361,7 @@ class BrickletColor(Device):
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -376,7 +376,7 @@ class BrickletColor(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

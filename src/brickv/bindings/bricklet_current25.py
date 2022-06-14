@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -21,7 +21,7 @@ GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['o
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCurrent25(Device):
-    """
+    r"""
     Measures AC/DC current between -25A and +25A
     """
 
@@ -59,7 +59,7 @@ class BrickletCurrent25(Device):
     THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -92,7 +92,7 @@ class BrickletCurrent25(Device):
         ipcon.add_device(self)
 
     def get_current(self):
-        """
+        r"""
         Returns the current of the sensor.
 
         If you want to get the current periodically, it is recommended to use the
@@ -104,7 +104,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_CURRENT, (), '', 10, 'h')
 
     def calibrate(self):
-        """
+        r"""
         Calibrates the 0 value of the sensor. You have to call this function
         when there is no current present.
 
@@ -122,7 +122,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_CALIBRATE, (), '', 0, '')
 
     def is_over_current(self):
-        """
+        r"""
         Returns *true* if more than 25A were measured.
 
         .. note::
@@ -133,7 +133,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_IS_OVER_CURRENT, (), '', 9, '!')
 
     def get_analog_value(self):
-        """
+        r"""
         Returns the value as read by a 12-bit analog-to-digital converter.
 
         .. note::
@@ -151,7 +151,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_ANALOG_VALUE, (), '', 10, 'H')
 
     def set_current_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Current` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -165,7 +165,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_SET_CURRENT_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_current_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Current Callback Period`.
         """
         self.check_validity()
@@ -173,7 +173,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_CURRENT_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_analog_value_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Analog Value` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -187,7 +187,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_analog_value_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Analog Value Callback Period`.
         """
         self.check_validity()
@@ -195,7 +195,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_current_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Current Reached` callback.
 
         The following options are possible:
@@ -219,7 +219,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_current_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Current Callback Threshold`.
         """
         self.check_validity()
@@ -227,7 +227,7 @@ class BrickletCurrent25(Device):
         return GetCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Analog Value Reached` callback.
 
         The following options are possible:
@@ -251,7 +251,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_analog_value_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Analog Value Callback Threshold`.
         """
         self.check_validity()
@@ -259,7 +259,7 @@ class BrickletCurrent25(Device):
         return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callbacks
 
         * :cb:`Current Reached`,
@@ -279,7 +279,7 @@ class BrickletCurrent25(Device):
         self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -287,7 +287,7 @@ class BrickletCurrent25(Device):
         return self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -302,7 +302,7 @@ class BrickletCurrent25(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletCurrent25.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIO4(Device):
-    """
+    r"""
     4-channel digital input/output
     """
 
@@ -57,7 +57,7 @@ class BrickletIO4(Device):
     EDGE_TYPE_BOTH = 2
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -87,7 +87,7 @@ class BrickletIO4(Device):
         ipcon.add_device(self)
 
     def set_value(self, value_mask):
-        """
+        r"""
         Sets the output value (high or low) with a bitmask (4bit). A 1 in the bitmask
         means high and a 0 in the bitmask means low.
 
@@ -107,7 +107,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_VALUE, (value_mask,), 'B', 0, '')
 
     def get_value(self):
-        """
+        r"""
         Returns a bitmask of the values that are currently measured.
         This function works if the pin is configured to input
         as well as if it is configured to output.
@@ -117,7 +117,7 @@ class BrickletIO4(Device):
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_VALUE, (), '', 9, 'B')
 
     def set_configuration(self, selection_mask, direction, value):
-        """
+        r"""
         Configures the value and direction of the specified pins. Possible directions
         are 'i' and 'o' for input and output.
 
@@ -146,7 +146,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_CONFIGURATION, (selection_mask, direction, value), 'B c !', 0, '')
 
     def get_configuration(self):
-        """
+        r"""
         Returns a value bitmask and a direction bitmask. A 1 in the direction bitmask
         means input and a 0 in the bitmask means output.
 
@@ -163,7 +163,7 @@ class BrickletIO4(Device):
         return GetConfiguration(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_CONFIGURATION, (), '', 10, 'B B'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the debounce period of the :cb:`Interrupt` callback.
 
         For example: If you set this value to 100, you will get the interrupt
@@ -177,7 +177,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -185,7 +185,7 @@ class BrickletIO4(Device):
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_interrupt(self, interrupt_mask):
-        """
+        r"""
         Sets the pins on which an interrupt is activated with a bitmask.
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
@@ -202,7 +202,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'B', 0, '')
 
     def get_interrupt(self):
-        """
+        r"""
         Returns the interrupt bitmask as set by :func:`Set Interrupt`.
         """
         self.check_validity()
@@ -210,7 +210,7 @@ class BrickletIO4(Device):
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_INTERRUPT, (), '', 9, 'B')
 
     def set_monoflop(self, selection_mask, value_mask, time):
-        """
+        r"""
         Configures a monoflop of the pins specified by the first parameter as 4 bit
         long bitmask. The specified pins must be configured for output. Non-output
         pins will be ignored.
@@ -240,7 +240,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'B B I', 0, '')
 
     def get_monoflop(self, pin):
-        """
+        r"""
         Returns (for the given pin) the current value and the time as set by
         :func:`Set Monoflop` as well as the remaining time until the value flips.
 
@@ -254,7 +254,7 @@ class BrickletIO4(Device):
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 17, 'B I I'))
 
     def set_selected_values(self, selection_mask, value_mask):
-        """
+        r"""
         Sets the output value (high or low) with a bitmask, according to
         the selection mask. The bitmask is 4 bit long, *true* refers to high
         and *false* refers to low.
@@ -277,7 +277,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'B B', 0, '')
 
     def get_edge_count(self, pin, reset_counter):
-        """
+        r"""
         Returns the current value of the edge counter for the selected pin. You can
         configure the edges that are counted with :func:`Set Edge Count Config`.
 
@@ -294,7 +294,7 @@ class BrickletIO4(Device):
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B !', 12, 'I')
 
     def set_edge_count_config(self, selection_mask, edge_type, debounce):
-        """
+        r"""
         Configures the edge counter for the selected pins.
 
         The edge type parameter configures if rising edges, falling edges or
@@ -320,7 +320,7 @@ class BrickletIO4(Device):
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'B B B', 0, '')
 
     def get_edge_count_config(self, pin):
-        """
+        r"""
         Returns the edge type and debounce time for the selected pin as set by
         :func:`Set Edge Count Config`.
 
@@ -333,7 +333,7 @@ class BrickletIO4(Device):
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 10, 'B B'))
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -348,7 +348,7 @@ class BrickletIO4(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -21,7 +21,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickHATZero(Device):
-    """
+    r"""
     HAT for Raspberry Pi Zero with 4 Bricklets ports
     """
 
@@ -70,7 +70,7 @@ class BrickHATZero(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -99,7 +99,7 @@ class BrickHATZero(Device):
         ipcon.add_device(self)
 
     def get_usb_voltage(self):
-        """
+        r"""
         Returns the USB supply voltage of the Raspberry Pi.
 
 
@@ -112,7 +112,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE, (), '', 10, 'H')
 
     def set_usb_voltage_callback_configuration(self, period, value_has_to_change, option, min, max):
-        """
+        r"""
         The period is the period with which the :cb:`USB Voltage` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -154,7 +154,7 @@ class BrickHATZero(Device):
         self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c H H', 0, '')
 
     def get_usb_voltage_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set USB Voltage Callback Configuration`.
 
         .. versionadded:: 2.0.1$nbsp;(Firmware)
@@ -164,7 +164,7 @@ class BrickHATZero(Device):
         return GetUSBVoltageCallbackConfiguration(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_USB_VOLTAGE_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c H H'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -182,7 +182,7 @@ class BrickHATZero(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -200,7 +200,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -208,7 +208,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -223,7 +223,7 @@ class BrickHATZero(Device):
         self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -240,7 +240,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -256,7 +256,7 @@ class BrickHATZero(Device):
         self.ipcon.send_request(self, BrickHATZero.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -264,7 +264,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -277,7 +277,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -290,7 +290,7 @@ class BrickHATZero(Device):
         self.ipcon.send_request(self, BrickHATZero.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -304,7 +304,7 @@ class BrickHATZero(Device):
         self.ipcon.send_request(self, BrickHATZero.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -313,7 +313,7 @@ class BrickHATZero(Device):
         return self.ipcon.send_request(self, BrickHATZero.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the HAT is connected to
         (typically '0' as the HAT is the root device in the topology),
         the position, the hardware and firmware version as well as the
@@ -327,7 +327,7 @@ class BrickHATZero(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickHATZero.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

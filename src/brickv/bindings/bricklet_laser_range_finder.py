@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetConfiguration = namedtuple('Configuration', ['acquisition_count', 'enable_qui
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLaserRangeFinder(Device):
-    """
+    r"""
     Measures distance up to 40m with laser light
     """
 
@@ -75,7 +75,7 @@ class BrickletLaserRangeFinder(Device):
     VERSION_3 = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -115,7 +115,7 @@ class BrickletLaserRangeFinder(Device):
         ipcon.add_device(self)
 
     def get_distance(self):
-        """
+        r"""
         Returns the measured distance.
 
         Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
@@ -133,7 +133,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE, (), '', 10, 'H')
 
     def get_velocity(self):
-        """
+        r"""
         Returns the measured velocity.
 
         Sensor hardware version 1 (see :func:`Get Sensor Hardware Version`) cannot
@@ -153,7 +153,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def set_distance_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -167,7 +167,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_distance_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Distance Callback Period`.
         """
         self.check_validity()
@@ -175,7 +175,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_velocity_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`Velocity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -189,7 +189,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_velocity_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set Velocity Callback Period`.
         """
         self.check_validity()
@@ -197,7 +197,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Distance Reached` callback.
 
         The following options are possible:
@@ -221,7 +221,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_distance_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Distance Callback Threshold`.
         """
         self.check_validity()
@@ -229,7 +229,7 @@ class BrickletLaserRangeFinder(Device):
         return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_velocity_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`Velocity Reached` callback.
 
         The following options are possible:
@@ -253,7 +253,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD, (option, min, max), 'c h h', 0, '')
 
     def get_velocity_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set Velocity Callback Threshold`.
         """
         self.check_validity()
@@ -261,7 +261,7 @@ class BrickletLaserRangeFinder(Device):
         return GetVelocityCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD, (), '', 13, 'c h h'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callbacks
 
         * :cb:`Distance Reached`,
@@ -281,7 +281,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -289,7 +289,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_moving_average(self, distance_average_length, velocity_average_length):
-        """
+        r"""
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the distance and velocity.
 
@@ -304,7 +304,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', 0, '')
 
     def get_moving_average(self):
-        """
+        r"""
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
         self.check_validity()
@@ -312,7 +312,7 @@ class BrickletLaserRangeFinder(Device):
         return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 10, 'B B'))
 
     def set_mode(self, mode):
-        """
+        r"""
         .. note::
          This function is only available if you have a LIDAR-Lite sensor with hardware
          version 1. Use :func:`Set Configuration` for hardware version 3. You can check
@@ -337,7 +337,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', 0, '')
 
     def get_mode(self):
-        """
+        r"""
         Returns the mode as set by :func:`Set Mode`.
         """
         self.check_validity()
@@ -345,7 +345,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MODE, (), '', 9, 'B')
 
     def enable_laser(self):
-        """
+        r"""
         Activates the laser of the LIDAR.
 
         We recommend that you wait 250ms after enabling the laser before
@@ -356,7 +356,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', 0, '')
 
     def disable_laser(self):
-        """
+        r"""
         Deactivates the laser of the LIDAR.
         """
         self.check_validity()
@@ -364,7 +364,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER, (), '', 0, '')
 
     def is_laser_enabled(self):
-        """
+        r"""
         Returns *true* if the laser is enabled, *false* otherwise.
         """
         self.check_validity()
@@ -372,7 +372,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', 9, '!')
 
     def get_sensor_hardware_version(self):
-        """
+        r"""
         Returns the LIDAR-Lite hardware version.
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
@@ -382,7 +382,7 @@ class BrickletLaserRangeFinder(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_SENSOR_HARDWARE_VERSION, (), '', 9, 'B')
 
     def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
-        """
+        r"""
         .. note::
          This function is only available if you have a LIDAR-Lite sensor with hardware
          version 3. Use :func:`Set Mode` for hardware version 1. You can check
@@ -425,7 +425,7 @@ class BrickletLaserRangeFinder(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', 0, '')
 
     def get_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Configuration`.
 
         .. versionadded:: 2.0.3$nbsp;(Plugin)
@@ -435,7 +435,7 @@ class BrickletLaserRangeFinder(Device):
         return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_CONFIGURATION, (), '', 13, 'B ! B H'))
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -450,7 +450,7 @@ class BrickletLaserRangeFinder(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

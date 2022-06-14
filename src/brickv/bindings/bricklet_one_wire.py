@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,7 +23,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 SearchBus = namedtuple('SearchBus', ['identifier', 'status'])
 
 class BrickletOneWire(Device):
-    """
+    r"""
     Communicates with up 64 1-Wire devices
     """
 
@@ -79,7 +79,7 @@ class BrickletOneWire(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -111,7 +111,7 @@ class BrickletOneWire(Device):
         ipcon.add_device(self)
 
     def search_bus_low_level(self):
-        """
+        r"""
         Returns a list of up to 64 identifiers of the connected 1-Wire devices.
         Each identifier is 64-bit and consists of 8-bit family code, 48-bit ID and
         8-bit CRC.
@@ -125,7 +125,7 @@ class BrickletOneWire(Device):
         return SearchBusLowLevel(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SEARCH_BUS_LOW_LEVEL, (), '', 69, 'H H 7Q B'))
 
     def reset_bus(self):
-        """
+        r"""
         Resets the bus with the 1-Wire reset operation.
         """
         self.check_validity()
@@ -133,7 +133,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_RESET_BUS, (), '', 9, 'B')
 
     def write(self, data):
-        """
+        r"""
         Writes a byte of data to the 1-Wire bus.
         """
         self.check_validity()
@@ -143,7 +143,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE, (data,), 'B', 9, 'B')
 
     def read(self):
-        """
+        r"""
         Reads a byte of data from the 1-Wire bus.
         """
         self.check_validity()
@@ -151,7 +151,7 @@ class BrickletOneWire(Device):
         return Read(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_READ, (), '', 10, 'B B'))
 
     def write_command(self, identifier, command):
-        """
+        r"""
         Writes a command to the 1-Wire device with the given identifier. You can obtain
         the identifier by calling :func:`Search Bus`. The MATCH ROM operation is used to
         write the command.
@@ -168,7 +168,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE_COMMAND, (identifier, command), 'Q B', 9, 'B')
 
     def set_communication_led_config(self, config):
-        """
+        r"""
         Sets the communication LED configuration. By default the LED shows 1-wire
         communication traffic by flickering.
 
@@ -183,7 +183,7 @@ class BrickletOneWire(Device):
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_COMMUNICATION_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_communication_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Communication LED Config`
         """
         self.check_validity()
@@ -191,7 +191,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_COMMUNICATION_LED_CONFIG, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -209,7 +209,7 @@ class BrickletOneWire(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -227,7 +227,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -235,7 +235,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -250,7 +250,7 @@ class BrickletOneWire(Device):
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -267,7 +267,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -283,7 +283,7 @@ class BrickletOneWire(Device):
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -291,7 +291,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -304,7 +304,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -317,7 +317,7 @@ class BrickletOneWire(Device):
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -331,7 +331,7 @@ class BrickletOneWire(Device):
         self.ipcon.send_request(self, BrickletOneWire.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -340,7 +340,7 @@ class BrickletOneWire(Device):
         return self.ipcon.send_request(self, BrickletOneWire.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -355,7 +355,7 @@ class BrickletOneWire(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletOneWire.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def search_bus(self):
-        """
+        r"""
         Returns a list of up to 64 identifiers of the connected 1-Wire devices.
         Each identifier is 64-bit and consists of 8-bit family code, 48-bit ID and
         8-bit CRC.

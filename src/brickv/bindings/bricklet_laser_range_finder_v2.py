@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -24,7 +24,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLaserRangeFinderV2(Device):
-    """
+    r"""
     Measures distance up to 40m with laser light
     """
 
@@ -91,7 +91,7 @@ class BrickletLaserRangeFinderV2(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -134,7 +134,7 @@ class BrickletLaserRangeFinderV2(Device):
         ipcon.add_device(self)
 
     def get_distance(self):
-        """
+        r"""
         Returns the measured distance.
 
         The laser has to be enabled, see :func:`Set Enable`.
@@ -149,7 +149,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE, (), '', 10, 'h')
 
     def set_distance_callback_configuration(self, period, value_has_to_change, option, min, max):
-        """
+        r"""
         The period is the period with which the :cb:`Distance` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -189,7 +189,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', 0, '')
 
     def get_distance_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Distance Callback Configuration`.
         """
         self.check_validity()
@@ -197,7 +197,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetDistanceCallbackConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c h h'))
 
     def get_velocity(self):
-        """
+        r"""
         Returns the measured velocity. The value has a range of -12800 to 12700
         and is given in 1/100 m/s.
 
@@ -215,7 +215,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_VELOCITY, (), '', 10, 'h')
 
     def set_velocity_callback_configuration(self, period, value_has_to_change, option, min, max):
-        """
+        r"""
         The period is the period with which the :cb:`Velocity` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -255,7 +255,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_VELOCITY_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c h h', 0, '')
 
     def get_velocity_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Velocity Callback Configuration`.
         """
         self.check_validity()
@@ -263,7 +263,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetVelocityCallbackConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_VELOCITY_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c h h'))
 
     def set_enable(self, enable):
-        """
+        r"""
         Enables the laser of the LIDAR if set to *true*.
 
         We recommend that you wait 250ms after enabling the laser before
@@ -276,7 +276,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_ENABLE, (enable,), '!', 0, '')
 
     def get_enable(self):
-        """
+        r"""
         Returns the value as set by :func:`Set Enable`.
         """
         self.check_validity()
@@ -284,7 +284,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_ENABLE, (), '', 9, '!')
 
     def set_configuration(self, acquisition_count, enable_quick_termination, threshold_value, measurement_frequency):
-        """
+        r"""
         The **Acquisition Count** defines the number of times the Laser Range Finder Bricklet
         will integrate acquisitions to find a correlation record peak. With a higher count,
         the Bricklet can measure longer distances. With a lower count, the rate increases. The
@@ -323,7 +323,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_CONFIGURATION, (acquisition_count, enable_quick_termination, threshold_value, measurement_frequency), 'B ! B H', 0, '')
 
     def get_configuration(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Configuration`.
         """
         self.check_validity()
@@ -331,7 +331,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetConfiguration(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_CONFIGURATION, (), '', 13, 'B ! B H'))
 
     def set_moving_average(self, distance_average_length, velocity_average_length):
-        """
+        r"""
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the distance and velocity.
 
@@ -346,7 +346,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', 0, '')
 
     def get_moving_average(self):
-        """
+        r"""
         Returns the length moving average as set by :func:`Set Moving Average`.
         """
         self.check_validity()
@@ -354,7 +354,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_MOVING_AVERAGE, (), '', 10, 'B B'))
 
     def set_offset_calibration(self, offset):
-        """
+        r"""
         The offset is added to the measured distance.
         It is saved in non-volatile memory, you only have to set it once.
 
@@ -372,7 +372,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_OFFSET_CALIBRATION, (offset,), 'h', 0, '')
 
     def get_offset_calibration(self):
-        """
+        r"""
         Returns the offset value as set by :func:`Set Offset Calibration`.
         """
         self.check_validity()
@@ -380,7 +380,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_OFFSET_CALIBRATION, (), '', 10, 'h')
 
     def set_distance_led_config(self, config):
-        """
+        r"""
         Configures the distance LED to be either turned off, turned on, blink in
         heartbeat mode or show the distance (brighter = object is nearer).
         """
@@ -391,7 +391,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_DISTANCE_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_distance_led_config(self):
-        """
+        r"""
         Returns the LED configuration as set by :func:`Set Distance LED Config`
         """
         self.check_validity()
@@ -399,7 +399,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_DISTANCE_LED_CONFIG, (), '', 9, 'B')
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -417,7 +417,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -435,7 +435,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -443,7 +443,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -458,7 +458,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -475,7 +475,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -491,7 +491,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -499,7 +499,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -512,7 +512,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -525,7 +525,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -539,7 +539,7 @@ class BrickletLaserRangeFinderV2(Device):
         self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -548,7 +548,7 @@ class BrickletLaserRangeFinderV2(Device):
         return self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -563,7 +563,7 @@ class BrickletLaserRangeFinderV2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletLaserRangeFinderV2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

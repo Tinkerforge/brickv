@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIndustrialDigitalIn4(Device):
-    """
+    r"""
     4 galvanically isolated digital inputs
     """
 
@@ -49,7 +49,7 @@ class BrickletIndustrialDigitalIn4(Device):
     EDGE_TYPE_BOTH = 2
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -75,7 +75,7 @@ class BrickletIndustrialDigitalIn4(Device):
         ipcon.add_device(self)
 
     def get_value(self):
-        """
+        r"""
         Returns the input value with a bitmask. The bitmask is 16bit long, *true*
         refers to high and *false* refers to low.
 
@@ -94,7 +94,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_VALUE, (), '', 10, 'H')
 
     def set_group(self, group):
-        """
+        r"""
         Sets a group of Digital In 4 Bricklets that should work together. You can
         find Bricklets that can be grouped together with :func:`Get Available For Group`.
 
@@ -121,7 +121,7 @@ class BrickletIndustrialDigitalIn4(Device):
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', 0, '')
 
     def get_group(self):
-        """
+        r"""
         Returns the group as set by :func:`Set Group`
         """
         self.check_validity()
@@ -129,7 +129,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_GROUP, (), '', 12, '4c')
 
     def get_available_for_group(self):
-        """
+        r"""
         Returns a bitmask of ports that are available for grouping. For example the
         value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
@@ -139,7 +139,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 9, 'B')
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the debounce period of the :cb:`Interrupt` callback.
 
         For example: If you set this value to 100, you will get the interrupt
@@ -153,7 +153,7 @@ class BrickletIndustrialDigitalIn4(Device):
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -161,7 +161,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def set_interrupt(self, interrupt_mask):
-        """
+        r"""
         Sets the pins on which an interrupt is activated with a bitmask.
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
@@ -180,7 +180,7 @@ class BrickletIndustrialDigitalIn4(Device):
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', 0, '')
 
     def get_interrupt(self):
-        """
+        r"""
         Returns the interrupt bitmask as set by :func:`Set Interrupt`.
         """
         self.check_validity()
@@ -188,7 +188,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 10, 'H')
 
     def get_edge_count(self, pin, reset_counter):
-        """
+        r"""
         Returns the current value of the edge counter for the selected pin. You can
         configure the edges that are counted with :func:`Set Edge Count Config`.
 
@@ -207,7 +207,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B !', 12, 'I')
 
     def set_edge_count_config(self, selection_mask, edge_type, debounce):
-        """
+        r"""
         Configures the edge counter for the selected pins. A bitmask of 9 or 0b1001 will
         enable the edge counter for pins 0 and 3.
 
@@ -236,7 +236,7 @@ class BrickletIndustrialDigitalIn4(Device):
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'H B B', 0, '')
 
     def get_edge_count_config(self, pin):
-        """
+        r"""
         Returns the edge type and debounce time for the selected pin as set by
         :func:`Set Edge Count Config`.
 
@@ -249,7 +249,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 10, 'B B'))
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -264,7 +264,7 @@ class BrickletIndustrialDigitalIn4(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

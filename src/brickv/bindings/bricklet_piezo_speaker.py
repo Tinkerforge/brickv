@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -19,7 +19,7 @@ except (ValueError, ImportError):
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletPiezoSpeaker(Device):
-    """
+    r"""
     Creates beep with configurable frequency
     """
 
@@ -40,7 +40,7 @@ class BrickletPiezoSpeaker(Device):
     BEEP_DURATION_INFINITE = 4294967295
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -59,7 +59,7 @@ class BrickletPiezoSpeaker(Device):
         ipcon.add_device(self)
 
     def beep(self, duration, frequency):
-        """
+        r"""
         Beeps with the given frequency for the given duration.
 
         .. versionchanged:: 2.0.2$nbsp;(Plugin)
@@ -77,7 +77,7 @@ class BrickletPiezoSpeaker(Device):
         self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_BEEP, (duration, frequency), 'I H', 0, '')
 
     def morse_code(self, morse, frequency):
-        """
+        r"""
         Sets morse code that will be played by the piezo buzzer. The morse code
         is given as a string consisting of "." (dot), "-" (minus) and " " (space)
         for *dits*, *dahs* and *pauses*. Every other character is ignored.
@@ -94,7 +94,7 @@ class BrickletPiezoSpeaker(Device):
         self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_MORSE_CODE, (morse, frequency), '60s H', 0, '')
 
     def calibrate(self):
-        """
+        r"""
         The Piezo Speaker Bricklet can play 512 different tones. This function
         plays each tone and measures the exact frequency back. The result is a
         mapping between setting value and frequency. This mapping is stored
@@ -110,7 +110,7 @@ class BrickletPiezoSpeaker(Device):
         return self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_CALIBRATE, (), '', 9, '!')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -125,7 +125,7 @@ class BrickletPiezoSpeaker(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoSpeaker.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

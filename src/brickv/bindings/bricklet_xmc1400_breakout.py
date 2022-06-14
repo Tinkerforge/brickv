@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum'
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletXMC1400Breakout(Device):
-    """
+    r"""
     Breakout for Infineon XMC1400 microcontroller
     """
 
@@ -92,7 +92,7 @@ class BrickletXMC1400Breakout(Device):
     STATUS_LED_CONFIG_SHOW_STATUS = 3
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -130,7 +130,7 @@ class BrickletXMC1400Breakout(Device):
         ipcon.add_device(self)
 
     def set_gpio_config(self, port, pin, mode, input_hysteresis, output_level):
-        """
+        r"""
         Example for a setter function. The values are the values that can be given to
         the XMC_GPIO_Init function. See communication.c in the firmware.
         """
@@ -145,7 +145,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_GPIO_CONFIG, (port, pin, mode, input_hysteresis, output_level), 'B B B B !', 0, '')
 
     def get_gpio_input(self, port, pin):
-        """
+        r"""
         Example for a getter function. Returns the result of a
         XMC_GPIO_GetInput call for the given port/pin.
         """
@@ -157,7 +157,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_GPIO_INPUT, (port, pin), 'B B', 9, '!')
 
     def set_adc_channel_config(self, channel, enable):
-        """
+        r"""
         Enables a ADC channel for the ADC driver example (adc.c/adc.h).
 
         There are 8 ADC channels and they correspond to the following pins:
@@ -179,7 +179,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_CHANNEL_CONFIG, (channel, enable), 'B !', 0, '')
 
     def get_adc_channel_config(self, channel):
-        """
+        r"""
         Returns the config for the given channel as set by :func:`Set ADC Channel Config`.
         """
         self.check_validity()
@@ -189,7 +189,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_CONFIG, (channel,), 'B', 9, '!')
 
     def get_adc_channel_value(self, channel):
-        """
+        r"""
         Returns the 12-bit value of the given ADC channel of the ADC driver example.
         """
         self.check_validity()
@@ -199,7 +199,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_CHANNEL_VALUE, (channel,), 'B', 10, 'H')
 
     def get_adc_values(self):
-        """
+        r"""
         Returns the values for all 8 ADC channels of the adc driver example.
 
         This example function also has a corresponding callback.
@@ -211,7 +211,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES, (), '', 24, '8H')
 
     def set_adc_values_callback_configuration(self, period, value_has_to_change):
-        """
+        r"""
         The period is the period with which the :cb:`ADC Values`
         callback is triggered periodically. A value of 0 turns the callback off.
 
@@ -230,7 +230,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_ADC_VALUES_CALLBACK_CONFIGURATION, (period, value_has_to_change), 'I !', 0, '')
 
     def get_adc_values_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by
         :func:`Set ADC Values Callback Configuration`.
         """
@@ -239,7 +239,7 @@ class BrickletXMC1400Breakout(Device):
         return GetADCValuesCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_ADC_VALUES_CALLBACK_CONFIGURATION, (), '', 13, 'I !'))
 
     def get_count(self):
-        """
+        r"""
         Returns the value of the example count (see example.c).
 
         This example function uses the "add_callback_value_function"-helper in the
@@ -256,7 +256,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT, (), '', 12, 'I')
 
     def set_count_callback_configuration(self, period, value_has_to_change, option, min, max):
-        """
+        r"""
         The period is the period with which the :cb:`Count` callback is triggered
         periodically. A value of 0 turns the callback off.
 
@@ -296,7 +296,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_COUNT_CALLBACK_CONFIGURATION, (period, value_has_to_change, option, min, max), 'I ! c I I', 0, '')
 
     def get_count_callback_configuration(self):
-        """
+        r"""
         Returns the callback configuration as set by :func:`Set Count Callback Configuration`.
         """
         self.check_validity()
@@ -304,7 +304,7 @@ class BrickletXMC1400Breakout(Device):
         return GetCountCallbackConfiguration(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_COUNT_CALLBACK_CONFIGURATION, (), '', 22, 'I ! c I I'))
 
     def get_spitfp_error_count(self):
-        """
+        r"""
         Returns the error count for the communication between Brick and Bricklet.
 
         The errors are divided into
@@ -322,7 +322,7 @@ class BrickletXMC1400Breakout(Device):
         return GetSPITFPErrorCount(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_SPITFP_ERROR_COUNT, (), '', 24, 'I I I I'))
 
     def set_bootloader_mode(self, mode):
-        """
+        r"""
         Sets the bootloader mode and returns the status after the requested
         mode change was instigated.
 
@@ -340,7 +340,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_BOOTLOADER_MODE, (mode,), 'B', 9, 'B')
 
     def get_bootloader_mode(self):
-        """
+        r"""
         Returns the current bootloader mode, see :func:`Set Bootloader Mode`.
         """
         self.check_validity()
@@ -348,7 +348,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_BOOTLOADER_MODE, (), '', 9, 'B')
 
     def set_write_firmware_pointer(self, pointer):
-        """
+        r"""
         Sets the firmware pointer for :func:`Write Firmware`. The pointer has
         to be increased by chunks of size 64. The data is written to flash
         every 4 chunks (which equals to one page of size 256).
@@ -363,7 +363,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_WRITE_FIRMWARE_POINTER, (pointer,), 'I', 0, '')
 
     def write_firmware(self, data):
-        """
+        r"""
         Writes 64 Bytes of firmware at the position as written by
         :func:`Set Write Firmware Pointer` before. The firmware is written
         to flash every 4 chunks.
@@ -380,7 +380,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_FIRMWARE, (data,), '64B', 9, 'B')
 
     def set_status_led_config(self, config):
-        """
+        r"""
         Sets the status LED configuration. By default the LED shows
         communication traffic between Brick and Bricklet, it flickers once
         for every 10 received data packets.
@@ -396,7 +396,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_SET_STATUS_LED_CONFIG, (config,), 'B', 0, '')
 
     def get_status_led_config(self):
-        """
+        r"""
         Returns the configuration as set by :func:`Set Status LED Config`
         """
         self.check_validity()
@@ -404,7 +404,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_STATUS_LED_CONFIG, (), '', 9, 'B')
 
     def get_chip_temperature(self):
-        """
+        r"""
         Returns the temperature as measured inside the microcontroller. The
         value returned is not the ambient temperature!
 
@@ -417,7 +417,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 10, 'h')
 
     def reset(self):
-        """
+        r"""
         Calling this function will reset the Bricklet. All configurations
         will be lost.
 
@@ -430,7 +430,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_RESET, (), '', 0, '')
 
     def write_uid(self, uid):
-        """
+        r"""
         Writes a new UID into flash. If you want to set a new UID
         you have to decode the Base58 encoded UID string into an
         integer first.
@@ -444,7 +444,7 @@ class BrickletXMC1400Breakout(Device):
         self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_WRITE_UID, (uid,), 'I', 0, '')
 
     def read_uid(self):
-        """
+        r"""
         Returns the current UID as an integer. Encode as
         Base58 to get the usual string version.
         """
@@ -453,7 +453,7 @@ class BrickletXMC1400Breakout(Device):
         return self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_READ_UID, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -468,7 +468,7 @@ class BrickletXMC1400Breakout(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletXMC1400Breakout.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:

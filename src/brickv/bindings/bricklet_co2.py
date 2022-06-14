@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2022-06-14.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -20,7 +20,7 @@ GetCO2ConcentrationCallbackThreshold = namedtuple('CO2ConcentrationCallbackThres
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCO2(Device):
-    """
+    r"""
     Measures CO2 concentration in ppm
     """
 
@@ -48,7 +48,7 @@ class BrickletCO2(Device):
     THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
-        """
+        r"""
         Creates an object with the unique device ID *uid* and adds it to
         the IP Connection *ipcon*.
         """
@@ -71,7 +71,7 @@ class BrickletCO2(Device):
         ipcon.add_device(self)
 
     def get_co2_concentration(self):
-        """
+        r"""
         Returns the measured CO2 concentration.
 
         If you want to get the CO2 concentration periodically, it is recommended to use
@@ -83,7 +83,7 @@ class BrickletCO2(Device):
         return self.ipcon.send_request(self, BrickletCO2.FUNCTION_GET_CO2_CONCENTRATION, (), '', 10, 'H')
 
     def set_co2_concentration_callback_period(self, period):
-        """
+        r"""
         Sets the period with which the :cb:`CO2 Concentration` callback is
         triggered periodically. A value of 0 turns the callback off.
 
@@ -97,7 +97,7 @@ class BrickletCO2(Device):
         self.ipcon.send_request(self, BrickletCO2.FUNCTION_SET_CO2_CONCENTRATION_CALLBACK_PERIOD, (period,), 'I', 0, '')
 
     def get_co2_concentration_callback_period(self):
-        """
+        r"""
         Returns the period as set by :func:`Set CO2 Concentration Callback Period`.
         """
         self.check_validity()
@@ -105,7 +105,7 @@ class BrickletCO2(Device):
         return self.ipcon.send_request(self, BrickletCO2.FUNCTION_GET_CO2_CONCENTRATION_CALLBACK_PERIOD, (), '', 12, 'I')
 
     def set_co2_concentration_callback_threshold(self, option, min, max):
-        """
+        r"""
         Sets the thresholds for the :cb:`CO2 Concentration Reached` callback.
 
         The following options are possible:
@@ -129,7 +129,7 @@ class BrickletCO2(Device):
         self.ipcon.send_request(self, BrickletCO2.FUNCTION_SET_CO2_CONCENTRATION_CALLBACK_THRESHOLD, (option, min, max), 'c H H', 0, '')
 
     def get_co2_concentration_callback_threshold(self):
-        """
+        r"""
         Returns the threshold as set by :func:`Set CO2 Concentration Callback Threshold`.
         """
         self.check_validity()
@@ -137,7 +137,7 @@ class BrickletCO2(Device):
         return GetCO2ConcentrationCallbackThreshold(*self.ipcon.send_request(self, BrickletCO2.FUNCTION_GET_CO2_CONCENTRATION_CALLBACK_THRESHOLD, (), '', 13, 'c H H'))
 
     def set_debounce_period(self, debounce):
-        """
+        r"""
         Sets the period with which the threshold callbacks
 
         * :cb:`CO2 Concentration Reached`,
@@ -155,7 +155,7 @@ class BrickletCO2(Device):
         self.ipcon.send_request(self, BrickletCO2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', 0, '')
 
     def get_debounce_period(self):
-        """
+        r"""
         Returns the debounce period as set by :func:`Set Debounce Period`.
         """
         self.check_validity()
@@ -163,7 +163,7 @@ class BrickletCO2(Device):
         return self.ipcon.send_request(self, BrickletCO2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 12, 'I')
 
     def get_identity(self):
-        """
+        r"""
         Returns the UID, the UID where the Bricklet is connected to,
         the position, the hardware and firmware version as well as the
         device identifier.
@@ -178,7 +178,7 @@ class BrickletCO2(Device):
         return GetIdentity(*self.ipcon.send_request(self, BrickletCO2.FUNCTION_GET_IDENTITY, (), '', 33, '8s 8s c 3B 3B H'))
 
     def register_callback(self, callback_id, function):
-        """
+        r"""
         Registers the given *function* with the given *callback_id*.
         """
         if function is None:
