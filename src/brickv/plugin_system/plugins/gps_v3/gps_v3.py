@@ -193,13 +193,13 @@ class GPSV3(COMCUPluginBase, Ui_GPSV3):
         try:
             counter, x = data
             if counter == 0:
-                self.update_dop(self.gal_fix, self.gal_dop, self.gal_satallites_used, x)
+                self.update_dop(self.gal_fix, self.gal_dop, self.gal_satallites_used, x, 300)
             else:
                 self.update_table(self.gal_model, counter, x)
         except:
             pass
 
-    def update_dop(self, fix, dop, used, data):
+    def update_dop(self, fix, dop, used, data, sat_num_add = 0):
         if data.fix == 1:
             fix.setText("No Fix")
         elif data.fix == 2:
@@ -217,7 +217,10 @@ class GPSV3(COMCUPluginBase, Ui_GPSV3):
         if len(data.satellite_numbers) == 0:
             used.setText('None')
         else:
-            used.setText(', '.join(map(str, data.satellite_numbers)))
+            sats = []
+            for sat in data.satellite_numbers:
+                sats.append(sat+sat_num_add)
+            used.setText(', '.join(map(str, sats)))
 
     def update_table(self, table_model, num, data):
         table_model.setItem(num-1, 0, QStandardItem(str(data.elevation)))
