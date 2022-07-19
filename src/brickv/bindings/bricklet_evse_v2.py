@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2022-07-15.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -75,6 +75,7 @@ class BrickletEVSEV2(Device):
     FUNCTION_GET_ALL_DATA_1 = 28
     FUNCTION_GET_ALL_DATA_2 = 29
     FUNCTION_FACTORY_RESET = 30
+    FUNCTION_GET_BUTTON_PRESS_BOOT_TIME = 31
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -203,6 +204,7 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ALL_DATA_1] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_FACTORY_RESET] = BrickletEVSEV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_PRESS_BOOT_TIME] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -510,6 +512,16 @@ class BrickletEVSEV2(Device):
         password = int(password)
 
         self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_FACTORY_RESET, (password,), 'I', 0, '')
+
+    def get_button_press_boot_time(self, reset):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        reset = bool(reset)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_PRESS_BOOT_TIME, (reset,), '!', 12, 'I')
 
     def get_spitfp_error_count(self):
         r"""
