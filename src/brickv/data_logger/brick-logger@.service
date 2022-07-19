@@ -1,0 +1,12 @@
+[Unit]
+Description=Tinkerforge Brick Logger (%I)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/brick-logger.py /etc/brick-logger/%I
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
