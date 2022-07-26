@@ -143,12 +143,15 @@ class DeveloperWindow(QDialog, Ui_Developer):
             self.button_serial_port_refresh.setEnabled(True)
             self.button_serial_port_open.setText('Open')
 
+    def timestamp(self):
+        return datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+
     def serial_port_loop(self, path, running_ref):
         serial_port = None
         pending_data = b''
 
         while running_ref[0]:
-            self.new_serial_text.emit('===== Opening {0} ...\n'.format(path))
+            self.new_serial_text.emit('===== {0} - Opening {1} ...\n'.format(self.timestamp(), path))
 
             while running_ref[0]:
                 try:
@@ -160,13 +163,13 @@ class DeveloperWindow(QDialog, Ui_Developer):
                 break
 
             if serial_port != None:
-                self.new_serial_text.emit('===== {0} is open\n'.format(path))
+                self.new_serial_text.emit('===== {0} - {1} is open\n'.format(self.timestamp(), path))
 
                 while running_ref[0]:
                     try:
                         data = serial_port.read(1000)
                     except Exception as e:
-                        self.new_serial_text.emit('===== Error for {0}: {1}\n'.format(path, e))
+                        self.new_serial_text.emit('===== {0} - Error for {1}: {2}\n'.format(self.timestamp(), path, e))
 
                         break
 
@@ -184,7 +187,7 @@ class DeveloperWindow(QDialog, Ui_Developer):
 
                         self.new_serial_text.emit(line)
 
-                self.new_serial_text.emit('===== Closing {0}\n'.format(path))
+                self.new_serial_text.emit('===== {0} - Closing {1}\n'.format(self.timestamp(), path))
                 serial_port.close()
 
     def append_serial_text(self, text):
