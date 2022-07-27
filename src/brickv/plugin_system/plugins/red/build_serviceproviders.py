@@ -3,7 +3,7 @@
 """
 Copyright (C) 2015 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2020 Erik Fleckstein <erik@tinkerforge.com>
+Copyright (C) 2020, 2022 Erik Fleckstein <erik@tinkerforge.com>
 
 build_serviceproviders.py: Generate python dicts for mobile internet feature
 
@@ -114,6 +114,9 @@ def main():
 
         for dict_c in dict_provider['country']:
             code_country = dict_c['@code']
+            if code_country.upper() not in dict_country_all:
+                print('    Skipping country with code {}: not found in ISO-3166 database'.format(code_country))
+                continue
             dict_country[code_country] = dict_country_all[code_country.upper()]
 
     except Exception as e:
