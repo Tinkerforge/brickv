@@ -61,6 +61,7 @@ JUMPER_CONFIGURATON = ['6A', '10A', '13A', '16A', '20A', '25A', '32A', 'Software
 GPIO = ['Low', 'High']
 CONTACTOR = ['Inactive', 'Active']
 LOCK_SWITCH = ['Not Available', 'Available']
+CONTROL_PILOT = ['Disconnected', 'Connected', 'Automatic']
 
 class DataStorageTable(QTableWidget):
     def __init__(self, page, data, *args):
@@ -138,6 +139,12 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
                                                        self.all_charging_slots_cb,
                                                        self.increase_error_count)
 
+        self.cbe_control_pilot_config = CallbackEmulator(self,
+                                                         self.evse.get_control_pilot_configuration,
+                                                         None,
+                                                         self.control_pilot_config_cb,
+                                                         self.increase_error_count)
+
         self.combo_gpio_input.currentIndexChanged.connect(self.gpio_changed)
         self.combo_gpio_output.currentIndexChanged.connect(self.gpio_changed)
         self.combo_shutdown_input.currentIndexChanged.connect(self.gpio_changed)
@@ -147,6 +154,9 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.button_read_page.clicked.connect(self.read_page_clicked)
         self.combo_button_config.currentIndexChanged.connect(self.button_config_changed)
         self.button_set_indicator.clicked.connect(self.set_indicator_clicked)
+        self.button_control_pilot_disconnect.clicked.connect(lambda: self.evse.set_control_pilot_configuration(0))
+        self.button_control_pilot_connect.clicked.connect(lambda: self.evse.set_control_pilot_configuration(1))
+        self.button_control_pilot_automatic.clicked.connect(lambda: self.evse.set_control_pilot_configuration(2))
 
         self.spin_slot_current = [self.spin_slot_current_0, self.spin_slot_current_1, self.spin_slot_current_2, self.spin_slot_current_3, self.spin_slot_current_4, self.spin_slot_current_5, self.spin_slot_current_6, self.spin_slot_current_7, self.spin_slot_current_8, self.spin_slot_current_9, self.spin_slot_current_10]
         self.check_slot_active = [self.check_slot_active_0, self.check_slot_active_1, self.check_slot_active_2, self.check_slot_active_3, self.check_slot_active_4, self.check_slot_active_5, self.check_slot_active_6, self.check_slot_active_7, self.check_slot_active_8, self.check_slot_active_9, self.check_slot_active_10]
@@ -277,6 +287,9 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         gpio_output    = self.combo_gpio_output.currentIndex()
         self.evse.set_gpio_configuration(shutdown_input, gpio_input, gpio_output)
 
+    def control_pilot_config_cb(self, cp):
+        self.label_control_pilot.setText('Config: {0}, CP Connected: {1}'.format(CONTROL_PILOT[cp.control_pilot], cp.control_pilot_connected))
+
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
 
@@ -394,6 +407,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.cbe_low_level_state.set_period(100)
         self.cbe_energy_meter_values.set_period(100)
         self.cbe_energy_meter_errors.set_period(100)
+        self.cbe_control_pilot_config.set_period(100)
         self.cbe_all_charging_slots.set_period(500)
 
     def stop(self):
@@ -401,6 +415,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.cbe_low_level_state.set_period(0)
         self.cbe_energy_meter_values.set_period(0)
         self.cbe_energy_meter_errors.set_period(0)
+        self.cbe_control_pilot_config.set_period(0)
         self.cbe_all_charging_slots.set_period(0)
 
     def destroy(self):
