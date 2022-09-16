@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2022-09-16.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -22,7 +22,7 @@ GetRGBValue = namedtuple('RGBValue', ['r', 'g', 'b'])
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected'])
 GetEnergyMeterDetailedValuesLowLevel = namedtuple('EnergyMeterDetailedValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetEnergyMeterState = namedtuple('EnergyMeterState', ['energy_meter_type', 'error_count'])
-GetAllData1 = namedtuple('AllData1', ['value', 'r', 'g', 'b', 'power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected', 'energy_meter_type', 'error_count', 'input', 'output', 'input_configuration', 'voltage', 'contactor_check_state'])
+GetAllData1 = namedtuple('AllData1', ['value', 'r', 'g', 'b', 'power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected', 'energy_meter_type', 'error_count', 'input', 'output', 'voltage', 'contactor_check_state'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -48,11 +48,9 @@ class BrickletWARPEnergyManager(Device):
     FUNCTION_GET_INPUT = 9
     FUNCTION_SET_OUTPUT = 10
     FUNCTION_GET_OUTPUT = 11
-    FUNCTION_SET_INPUT_CONFIGURATION = 12
-    FUNCTION_GET_INPUT_CONFIGURATION = 13
-    FUNCTION_GET_INPUT_VOLTAGE = 14
-    FUNCTION_GET_STATE = 15
-    FUNCTION_GET_ALL_DATA_1 = 16
+    FUNCTION_GET_INPUT_VOLTAGE = 12
+    FUNCTION_GET_STATE = 13
+    FUNCTION_GET_ALL_DATA_1 = 14
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -106,8 +104,6 @@ class BrickletWARPEnergyManager(Device):
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_INPUT] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_SET_OUTPUT] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_OUTPUT] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletWARPEnergyManager.FUNCTION_SET_INPUT_CONFIGURATION] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_INPUT_CONFIGURATION] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_INPUT_VOLTAGE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_STATE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_ALL_DATA_1] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -223,24 +219,6 @@ class BrickletWARPEnergyManager(Device):
 
         return self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_OUTPUT, (), '', 9, '!')
 
-    def set_input_configuration(self, input_configuration):
-        r"""
-        TODO
-        """
-        self.check_validity()
-
-        input_configuration = list(map(int, input_configuration))
-
-        self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_SET_INPUT_CONFIGURATION, (input_configuration,), '2B', 0, '')
-
-    def get_input_configuration(self):
-        r"""
-        TODO
-        """
-        self.check_validity()
-
-        return self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_INPUT_CONFIGURATION, (), '', 10, '2B')
-
     def get_input_voltage(self):
         r"""
         TODO
@@ -263,7 +241,7 @@ class BrickletWARPEnergyManager(Device):
         """
         self.check_validity()
 
-        return GetAllData1(*self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_ALL_DATA_1, (), '', 58, '! B B B f f f 3! 3! B 6I 2! ! 2B H B'))
+        return GetAllData1(*self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_ALL_DATA_1, (), '', 56, '! B B B f f f 3! 3! B 6I 2! ! H B'))
 
     def get_spitfp_error_count(self):
         r"""

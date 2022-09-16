@@ -840,10 +840,8 @@ class IPConnection(object):
         tmp = None
 
         try:
-            tmp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            tmp.settimeout(5)
+            tmp = socket.create_connection((self.host, self.port), timeout=5)
             tmp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-            tmp.connect((self.host, self.port))
 
             if sys.platform == 'win32':
                 # for some unknown reason the socket recv() call does not
