@@ -39,7 +39,6 @@ import html
 import queue
 import threading
 import subprocess
-from copy import deepcopy
 import platform
 import urllib.parse
 import time
@@ -96,8 +95,7 @@ logging.basicConfig(level=config.LOGGING_LEVEL,
 brickv_version = [(0, 0, 0), (0, 0, 0)]
 
 class ExceptionReporter:
-    def __init__(self, argv):
-        self.argv = argv
+    def __init__(self):
         self.start_time = time.monotonic()
         self.error_queue = queue.Queue()
         self.error_spawn = threading.Thread(target=self.error_spawner, daemon=True)
@@ -210,7 +208,7 @@ class ExceptionReporter:
 
             # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
             # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-            rc = subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + self.argv, input=report_message, universal_newlines=True).returncode
+            rc = subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"], input=report_message, universal_newlines=True).returncode
 
             show_again = rc & 1 == 1
             exit_requested = rc & 2 == 2
@@ -258,7 +256,7 @@ class ErrorReporter(QMainWindow, Ui_ErrorReporter):
     def closeEvent(self, event):
         QApplication.exit(int(self.check_show_again.isChecked()))
 
-def error_report_main():
+def error_report_main(qapplication_argv):
     error_message = sys.stdin.read()
 
     if len(error_message) == 0:
@@ -270,7 +268,7 @@ def error_report_main():
 
     formatted_error_message = "<pre>{}</pre>".format(html.escape(error_message).replace("\n", "<br>"))
 
-    app = QApplication(sys.argv)
+    app = QApplication(qapplication_argv)
 
     if sys.platform == 'darwin':
         # workaround macOS QTBUG-61562
@@ -329,11 +327,13 @@ def main(dev_mode):
     except locale.Error:
         pass # ignore this as it might fail on macOS, we'll fallback to UTF-8 in that case
 
+    qapplication_argv = [sys.argv[0]]
+
     if config.get_use_fusion_gui_style():
-        sys.argv += ['-style', 'fusion']
+        qapplication_argv += ['-style', 'fusion']
 
     if '--error-report' in sys.argv:
-        sys.exit(error_report_main())
+        sys.exit(error_report_main(qapplication_argv))
 
     if '--no-dev-mode' not in sys.argv and dev_mode and not sys.flags.dev_mode:
         sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__',] + sys.argv).returncode)
@@ -342,9 +342,8 @@ def main(dev_mode):
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
-    argv = deepcopy(sys.argv) # Deep copy because QApplication (i.e. BrickViewer) constructor parses away Qt args and we want to know the style.
     if '--no-error-reporter' not in sys.argv:
-        ExceptionReporter(argv)
+        ExceptionReporter()
 
     # Exceptions that happen before the event loop runs (f.e. syntax errors) kill the brickv so fast, that the error reporter thread
     # (which is daemonized) can not report the error before it is killed. Report them manually.
@@ -357,7 +356,7 @@ def main(dev_mode):
         # do what the warnings says to avoid it
         QApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 
-        brick_viewer = BrickViewer(sys.argv)
+        brick_viewer = BrickViewer(qapplication_argv)
 
         if sys.platform == 'darwin':
             # workaround macOS QTBUG-61562
@@ -400,7 +399,7 @@ def main(dev_mode):
 
         # Either sys.executable is /path/to/python, then run calls /path/to/python /path/to/main.py --error-report,
         # or sys.executable is brickv[.exe], then the --error-report flag ensures, that the path to main.py is ignored.
-        subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"] + argv, input=error, universal_newlines=True)
+        subprocess.run([sys.executable, os.path.realpath(__file__), "--error-report"], input=error, universal_newlines=True)
         sys.exit(1)
 
     sys.exit(brick_viewer.exec_())
