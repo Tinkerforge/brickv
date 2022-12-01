@@ -42,6 +42,7 @@ import subprocess
 import platform
 import urllib.parse
 import time
+import argparse
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -333,16 +334,28 @@ def main(dev_mode):
         qapplication_argv += ['-style', 'fusion']
 
     if '--error-report' in sys.argv:
+        # special handle --error-report option for the "brickv[.exe] /path/to/main.py --error-report"
+        # case were the /path/to/main.py has to be ignored. also the --error-report flag is for intrnal
+        # usage anyway, so no need for argparse niceness
         sys.exit(error_report_main(qapplication_argv))
 
-    if '--no-dev-mode' not in sys.argv and dev_mode and not sys.flags.dev_mode:
+    parser = argparse.ArgumentParser(description='Brick Viewer ' + config.BRICKV_VERSION)
+
+    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode')
+    parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    print(args)
+
+    if not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
         sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv).returncode)
 
     # Catch all uncaught exceptions and show an error message for them.
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
     # can be slots which try to (for example) send requests but don't wrap
     # them in an async call with error handling.
-    if '--no-error-reporter' not in sys.argv:
+    if not args.no_error_reporter:
         ExceptionReporter()
 
     # Exceptions that happen before the event loop runs (f.e. syntax errors) kill the brickv so fast, that the error reporter thread
@@ -383,7 +396,7 @@ def main(dev_mode):
 
         splash.finish(main_window)
     except:
-        if '--no-error-reporter' in sys.argv:
+        if args.no_error_reporter:
             raise
 
         etype, value, tb = sys.exc_info()
