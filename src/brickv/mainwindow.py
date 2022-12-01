@@ -70,7 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_connected = pyqtSignal(int)
     qtcb_disconnected = pyqtSignal(int)
 
-    def __init__(self, brickv_version_ref, parent=None):
+    def __init__(self, brickv_version_ref, host, port, parent=None):
         QMainWindow.__init__(self, parent)
 
         self.brickv_version_ref = brickv_version_ref
@@ -234,6 +234,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon_available = False
 
         self.update_ui_state()
+        if host != None:
+            QTimer.singleShot(0, lambda: self.auto_connect(host, port))
+
+    def auto_connect(self, host, port):
+        self.combo_host.setCurrentText(host)
+
+        if port != None:
+            self.checkbox_different_port.setChecked(port != config.DEFAULT_PORT)
+            self.spinbox_port.setValue(port)
+
+        self.connect_clicked()
 
     def get_last_host(self):
         return self.last_host
