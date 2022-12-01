@@ -29,14 +29,14 @@ import time
 import gc
 import functools
 
-from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QThread
+from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QEvent, QThread, QModelIndex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCursor, QIcon, \
                         QBrush, QColor, QKeySequence
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, \
                             QPushButton, QHBoxLayout, QVBoxLayout, \
                             QLabel, QFrame, QSpacerItem, QSizePolicy, \
                             QToolButton, QLineEdit, QMenu, QTabBar, \
-                            QCheckBox, QComboBox, QShortcut
+                            QCheckBox, QComboBox, QShortcut, QAction
 
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
@@ -94,9 +94,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setWindowTitle(title)
 
+        self.btn_select = QPushButton('Select')
+        self.menu_select = QMenu()
+        self.actions_select = []
+
+        self.btn_select.setMenu(self.menu_select)
+        self.tab_widget.setCornerWidget(self.btn_select, Qt.TopLeftCorner)
+
         self.delayed_update_tree_view_timer = QTimer(self)
         self.delayed_update_tree_view_timer.timeout.connect(self.update_tree_view)
         self.delayed_update_tree_view_timer.setInterval(100)
+
+        self.delayed_update_select_menu_timer = QTimer(self)
+        self.delayed_update_select_menu_timer.timeout.connect(self.update_select_menu)
+        self.delayed_update_select_menu_timer.setInterval(100)
 
         self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)
@@ -104,6 +115,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_proxy_model.setSourceModel(self.tree_view_model)
         self.tree_view.setModel(self.tree_view_proxy_model)
         self.tree_view.activated.connect(self.item_activated)
+        self.tree_view.header().sortIndicatorChanged.connect(lambda: self.delayed_update_select_menu_timer.start())
         self.set_tree_view_defaults()
 
         inventory.info_changed.connect(lambda: self.delayed_update_tree_view_timer.start())
@@ -234,6 +246,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon_available = False
 
         self.update_ui_state()
+        self.update_select_menu()
+
         if host != None:
             QTimer.singleShot(0, lambda: self.auto_connect(host, port))
 
@@ -823,6 +837,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return -1
 
+    def show_setup(self):
+        for index in range(self.tab_widget.count()):
+            if not hasattr(self.tab_widget.widget(index), '_info'):
+                self.tab_widget.isTabEnabled(index)
+                self.tab_widget.setCurrentIndex(index)
+                break
+
     def show_plugin(self, uid):
         device_info = inventory.get_info(uid)
 
@@ -1209,7 +1230,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             uid = info.uid if info.kind != "extension" else ''
 
-            row = [QStandardItem(info.name),
+            name_item = QStandardItem(info.name)
+            select_text = info.name
+
+            if len(uid) > 0:
+                select_text = '{0} [{1}]'.format(select_text, uid)
+
+            if info.position != '0':
+                select_text = '{0}: {1}'.format(info.position.title(), select_text)
+
+            name_item.setData(select_text)
+
+            row = [name_item,
                    QStandardItem(uid),
                    QStandardItem(info.position.title()),
                    QStandardItem(fw_version)]
@@ -1271,6 +1303,58 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()
         self.tree_view.header().setSortIndicator(sis, sio)
         self.delayed_refresh_updates_timer.start()
+
+        self.update_select_menu()
+
+    def select_tab(self, uid, position):
+        if uid == None:
+            self.show_setup()
+        else:
+            plugin = self.show_plugin(uid)
+
+            if plugin != None and position.startswith('Ext'):
+                plugin.show_extension(int(position.replace('Ext', '')))
+
+    def update_select_menu(self):
+        self.delayed_update_select_menu_timer.stop()
+
+        for action in self.menu_select.actions():
+            self.menu_select.removeAction(action)
+
+        action = QAction('Setup')
+        action.triggered.connect(functools.partial(self.select_tab, None, None))
+
+        self.actions_select = [action]
+
+        def create_actions(proxy_parent, indent):
+            for row in range(self.tree_view_proxy_model.rowCount(proxy_parent)):
+                proxy_child = self.tree_view_proxy_model.index(row, 0, proxy_parent)
+                parent = self.tree_view_proxy_model.mapToSource(proxy_parent)
+                child = self.tree_view_proxy_model.mapToSource(proxy_child)
+                name = child.sibling(child.row(), 0).data(Qt.UserRole + 1)
+                uid = child.sibling(child.row(), 1).data()
+                position = child.sibling(child.row(), 2).data()
+
+                if position.startswith('Ext'):
+                    uid = parent.sibling(parent.row(), 1).data()
+
+                action = QAction(indent + name)
+                action.triggered.connect(functools.partial(self.select_tab, uid, position))
+
+                self.actions_select.append(action)
+
+                if self.tree_view_proxy_model.hasChildren(proxy_child):
+                    create_actions(proxy_child, indent + '    ')
+
+        create_actions(QModelIndex(), '')
+
+        if len(self.actions_select) > 1:
+            action = QAction()
+            action.setSeparator(True)
+
+            self.actions_select.insert(1, action)
+
+        self.menu_select.addActions(self.actions_select)
 
     def delayed_refresh_updates(self):
         self.delayed_refresh_updates_timer.stop()
