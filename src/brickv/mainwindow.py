@@ -814,7 +814,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return False
 
     def tab_for_uid(self, uid):
-        for index in range(1, self.tab_widget.count()):
+        for index in range(self.tab_widget.count()):
             try:
                 if self.tab_widget.widget(index)._info.uid == uid:
                     return index
@@ -832,7 +832,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         index = self.tab_for_uid(uid)
         tab_window = device_info.tab_window
 
-        if index > 0 and self.tab_widget.isTabEnabled(index):
+        if index >= 0 and self.tab_widget.isTabEnabled(index):
             self.tab_widget.setCurrentIndex(index)
 
         widget = tab_window.toplevel_window
