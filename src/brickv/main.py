@@ -341,12 +341,11 @@ def main(dev_mode):
 
     parser = argparse.ArgumentParser(description='Brick Viewer ' + config.BRICKV_VERSION)
 
+    parser.add_argument('-v', '--version', action='version', version=config.BRICKV_VERSION)
     parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode')
     parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter')
 
     args = parser.parse_args(sys.argv[1:])
-
-    print(args)
 
     if not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
         sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv).returncode)
