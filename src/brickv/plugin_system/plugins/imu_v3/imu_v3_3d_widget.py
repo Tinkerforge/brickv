@@ -45,7 +45,8 @@ class IMUV33DWidget(RenderWidget):
         return self.save_orientation_flag, self.reference_orientation, self.has_save_orientation
 
     def set_state(self, tup):
-        self.save_orientation_flag, self.reference_orientation, self.has_save_orientation = tup
+        if tup != None:
+            self.save_orientation_flag, self.reference_orientation, self.has_save_orientation = tup
 
     def get_model_matrix(self):
         result = super().get_model_matrix()
