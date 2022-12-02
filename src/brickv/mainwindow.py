@@ -249,7 +249,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_select_menu()
 
         if host != None:
-            QTimer.singleShot(0, lambda: self.auto_connect(host, port))
+            # FIXME: need to delay for 100ms here to give the main window a chance
+            #        to become the foreground window. otherwise the splash screen
+            #        will not disappear in case the connection fails and an error
+            #        dialog becomes the foreground window
+            QTimer.singleShot(100, lambda: self.auto_connect(host, port))
 
     def auto_connect(self, host, port):
         self.combo_host.setCurrentText(host)
