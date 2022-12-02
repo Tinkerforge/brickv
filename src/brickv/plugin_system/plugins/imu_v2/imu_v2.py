@@ -113,8 +113,8 @@ class WrapperWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.setMinimumSize(200, 200)
-        self.glWidget = IMUV23DWidget()
-        self.layout().addWidget(self.glWidget)
+        self.gl_widget = IMUV23DWidget(self)
+        self.layout().addWidget(self.gl_widget)
         self.setWindowTitle('3D View - IMU Brick 2.0 - Brick Viewer ' + config.BRICKV_VERSION)
 
     def closeEvent(self, _event):
@@ -258,17 +258,17 @@ class IMUV2(PluginBase, Ui_IMUV2):
     def save_orientation_clicked(self):
         self.imu_gl.save_orientation()
         if self.imu_gl_wrapper is not None:
-            self.imu_gl_wrapper.glWidget.save_orientation()
+            self.imu_gl_wrapper.gl_widget.save_orientation()
         self.orientation_label.hide()
 
     def cleanup_gl(self):
         self.state = self.imu_gl.get_state()
         self.imu_gl.hide()
         self.imu_gl.cleanup()
+        self.imu_gl.setParent(None)
 
     def restart_gl(self):
-        self.imu_gl = IMUV23DWidget()
-
+        self.imu_gl = IMUV23DWidget(self)
         self.imu_gl.setFixedSize(200, 200)
         self.gl_layout.addWidget(self.imu_gl)
         self.imu_gl.show()
@@ -276,14 +276,15 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.save_orientation.clicked.connect(self.save_orientation_clicked)
         self.imu_gl.set_state(self.state)
 
-    def start(self):
-        if not self.alive:
-            return
-
+    def create(self):
         self.parent().add_callback_pre_tab(lambda tab_window: self.cleanup_gl(), 'imu_v2_cleanup_pre_tab')
         self.parent().add_callback_post_tab(lambda tab_window, tab_index: self.restart_gl(), 'imu_v2_restart_post_tab')
         self.parent().add_callback_pre_untab(lambda tab_window, tab_index: self.cleanup_gl(), 'imu_v2_cleanup_pre_untab')
         self.parent().add_callback_post_untab(lambda tab_window: self.restart_gl(), 'imu_v2_restart_post_untab')
+
+    def start(self):
+        if not self.alive:
+            return
 
         self.gl_layout.activate()
 
@@ -333,7 +334,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.button_detach_3d_view.setEnabled(False)
 
         self.imu_gl_wrapper = WrapperWidget(self)
-        self.imu_gl_wrapper.glWidget.set_state(self.imu_gl.get_state())
+        self.imu_gl_wrapper.gl_widget.set_state(self.imu_gl.get_state())
         self.save_orientation.clicked.connect(self.save_orientation_clicked)
 
         self.imu_gl_wrapper.show()
@@ -385,10 +386,10 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                            self.sensor_data[15].value)
 
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update_orientation(self.sensor_data[12].value,
-                                                                self.sensor_data[13].value,
-                                                                self.sensor_data[14].value,
-                                                                self.sensor_data[15].value)
+                self.imu_gl_wrapper.gl_widget.update_orientation(self.sensor_data[12].value,
+                                                                 self.sensor_data[13].value,
+                                                                 self.sensor_data[14].value,
+                                                                 self.sensor_data[15].value)
 
             cal_mag = data.calibration_status & 3
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
@@ -409,10 +410,10 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                            data.quaternion[3] / (2 ** 14 - 1))
 
             if self.imu_gl_wrapper is not None:
-                self.imu_gl_wrapper.glWidget.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
-                                                                data.quaternion[1] / (2 ** 14 - 1),
-                                                                data.quaternion[2] / (2 ** 14 - 1),
-                                                                data.quaternion[3] / (2 ** 14 - 1))
+                self.imu_gl_wrapper.gl_widget.update_orientation(data.quaternion[0] / (2 ** 14 - 1),
+                                                                 data.quaternion[1] / (2 ** 14 - 1),
+                                                                 data.quaternion[2] / (2 ** 14 - 1),
+                                                                 data.quaternion[3] / (2 ** 14 - 1))
 
     def led_clicked(self, state):
         if state == Qt.Checked:

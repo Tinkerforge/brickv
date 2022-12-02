@@ -988,6 +988,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
 
                 device_info.tab_window = self.create_tab_window(device_info, self.ipcon)
+
+                device_info.plugin.create()
+
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
 

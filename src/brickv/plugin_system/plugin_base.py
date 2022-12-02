@@ -294,6 +294,9 @@ class PluginBase(QWidget):
         return False
 
     # All below to be overridden by inheriting class
+    def create(self):
+        pass
+
     def stop(self):
         pass
 

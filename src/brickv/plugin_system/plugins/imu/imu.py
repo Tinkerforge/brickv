@@ -180,9 +180,10 @@ class IMU(PluginBase, Ui_IMU):
         self.state = self.imu_gl.get_state()
         self.imu_gl.hide()
         self.imu_gl.cleanup()
+        self.imu_gl.setParent(None)
 
     def restart_gl(self):
-        self.imu_gl = IMU3DWidget()
+        self.imu_gl = IMU3DWidget(self)
 
         self.imu_gl.setMinimumSize(150, 150)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -192,17 +193,18 @@ class IMU(PluginBase, Ui_IMU):
         self.save_orientation.clicked.connect(self.save_orientation_clicked)
         self.imu_gl.set_state(self.state)
 
+    def create(self):
+        self.parent().add_callback_pre_tab(lambda tab_window: self.cleanup_gl(), 'imu_cleanup_pre_tab')
+        self.parent().add_callback_post_tab(lambda tab_window, tab_index: self.restart_gl(), 'imu_restart_post_tab')
+        self.parent().add_callback_pre_untab(lambda tab_window, tab_index: self.cleanup_gl(), 'imu_cleanup_pre_untab')
+        self.parent().add_callback_post_untab(lambda tab_window: self.restart_gl(), 'imu_restart_post_untab')
+
     def start(self):
         if not self.alive:
             return
 
         if self.has_status_led:
             async_call(self.imu.is_status_led_enabled, None, self.status_led_action.setChecked, self.increase_error_count)
-
-        self.parent().add_callback_pre_tab(lambda tab_window: self.cleanup_gl(), 'imu_cleanup_pre_tab')
-        self.parent().add_callback_post_tab(lambda tab_window, tab_index: self.restart_gl(), 'imu_restart_post_tab')
-        self.parent().add_callback_pre_untab(lambda tab_window, tab_index: self.cleanup_gl(), 'imu_cleanup_pre_untab')
-        self.parent().add_callback_post_untab(lambda tab_window: self.restart_gl(), 'imu_restart_post_untab')
 
         self.gl_layout.activate()
         self.cbe_all_data.set_period(100)
