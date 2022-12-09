@@ -268,9 +268,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return self.last_host
 
     def disable_auto_search_for_updates(self):
+        if self.flashing_window != None:
+            self.flashing_window.set_auto_search_for_updates(False)
+
         self.fw_version_fetcher.abort()
 
     def enable_auto_search_for_updates(self):
+        if self.flashing_window != None:
+            self.flashing_window.set_auto_search_for_updates(True)
+
         self.fw_version_fetcher.reset()
         self.fw_version_fetcher.moveToThread(self.fw_version_fetcher_thread)
         self.fw_version_fetcher_thread.started.connect(self.fw_version_fetcher.run)
@@ -419,8 +425,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMessageBox.information(self, 'GUI Style', 'GUI style change will be applied on next Brick Viewer start.', QMessageBox.Ok)
 
     def auto_search_for_updates_changed(self):
-        config.set_auto_search_for_updates(self.checkbox_auto_search_for_updates.isChecked())
-        if self.checkbox_auto_search_for_updates.isChecked():
+        checked = self.checkbox_auto_search_for_updates.isChecked()
+
+        config.set_auto_search_for_updates(checked)
+
+        if checked:
             self.enable_auto_search_for_updates()
         else:
             self.disable_auto_search_for_updates()
@@ -532,6 +541,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.flashing_window.refresh_update_tree_view()
 
         self.flashing_window.set_ipcon_available(self.ipcon_available)
+        self.flashing_window.set_auto_search_for_updates(self.checkbox_auto_search_for_updates.isChecked())
 
     def flashing_clicked(self):
         self.prepare_flashing_window()
@@ -1202,6 +1212,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.flashing_window != None:
             self.flashing_window.set_ipcon_available(self.ipcon_available)
+            self.flashing_window.set_auto_search_for_updates(self.checkbox_auto_search_for_updates.isChecked())
 
         if self.advanced_window != None:
             self.advanced_window.set_ipcon_available(self.ipcon_available)

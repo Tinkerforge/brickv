@@ -215,6 +215,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.button_serial_port_refresh.clicked.connect(self.refresh_serial_ports)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
+        self.button_update_firmware_list.clicked.connect(lambda: self.refresh_updates_clicked(force=True))
         self.button_firmware_save.clicked.connect(self.firmware_save_clicked)
         self.button_firmware_browse.clicked.connect(self.firmware_browse_clicked)
         self.button_uid_load.clicked.connect(self.uid_load_clicked)
@@ -222,10 +223,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_parent.currentIndexChanged.connect(self.brick_changed)
         self.combo_port.currentIndexChanged.connect(self.port_changed)
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
+        self.button_update_plugin_list.clicked.connect(lambda: self.refresh_updates_clicked(force=True))
         self.button_plugin_save.clicked.connect(self.plugin_save_clicked)
         self.button_plugin_browse.clicked.connect(self.plugin_browse_clicked)
         self.combo_extension.currentIndexChanged.connect(self.extension_changed)
         self.combo_extension_firmware.currentIndexChanged.connect(self.extension_firmware_changed)
+        self.button_update_ext_firmware_list.clicked.connect(lambda: self.refresh_updates_clicked(force=True))
         self.button_extension_firmware_save.clicked.connect(self.extension_firmware_save_clicked)
         self.button_extension_firmware_browse.clicked.connect(self.extension_firmware_browse_clicked)
 
@@ -268,7 +271,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_tree_view.activated.connect(self.update_tree_view_clicked)
         self.update_tree_view.setExpandsOnDoubleClick(False)
 
-        self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
+        self.update_button_refresh.clicked.connect(lambda: self.refresh_updates_clicked(force=False))
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
 
         self.combo_serial_port.currentIndexChanged.connect(self.update_ui_state)
@@ -524,6 +527,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.refresh_update_tree_view()
 
         self.update_button_refresh.setDisabled(False)
+        self.button_update_firmware_list.setDisabled(False)
+        self.button_update_plugin_list.setDisabled(False)
+        self.button_update_ext_firmware_list.setDisabled(False)
 
     def load_version_info(self, version_info):
         # Save combobox state by url_part
@@ -1932,12 +1938,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif i == 3:
             self.extension_changed(self.combo_extension.currentIndex())
 
-    def refresh_updates_clicked(self):
-        if self.tab_widget.currentIndex() != 0:
+    def refresh_updates_clicked(self, force=False):
+        if not force and self.tab_widget.currentIndex() != 0:
             self.refresh_updates_pending = True
             return
 
         self.update_button_refresh.setDisabled(True)
+        self.button_update_firmware_list.setDisabled(True)
+        self.button_update_plugin_list.setDisabled(True)
+        self.button_update_ext_firmware_list.setDisabled(True)
 
         self.refresh_updates_pending = False
         self.fw_fetch_progress_bar = PaddedProgressDialog(self, 'Discovering latest versions on tinkerforge.com')
@@ -2364,3 +2373,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.refresh_update_tree_view()
 
         self.update_ui_state()
+
+    def set_auto_search_for_updates(self, enable):
+        self.label_firmware_a.setVisible(not enable)
+        self.label_firmware_b.setVisible(enable)
+        self.button_update_firmware_list.setVisible(not enable)
+
+        self.label_plugin_a.setVisible(not enable)
+        self.label_plugin_b.setVisible(enable)
+        self.button_update_plugin_list.setVisible(not enable)
+
+        self.label_ext_firmware_a.setVisible(not enable)
+        self.label_ext_firmware_b.setVisible(enable)
+        self.button_update_ext_firmware_list.setVisible(not enable)
