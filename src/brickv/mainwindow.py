@@ -70,7 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_connected = pyqtSignal(int)
     qtcb_disconnected = pyqtSignal(int)
 
-    def __init__(self, brickv_version_ref, host, port, parent=None):
+    def __init__(self, brickv_version_ref, host, port, secret, remember_secret, parent=None):
         QMainWindow.__init__(self, parent)
 
         self.brickv_version_ref = brickv_version_ref
@@ -253,15 +253,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             #        to become the foreground window. otherwise the splash screen
             #        will not disappear in case the connection fails and an error
             #        dialog becomes the foreground window
-            QTimer.singleShot(100, lambda: self.auto_connect(host, port))
+            QTimer.singleShot(100, lambda: self.auto_connect(host, port, secret, remember_secret))
 
-    def auto_connect(self, host, port):
+    def auto_connect(self, host, port, secret, remember_secret):
         self.combo_host.setCurrentText(host)
 
         if port != None:
             self.checkbox_different_port.setChecked(port != config.DEFAULT_PORT)
             self.spinbox_port.setValue(port)
 
+        if secret != None:
+            self.checkbox_authentication.setChecked(True)
+            self.edit_secret.setText(secret)
+            self.checkbox_remember_secret.setChecked(remember_secret)
+        else:
+            self.checkbox_authentication.setChecked(False)
+            self.edit_secret.setText('')
+            self.checkbox_remember_secret.setChecked(False)
         self.connect_clicked()
 
     def get_last_host(self):

@@ -342,10 +342,12 @@ def main(dev_mode):
     parser = argparse.ArgumentParser(description='Brick Viewer ' + config.BRICKV_VERSION)
 
     parser.add_argument('-v', '--version', action='version', version=config.BRICKV_VERSION)
-    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode')
-    parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter')
-    parser.add_argument('host', nargs='?', help='connect to the given host')
-    parser.add_argument('--port', type=int, help='port override if host is given')
+    parser.add_argument('host', nargs='?', help='connect to given host')
+    parser.add_argument('-p', '--port', type=int, help='port for given host [default: 4223]', default=4223)
+    parser.add_argument('-s', '--secret', help='secret for given host [default: disabled]')
+    parser.add_argument('-r', '--remember-secret', action='store_true', help='remember secret for given host [default: disabled]')
+    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: disabled]')
+    parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter [default: enabled]')
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -392,7 +394,7 @@ def main(dev_mode):
 
         from brickv.mainwindow import MainWindow
 
-        main_window = MainWindow(brickv_version, args.host, args.port)
+        main_window = MainWindow(brickv_version, args.host, args.port, args.secret, args.remember_secret)
         main_window.show()
 
         splash.finish(main_window)
