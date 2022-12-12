@@ -647,3 +647,17 @@
 - Draw a vertical line to indicate time jumps in plots
 - Fix driver installation on Windows
 - Upgrade bundled Python to 3.9 on Windows (Windows 8.1 required)
+
+2022-12-12: 2.4.23 (<unknown>)
+- Allow saving config when Modbus master timeout is changed for RS485 Bricklet
+- Enable Python development mode when running from source
+- Fix socket leak on connect error
+- Add manual y-axis scaling for plot widget
+- Remove all driver files for Windows 7 and earlier
+- Fix calibration dialog title for Compass Bricklet plugin
+- Fix Galileo satellite numbers for GPS Bricklet 3.0
+- Add support for IPv6 connections
+- Add commandline options to specify host, port and secret
+- Add tab select menu that stays in the top left corner
+- Fix corner cases in IMU Brick(let) plugin untab handling
+- Add manual firmware list update button if auto-search for updates is disabled
