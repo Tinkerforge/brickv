@@ -279,7 +279,7 @@ def error_report_main(qapplication_argv):
 
     window = ErrorReporter()
     window.setupUi(window)
-    window.setWindowTitle('Error - Brick Viewer ' + config.BRICKV_VERSION)
+    window.setWindowTitle('Error - ' + config.BRICKV_TITLE)
     window.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
     mail_url = 'mailto:info@tinkerforge.com?subject=Brickv Error Report&body=PLEASE ALSO DESCRIBE WHAT YOU TRIED TO DO AT THE TIME THE ERROR OCCURRED.{}'.format(urllib.parse.quote("\n\n"+error_message))
@@ -346,7 +346,7 @@ def stdio_wrapper(qapplication_argv, func):
             app = QApplication(qapplication_argv)
             app.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
-            mbox = QMessageBox(QMessageBox.NoIcon, 'Brick Viewer ' + config.BRICKV_VERSION, stdio.getvalue().strip(), buttons=QMessageBox.Ok)
+            mbox = QMessageBox(QMessageBox.NoIcon, config.BRICKV_TITLE, stdio.getvalue().strip(), buttons=QMessageBox.Ok)
             mbox.exec_()
 
             raise
@@ -368,7 +368,7 @@ def main(dev_mode):
         # usage anyway, so no need for argparse niceness
         sys.exit(error_report_main(qapplication_argv))
 
-    parser = argparse.ArgumentParser(prog='brickv', description='Brick Viewer ' + config.BRICKV_VERSION)
+    parser = argparse.ArgumentParser(prog='brickv', description=config.BRICKV_TITLE)
 
     parser.add_argument('-v', '--version', action='version', version=config.BRICKV_VERSION)
     parser.add_argument('host', nargs='?', help='connect to given host')

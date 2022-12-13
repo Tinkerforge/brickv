@@ -115,7 +115,7 @@ class WrapperWidget(QWidget):
         self.setMinimumSize(200, 200)
         self.gl_widget = IMUV23DWidget(self)
         self.layout().addWidget(self.gl_widget)
-        self.setWindowTitle('3D View - IMU Brick 2.0 - Brick Viewer ' + config.BRICKV_VERSION)
+        self.setWindowTitle('3D View - IMU Brick 2.0 - ' + config.BRICKV_TITLE)
 
     def closeEvent(self, _event):
         self.plugin.imu_gl_wrapper = None

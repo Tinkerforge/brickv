@@ -31,6 +31,7 @@ LOGGING_FORMAT = '%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(messag
 LOGGING_DATEFMT = '%Y-%m-%d %H:%M:%S'
 
 BRICKV_VERSION = '2.4.23'
+BRICKV_TITLE = 'Brick Viewer ' + BRICKV_VERSION
 
 HOST_INFO_COUNT = 10
 

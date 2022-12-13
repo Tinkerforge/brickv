@@ -115,7 +115,7 @@ class TabWindow(QWidget):
         # this stops the plugin as a side effect
         self.tab_widget.removeTab(index)
 
-        self.toplevel_window = ToplevelWindow(self, self.name + " - " + "Brick Viewer " + config.BRICKV_VERSION)
+        self.toplevel_window = ToplevelWindow(self, self.name + " - " + config.BRICKV_TITLE)
 
         layout = QVBoxLayout(self.toplevel_window)
         layout.addWidget(self)
