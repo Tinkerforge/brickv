@@ -43,6 +43,7 @@ import platform
 import urllib.parse
 import time
 import argparse
+import io
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -322,6 +323,34 @@ def error_report_main(qapplication_argv):
 
     return app.exec_()
 
+def stdio_wrapper(qapplication_argv, func):
+    if sys.stdout != None and sys.stderr != None:
+        return func()
+    else:
+        # frozen programs on Windows and macOS have no stdio attachted. capture
+        # stdio output and show it in a message box instead
+        stdio = io.StringIO()
+
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+
+        sys.stdout = stdio
+        sys.stderr = stdio
+
+        try:
+            return func()
+        except SystemExit:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+
+            app = QApplication(qapplication_argv)
+            app.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
+
+            mbox = QMessageBox(QMessageBox.NoIcon, 'Brick Viewer ' + config.BRICKV_VERSION, stdio.getvalue().strip(), buttons=QMessageBox.Ok)
+            mbox.exec_()
+
+            raise
+
 def main(dev_mode):
     try:
         locale.setlocale(locale.LC_ALL, '')
@@ -339,7 +368,7 @@ def main(dev_mode):
         # usage anyway, so no need for argparse niceness
         sys.exit(error_report_main(qapplication_argv))
 
-    parser = argparse.ArgumentParser(description='Brick Viewer ' + config.BRICKV_VERSION)
+    parser = argparse.ArgumentParser(prog='brickv', description='Brick Viewer ' + config.BRICKV_VERSION)
 
     parser.add_argument('-v', '--version', action='version', version=config.BRICKV_VERSION)
     parser.add_argument('host', nargs='?', help='connect to given host')
@@ -349,7 +378,7 @@ def main(dev_mode):
     parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: disabled]')
     parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter [default: enabled]')
 
-    args = parser.parse_args(sys.argv[1:])
+    args = stdio_wrapper(qapplication_argv, lambda: parser.parse_args(sys.argv[1:]))
 
     if not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
         sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv).returncode)
