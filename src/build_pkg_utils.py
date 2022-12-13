@@ -195,7 +195,7 @@ class BuildPkgUtils:
 
         deb_name = '{}-{}_all.deb'.format(self.executable_name, self.version)
 
-        system(['dpkg', '-b', 'dist/linux', deb_name])
+        system(['dpkg-deb', '-Zxz', '-b', 'dist/linux', deb_name])
 
         print('changing owner back to original user')
         system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
