@@ -324,11 +324,11 @@ def error_report_main(qapplication_argv):
     return app.exec_()
 
 def stdio_wrapper(qapplication_argv, func):
-    if sys.stdout != None and sys.stderr != None:
+    if not getattr(sys, 'frozen', False) or sys.platform.startswith('linux'):
         return func()
     else:
-        # frozen programs on Windows and macOS have no stdio attachted. capture
-        # stdio output and show it in a message box instead
+        # frozen programs on Windows and macOS have no stdio properly attached.
+        # capture stdio output and show it in a message box instead
         stdio = io.StringIO()
 
         old_stdout = sys.stdout
