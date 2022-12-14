@@ -347,6 +347,7 @@ def stdio_wrapper(qapplication_argv, func):
             app.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
             mbox = QMessageBox(QMessageBox.NoIcon, config.BRICKV_TITLE, stdio.getvalue().strip(), buttons=QMessageBox.Ok)
+            QWidget.setWindowTitle(mbox, config.BRICKV_TITLE) # macOS UI guidelines forbid message box window titles, ignore these guidelines
             mbox.exec_()
 
             raise
