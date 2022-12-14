@@ -240,7 +240,7 @@ class BrickViewer(QApplication):
         self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
         if sys.platform == 'darwin' and config.get_use_fusion_gui_style():
-            #workaround macOS QTBUG-75321
+            # workaround macOS QTBUG-75321
             p = self.palette()
             p.setColor(QPalette.ButtonText, p.color(QPalette.WindowText))
             self.setPalette(p)
@@ -364,7 +364,7 @@ def main(dev_mode):
 
     if '--error-report' in sys.argv:
         # special handle --error-report option for the "brickv[.exe] /path/to/main.py --error-report"
-        # case were the /path/to/main.py has to be ignored. also the --error-report flag is for intrnal
+        # case were the /path/to/main.py has to be ignored. also the --error-report flag is for internal
         # usage anyway, so no need for argparse niceness
         sys.exit(error_report_main(qapplication_argv))
 
