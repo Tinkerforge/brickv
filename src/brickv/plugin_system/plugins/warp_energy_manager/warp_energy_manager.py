@@ -94,8 +94,6 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.s_syncer = SliderSpinSyncer(self.slider_s, self.spin_s, self.hsl_changed, spin_signal='valueChanged')
         self.l_syncer = SliderSpinSyncer(self.slider_l, self.spin_l, self.hsl_changed, spin_signal='valueChanged')
 
-        self.combobox_input0.currentIndexChanged.connect(self.input_configuration_changed)
-        self.combobox_input1.currentIndexChanged.connect(self.input_configuration_changed)
         self.checkbox_enable_contactor.stateChanged.connect(self.enable_contactor_changed)
         self.checkbox_enable_output.stateChanged.connect(self.enable_output_changed)
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
@@ -139,7 +137,7 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
 
     def energy_meter_state_cb(self, ems):
-        self.label_energy_meter_state.setText('Available: {0}, Error Counts: {1}'.format(ems.available, str(ems.error_count)))
+        self.label_energy_meter_state.setText('Type: {0}, Error Counts: {1}'.format(ems.energy_meter_type, str(ems.error_count)))
 
     def energy_meter_detailed_clicked(self):
         values = self.warp.get_energy_meter_detailed_values()
@@ -211,7 +209,6 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         async_call(self.warp.get_rgb_value, None, self.get_rgb_value_async, self.increase_error_count, expand_result_tuple_for_callback=True)
         async_call(self.warp.get_contactor, None, self.get_contactor_async, self.increase_error_count)
         async_call(self.warp.get_output, None, self.get_output_async, self.increase_error_count)
-        async_call(self.warp.get_input_configuration, None, self.get_input_configuration_async, self.increase_error_count)
         self.cbe_input_voltage.set_period(100)
         self.cbe_input.set_period(100)
         self.cbe_state.set_period(100)
@@ -234,11 +231,8 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
     def enable_output_changed(self, state):
         self.warp.set_output(state == Qt.Checked)
 
-    def input_configuration_changed(self, _):
-        self.warp.set_input_configuration([self.combobox_input0.currentIndex(), self.combobox_input1.currentIndex()])
-
     def energy_meter_reset_clicked(self):
-        self.warp.reset_energy_meter()
+        self.warp.reset_energy_meter_relative_energy()
 
     def rgb_changed(self, *_args):
         if self.changing:
@@ -294,14 +288,6 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.checkbox_enable_output.blockSignals(True)
         self.checkbox_enable_output.setChecked(value)
         self.checkbox_enable_output.blockSignals(False)
-
-    def get_input_configuration_async(self, config):
-        self.combobox_input0.blockSignals(True)
-        self.combobox_input0.setCurrentIndex(config[0])
-        self.combobox_input0.blockSignals(False)
-        self.combobox_input1.blockSignals(True)
-        self.combobox_input1.setCurrentIndex(config[1])
-        self.combobox_input1.blockSignals(False)
 
     def destroy(self):
         pass
