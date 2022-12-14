@@ -352,7 +352,11 @@ def stdio_wrapper(qapplication_argv, func):
 
             raise
 
-def main(dev_mode):
+def main(dev_mode=None):
+    if dev_mode == None:
+        # enable dev-mode if running from source
+        dev_mode = config.PACKAGE_TYPE == None
+
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
@@ -374,9 +378,9 @@ def main(dev_mode):
     parser.add_argument('-v', '--version', action='version', version=config.BRICKV_VERSION)
     parser.add_argument('host', nargs='?', help='connect to given host')
     parser.add_argument('-p', '--port', type=int, help='port for given host [default: 4223]', default=4223)
-    parser.add_argument('-s', '--secret', help='secret for given host [default: disabled]')
+    parser.add_argument('-s', '--secret', help='secret for given host [default: none]')
     parser.add_argument('-r', '--remember-secret', action='store_true', help='remember secret for given host [default: disabled]')
-    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: disabled]')
+    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: {0}]'.format('enabled' if dev_mode else 'disabled'))
     parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter [default: enabled]')
 
     args = stdio_wrapper(qapplication_argv, lambda: parser.parse_args(sys.argv[1:]))
@@ -451,4 +455,4 @@ def main(dev_mode):
     sys.exit(brick_viewer.exec_())
 
 if __name__ == "__main__":
-    main(not getattr(sys, 'frozen', False))
+    main()

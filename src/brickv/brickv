@@ -32,7 +32,11 @@ try:
     from brickv.main import main
 
     if __name__ == "__main__":
-        main(False)
+        main(dev_mode=False) # FIXME: this script is currently only used for the AUR package,
+                             #        that currently lacks the package_type maker file that
+                             #        would be used to detect if brickv runs from source or
+                             #        packaged. if it runs from source dev-mode should be on.
+                             #        if it runs from a package dev-mode should be off
 except ImportError:
     print('Could not import brickv. Please make sure that brickv is installed properly. ' + \
           'If you want to start brickv from source, you should directly call "python main.py".')
