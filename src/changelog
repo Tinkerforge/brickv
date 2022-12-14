@@ -648,7 +648,7 @@
 - Fix driver installation on Windows
 - Upgrade bundled Python to 3.9 on Windows (Windows 8.1 required)
 
-2022-12-14: 2.4.23 (<unknown>)
+2022-12-14: 2.4.23 (8c124df)
 - Allow saving config when Modbus master timeout is changed for RS485 Bricklet
 - Enable Python development mode when running from source
 - Fix socket leak on connect error
