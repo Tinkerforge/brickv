@@ -29,8 +29,8 @@ import sys
 import zipfile
 from collections import namedtuple
 
-def system(command):
-    subprocess.check_call(command)
+def system(command, **kwargs):
+    subprocess.check_call(command, **kwargs)
 
 def specialize_template(template_filename, destination_filename, replacements):
     lines = []
@@ -164,9 +164,8 @@ class BuildPkgUtils:
         shutil.copy(os.path.join(self.source_path, 'main_folder.spec'), os.path.join(self.unpacked_source_path, 'main_folder.spec'))
 
         print('running pyinstaller')
-        os.chdir(self.unpacked_source_path)
-        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv + ['--build-data-path=' + self.build_data_src_path, '--version=' + self.version])
-        os.chdir(self.root_path)
+        system(['pyinstaller', '--distpath', '../dist', '--workpath', '../build', 'main_folder.spec', '--'] + sys.argv + ['--build-data-path=' + self.build_data_src_path, '--version=' + self.version],
+               cwd=self.unpacked_source_path)
 
     def build_debian_pkg(self):
         print('creating DEBIAN/control from template')
