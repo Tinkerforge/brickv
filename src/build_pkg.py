@@ -63,16 +63,17 @@ def prepare_manifest(utils):
             if not os.path.isdir(plugin_path):
                 continue
 
-            brick_binding = os.path.join(bindings_path, 'brick_{0}.py'.format(plugin_name))
-            bricklet_binding = os.path.join(bindings_path, 'bricklet_{0}.py'.format(plugin_name))
-            tng_binding = os.path.join(bindings_path, '{0}.py'.format(plugin_name))
-            released = True
+            for prefix in ['brick_', 'bricklet_', '']: # empty prefix for TNG
+                try:
+                    with open(os.path.join(bindings_path, '{0}{1}.py'.format(prefix, plugin_name)), 'r') as f:
+                        if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
+                            print('excluding unreleased plugin and binding: ' + plugin_name)
+                            excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
+                            excluded_patterns.append('recursive-exclude {source_folder}/bindings {prefix}{plugin_name}.py'.format(source_folder=utils.source_path, prefix=prefix, plugin_name=plugin_name))
 
-            for file in [brick_binding, bricklet_binding, tng_binding]:
-                if os.path.isfile(file):
-                    with open(file, 'r') as f:
-                        released = not '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read()
                         break
+                except FileNotFoundError:
+                    pass
             else:
                 raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
