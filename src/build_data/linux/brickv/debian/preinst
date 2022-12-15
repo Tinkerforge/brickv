@@ -9,3 +9,7 @@ if [ -d "/usr/share/brickv" ]; then
     find /usr/share/brickv -name "*.pyc" -print0 | xargs --null --no-run-if-empty rm
     find /usr/lib/python3/dist-packages/ -type d -empty -print0 | xargs --null --no-run-if-empty rmdir
 fi
+
+#DEBHELPER#
+
+exit 0

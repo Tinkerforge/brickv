@@ -32,12 +32,17 @@ from collections import namedtuple
 def system(command, **kwargs):
     subprocess.check_call(command, **kwargs)
 
-def specialize_template(template_filename, destination_filename, replacements):
+def specialize_template(template_filename, destination_filename, replacements, remove_template=False):
     lines = []
     replaced = set()
 
-    with open(template_filename, 'r') as f:
+    # intentionally use mode=rb and decode/encode to be able to enforce UTF-8
+    # in an ASCII environment even with Python2 where the open function doesn't
+    # have an encoding parameter
+    with open(template_filename, 'rb') as f:
         for line in f.readlines():
+            line = line.decode('utf-8')
+
             for key in replacements:
                 replaced_line = line.replace(key, replacements[key])
 
@@ -46,15 +51,16 @@ def specialize_template(template_filename, destination_filename, replacements):
 
                 line = replaced_line
 
-            lines.append(line)
+            lines.append(line.encode('utf-8'))
 
     if replaced != set(replacements.keys()):
         raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
 
-    os.makedirs(os.path.dirname(destination_filename), exist_ok=True)
+    with open(destination_filename, 'wb') as f:
+        f.writelines(lines)
 
-    with open(destination_filename, 'w+') as f:
-            f.writelines(lines)
+    if remove_template:
+        os.remove(template_filename)
 
 def get_commit_id():
     try:
@@ -74,13 +80,14 @@ class BuildPkgUtils:
         self.root_path = os.path.realpath(os.path.dirname(__file__))
         self.dist_path = os.path.join(self.root_path, 'dist')
         self.build_data_src_path = os.path.join(self.root_path, 'build_data', platform, executable_name)
-        self.build_data_dest_path = os.path.join(self.dist_path, platform)
 
         assert not (self.internal and self.snapshot)
 
         if platform == 'linux':
+            self.build_data_dest_path = os.path.join(self.dist_path, 'tinkerforge-{}-{}'.format(executable_name, version))
             self.unpacked_source_path = os.path.join(self.build_data_dest_path, 'usr', 'share', executable_name)
         else:
+            self.build_data_dest_path = os.path.join(self.dist_path, platform)
             self.unpacked_source_path = os.path.join(self.build_data_dest_path, executable_name)
 
         self.source_path = os.path.join(self.root_path, executable_name)
@@ -168,40 +175,38 @@ class BuildPkgUtils:
                cwd=self.unpacked_source_path)
 
     def build_debian_pkg(self):
-        print('creating DEBIAN/control from template')
-
-        installed_size = int(subprocess.check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split(b'\t')[0])
-        control_path = os.path.join(self.build_data_dest_path, 'DEBIAN', 'control')
-        specialize_template(control_path, control_path,
-                            {'<<VERSION>>': self.version,
-                             '<<INSTALLED_SIZE>>': str(installed_size)})
-
         print('changing directory modes to 0755')
-        system(['find', 'dist/linux', '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
+        system(['find', self.build_data_dest_path, '-type', 'd', '-exec', 'chmod', '0755', '{}', ';'])
 
         print('changing file modes')
-        system(['find', 'dist/linux', '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
-        system(['find', 'dist/linux', '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
-
-        print('changing owner to root')
-
-        stat = os.stat('dist/linux')
-        user, group = stat.st_uid, stat.st_gid
-
-        system(['sudo', 'chown', '-R', 'root:root', 'dist/linux'])
+        system(['find', self.build_data_dest_path, '-type', 'f', '-perm', '664', '-exec', 'chmod', '0644', '{}', ';'])
+        system(['find', self.build_data_dest_path, '-type', 'f', '-perm', '775', '-exec', 'chmod', '0755', '{}', ';'])
 
         print('building Debian package')
+        specialize_template(os.path.join(self.build_data_dest_path, 'debian/changelog.template'),
+                            os.path.join(self.build_data_dest_path, 'debian/changelog'),
+                            {'<<VERSION>>': self.version,
+                             '<<DATE>>': subprocess.check_output(['date', '-R']).decode('utf-8').strip()},
+                            remove_template=True)
 
-        deb_name = '{}-{}_all.deb'.format(self.executable_name, self.version)
+        with open(os.path.join(self.build_data_dest_path, 'debian', 'install'), 'w') as f:
+            for root, dirs, files in sorted(os.walk(self.build_data_dest_path)):
+                for name in files:
+                    path = os.path.relpath(os.path.join(root, name), self.build_data_dest_path)
 
-        system(['dpkg-deb', '-Zxz', '-b', 'dist/linux', deb_name])
+                    if path.startswith('debian'):
+                        continue
 
-        print('changing owner back to original user')
-        system(['sudo', 'chown', '-R', '{}:{}'.format(user, group), 'dist/linux'])
+                    if ' ' in path:
+                        print('Paths with spaces are not supported:', path)
+                        sys.exit(1)
+
+                    f.write(path + '\n')
+
+        system(['dpkg-buildpackage', '-us', '-uc'], cwd=self.build_data_dest_path)
 
         if os.path.exists('/usr/bin/lintian'):
-            print('checking Debian package')
-            system(['lintian', '--pedantic', '--suppress-tags', 'changelog-file-missing-in-native-package,no-copyright-file,binary-without-manpage', deb_name])
+            system(['lintian', '--verbose', '--pedantic','--no-tag-display-limit', '--suppress-tags', 'changelog-file-missing-in-native-package,no-copyright-file,binary-without-manpage', os.path.join(self.dist_path, '{}_{}_all.deb'.format(self.executable_name, self.version))])
         else:
             print('skipping lintian check')
 
