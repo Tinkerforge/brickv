@@ -357,6 +357,11 @@ def main(dev_mode=None):
         # enable dev-mode if running from source
         dev_mode = config.PACKAGE_TYPE == None
 
+    # dev-mode is new in Python 3.7, but we only use it for internal purposes
+    # so don't raise the minimum Python version just for this, but instead just
+    # don't use dev-mode if its not available
+    has_dev_mode = hasattr(sys.flags, 'dev_mode')
+
     try:
         locale.setlocale(locale.LC_ALL, '')
     except locale.Error:
@@ -380,12 +385,15 @@ def main(dev_mode=None):
     parser.add_argument('-p', '--port', type=int, help='port for given host [default: 4223]', default=4223)
     parser.add_argument('-s', '--secret', help='secret for given host [default: none]')
     parser.add_argument('-r', '--remember-secret', action='store_true', help='remember secret for given host [default: disabled]')
-    parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: {0}]'.format('enabled' if dev_mode else 'disabled'))
+
+    if has_dev_mode:
+        parser.add_argument('--no-dev-mode', action='store_true', help='disable Python dev mode [default: {0}]'.format('enabled' if dev_mode else 'disabled'))
+
     parser.add_argument('--no-error-reporter', action='store_true', help='disable error reporter [default: enabled]')
 
     args = stdio_wrapper(qapplication_argv, lambda: parser.parse_args(sys.argv[1:]))
 
-    if not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
+    if has_dev_mode and not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
         sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv).returncode)
 
     # Catch all uncaught exceptions and show an error message for them.
