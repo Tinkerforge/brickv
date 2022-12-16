@@ -46,12 +46,9 @@ import subprocess
 from build_pkg_utils import *
 from brickv.config import BRICKV_VERSION
 
-def prepare_manifest(utils):
-    print('preparing manifest')
-
-    bindings_path = os.path.join(utils.source_path, 'bindings')
-    plugins_path = os.path.join(utils.source_path, 'plugin_system', 'plugins')
-    excluded_patterns = []
+def remove_unreleased_plugins(utils):
+    bindings_path = os.path.join(utils.unpacked_source_path, 'bindings')
+    plugins_path = os.path.join(utils.unpacked_source_path, 'plugin_system', 'plugins')
 
     if not utils.internal:
         for plugin_name in sorted(os.listdir(plugins_path)):
@@ -64,21 +61,41 @@ def prepare_manifest(utils):
                 continue
 
             for prefix in ['brick_', 'bricklet_', '']: # empty prefix for TNG
-                try:
-                    with open(os.path.join(bindings_path, '{0}{1}.py'.format(prefix, plugin_name)), 'r') as f:
-                        if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
-                            print('excluding unreleased plugin and binding: ' + plugin_name)
-                            excluded_patterns.append('prune {source_folder}/plugin_system/plugins/{plugin_name}'.format(source_folder=utils.source_path, plugin_name=plugin_name))
-                            excluded_patterns.append('recursive-exclude {source_folder}/bindings {prefix}{plugin_name}.py'.format(source_folder=utils.source_path, prefix=prefix, plugin_name=plugin_name))
+                binding_path = os.path.join(bindings_path, '{0}{1}.py'.format(prefix, plugin_name))
 
-                        break
+                try:
+                    with open(binding_path, 'r') as f:
+                        binding_data = f.read()
                 except FileNotFoundError:
-                    pass
+                    continue
+
+                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in binding_data:
+                    print('removing unreleased plugin and binding: ' + plugin_name)
+
+                    shutil.rmtree(plugin_path)
+                    os.remove(binding_path)
+
+                break
             else:
                 raise Exception('No bindings found corresponding to plugin {0}'.format(plugin_name))
 
-    specialize_template(os.path.join(utils.root_path, 'MANIFEST.in.template'), os.path.join(utils.root_path, 'MANIFEST.in'),
-                        {'<<EXCLUDES>>': '\n'.join(excluded_patterns)})
+        for binding_name in sorted(os.listdir(bindings_path)):
+            if '__pycache__' in binding_name or 'unknown' in binding_name:
+                continue
+
+            if binding_name.startswith('brick_') or binding_name.startswith('bricklet_') or binding_name.startswith('tng_'):
+                binding_path = os.path.join(bindings_path, binding_name)
+
+                try:
+                    with open(binding_path, 'r') as f:
+                        binding_data = f.read()
+                except FileNotFoundError:
+                    continue
+
+                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in binding_data:
+                    print('removing unreleased binding: ' + binding_name)
+
+                    os.remove(binding_path)
 
 def write_marker_files_and_patch_plugins(utils):
     package_type = {'linux': 'deb', 'macos': 'dmg', 'windows': 'exe'}[utils.platform]
@@ -114,10 +131,11 @@ def build_linux_pkg():
 
     utils = BuildPkgUtils('brickv', 'linux', BRICKV_VERSION)
 
-    utils.run_sdist(pre_sdist=lambda: prepare_manifest(utils), prepare_script=os.path.join(utils.root_path, 'build_src.py'))
+    utils.run_sdist(prepare_script=os.path.join(utils.root_path, 'build_src.py'))
     utils.copy_build_data()
     utils.unpack_sdist()
 
+    remove_unreleased_plugins(utils)
     write_marker_files_and_patch_plugins(utils)
 
     utils.build_debian_pkg()
@@ -130,8 +148,7 @@ def build_pyinstaller_pkg():
 
     utils.exit_if_not_venv()
     utils.build_pyinstaller_pkg(prepare_script=os.path.join(utils.root_path, 'build_src.py'),
-                                pre_sdist=lambda: prepare_manifest(utils),
-                                pre_pyinstaller=lambda: [write_marker_files_and_patch_plugins(utils), utils.copy_build_data()])
+                                pre_pyinstaller=lambda: [remove_unreleased_plugins(utils), write_marker_files_and_patch_plugins(utils), utils.copy_build_data()])
     utils.copy_build_artifact()
 
 BRICK_FLASH_VERSION = '1.0.2'

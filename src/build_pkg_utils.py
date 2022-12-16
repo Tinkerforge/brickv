@@ -125,7 +125,7 @@ class BuildPkgUtils:
         unpacked_path = os.path.join(self.dist_path, '{}-{}'.format(self.executable_name, self.version), self.executable_name)
         shutil.copytree(unpacked_path, self.unpacked_source_path)
 
-    def run_sdist(self, pre_sdist=lambda: None, prepare_script=None):
+    def run_sdist(self, prepare_script=None, pre_sdist=lambda: None):
         print('removing old build directories')
 
         egg_info_path = self.source_path + '.egg-info'
