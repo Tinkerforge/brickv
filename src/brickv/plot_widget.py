@@ -124,6 +124,8 @@ class PlotScaleConfigWindow(QDialog, Ui_PlotScaleConfig):
         self.spin_y_scale_min.setEnabled(not enable)
         self.spin_y_scale_max.setEnabled(not enable)
 
+        self.parent().edit_scales_button.setText(self.parent().edit_scales_button.text().rstrip(' *') + ('' if enable else ' *'))
+
         self.y_scale_change()
 
     def y_scale_change(self):
