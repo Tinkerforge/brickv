@@ -121,6 +121,7 @@ def build_linux_pkg():
     write_marker_files_and_patch_plugins(utils)
 
     utils.build_debian_pkg()
+    utils.copy_build_artifact()
 
 def build_pyinstaller_pkg():
     platform_dict = {'win32': 'windows', 'darwin': 'macos'}

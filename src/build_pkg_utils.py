@@ -211,13 +211,18 @@ class BuildPkgUtils:
             print('skipping lintian check')
 
     def copy_build_artifact(self):
-        installer = os.path.join(self.build_data_dest_path,
-                                '{}_{}_{}.{}'.format(self.executable_name,
-                                                     self.platform,
-                                                     self.underscore_version,
-                                                     'exe' if self.platform == 'windows' else 'dmg'))
+        if self.platform == 'linux':
+            shutil.copy(os.path.join(self.dist_path, '{}_{}_all.deb'.format(self.executable_name, self.version)), self.root_path)
+            shutil.copy(os.path.join(self.dist_path, 'tinkerforge-{}_{}.dsc'.format(self.executable_name, self.version)), self.root_path)
+            shutil.copy(os.path.join(self.dist_path, 'tinkerforge-{}_{}.tar.xz'.format(self.executable_name, self.version)), self.root_path)
+        else:
+            installer = os.path.join(self.build_data_dest_path,
+                                     '{}_{}_{}.{}'.format(self.executable_name,
+                                                          self.platform,
+                                                          self.underscore_version,
+                                                          'exe' if self.platform == 'windows' else 'dmg'))
 
-        shutil.copy(installer, self.root_path)
+            shutil.copy(installer, self.root_path)
 
     def exit_if_not_venv(self):
         in_virtualenv = hasattr(sys, 'real_prefix')
