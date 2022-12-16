@@ -2,12 +2,12 @@
 set -e
 
 # If the user had installed an old version of brickv (before the port to Python 3)
-# and ran brickv with root permissions, pyc files are created in the installation
+# and ran brickv with root permissions, *.pyc files are created in the installation
 # folder. Remove them and all empty folders before installing the new brickv version.
 
-if [ -d "/usr/share/brickv" ]; then
-    find /usr/share/brickv -name "*.pyc" -print0 | xargs --null --no-run-if-empty rm
-    find /usr/lib/python3/dist-packages/ -type d -empty -print0 | xargs --null --no-run-if-empty rmdir
+if [ -d /usr/share/brickv ]; then
+    find /usr/share/brickv -name *.pyc -print0 | xargs --null --no-run-if-empty rm
+    find /usr/share/brickv -type d -empty -print0 | xargs --null --no-run-if-empty rmdir
 fi
 
 #DEBHELPER#
