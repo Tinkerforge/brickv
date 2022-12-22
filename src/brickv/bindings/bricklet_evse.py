@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2022-12-22.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -27,7 +27,7 @@ GetChargingSlotDefault = namedtuple('ChargingSlotDefault', ['max_current', 'acti
 GetUserCalibration = namedtuple('UserCalibration', ['user_calibration_active', 'voltage_diff', 'voltage_mul', 'voltage_div', 'resistance_2700', 'resistance_880'])
 GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
 GetButtonState = namedtuple('ButtonState', ['button_press_time', 'button_release_time', 'button_pressed'])
-GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'jumper_configuration', 'has_lock_switch', 'evse_version', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'charging_time', 'time_since_state_change', 'uptime', 'indication', 'duration', 'button_press_time', 'button_release_time', 'button_pressed'])
+GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'jumper_configuration', 'has_lock_switch', 'evse_version', 'led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'charging_time', 'time_since_state_change', 'uptime', 'indication', 'duration', 'button_press_time', 'button_release_time', 'button_pressed', 'boost_mode_enabled'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -63,6 +63,8 @@ class BrickletEVSE(Device):
     FUNCTION_GET_BUTTON_STATE = 19
     FUNCTION_GET_ALL_DATA_1 = 20
     FUNCTION_FACTORY_RESET = 21
+    FUNCTION_SET_BOOST_MODE = 22
+    FUNCTION_GET_BOOST_MODE = 23
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -161,6 +163,8 @@ class BrickletEVSE(Device):
         self.response_expected[BrickletEVSE.FUNCTION_GET_BUTTON_STATE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_ALL_DATA_1] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_FACTORY_RESET] = BrickletEVSE.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletEVSE.FUNCTION_SET_BOOST_MODE] = BrickletEVSE.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSE.FUNCTION_GET_BOOST_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSE.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSE.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -398,7 +402,7 @@ class BrickletEVSE(Device):
         """
         self.check_validity()
 
-        return GetAllData1(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ALL_DATA_1, (), '', 66, 'B B B B H B B B ! B B H 2H 3h 2I 5! I I I h H I I !'))
+        return GetAllData1(*self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_ALL_DATA_1, (), '', 67, 'B B B B H B B B ! B B H 2H 3h 2I 5! I I I h H I I ! !'))
 
     def factory_reset(self, password):
         r"""
@@ -409,6 +413,24 @@ class BrickletEVSE(Device):
         password = int(password)
 
         self.ipcon.send_request(self, BrickletEVSE.FUNCTION_FACTORY_RESET, (password,), 'I', 0, '')
+
+    def set_boost_mode(self, boost_mode_enabled):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        boost_mode_enabled = bool(boost_mode_enabled)
+
+        self.ipcon.send_request(self, BrickletEVSE.FUNCTION_SET_BOOST_MODE, (boost_mode_enabled,), '!', 0, '')
+
+    def get_boost_mode(self):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSE.FUNCTION_GET_BOOST_MODE, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         r"""

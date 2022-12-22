@@ -140,7 +140,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
                                                        self.increase_error_count)
 
         self.cbe_control_pilot_config = CallbackEmulator(self,
-                                                         self.evse.get_control_pilot_configuration,
+                                                         self.evse.get_control_pilot_disconnect,
                                                          None,
                                                          self.control_pilot_config_cb,
                                                          self.increase_error_count)
@@ -287,8 +287,8 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         gpio_output    = self.combo_gpio_output.currentIndex()
         self.evse.set_gpio_configuration(shutdown_input, gpio_input, gpio_output)
 
-    def control_pilot_config_cb(self, cp):
-        self.label_control_pilot.setText('Config: {0}, CP Connected: {1}'.format(CONTROL_PILOT[cp.control_pilot], cp.control_pilot_connected))
+    def control_pilot_config_cb(self, disconnected):
+        self.label_control_pilot.setText('Disconnected: {0}'.format(disconnected))
 
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))

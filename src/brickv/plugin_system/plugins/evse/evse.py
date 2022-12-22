@@ -49,22 +49,22 @@ class EVSE(COMCUPluginBase, Ui_EVSE):
         self.setupUi(self)
 
         self.evse = self.device
-
-        self.cbe_state = CallbackEmulator(self,
-                                          self.evse.get_state,
-                                          None,
-                                          self.state_cb,
-                                          self.increase_error_count)
-        self.cbe_low_level_state = CallbackEmulator(self,
-                                                    self.evse.get_low_level_state,
-                                                    None,
-                                                    self.low_level_state_cb,
-                                                    self.increase_error_count)
-        self.cbe_max_charging_current = CallbackEmulator(self,
-                                                         self.evse.get_max_charging_current,
-                                                         None,
-                                                         self.max_charging_current_cb,
-                                                         self.increase_error_count)
+#
+#        self.cbe_state = CallbackEmulator(self,
+#                                          self.evse.get_state,
+#                                          None,
+#                                          self.state_cb,
+#                                          self.increase_error_count)
+#        self.cbe_low_level_state = CallbackEmulator(self,
+#                                                    self.evse.get_low_level_state,
+#                                                    None,
+#                                                    self.low_level_state_cb,
+#                                                    self.increase_error_count)
+#        self.cbe_max_charging_current = CallbackEmulator(self,
+#                                                         self.evse.get_max_charging_current,
+#                                                         None,
+#                                                         self.max_charging_current_cb,
+#                                                         self.increase_error_count)
 
     def state_cb(self, state):
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])

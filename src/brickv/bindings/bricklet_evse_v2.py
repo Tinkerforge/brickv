@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-08-23.      #
+# This file was automatically generated on 2022-12-22.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -29,9 +29,8 @@ GetAllEnergyMeterValuesLowLevel = namedtuple('AllEnergyMeterValuesLowLevel', ['v
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['shutdown_input_configuration', 'input_configuration', 'output_configuration'])
 GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
 GetButtonState = namedtuple('ButtonState', ['button_press_time', 'button_release_time', 'button_pressed'])
-GetControlPilotConfiguration = namedtuple('ControlPilotConfiguration', ['control_pilot', 'control_pilot_connected'])
 GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state', 'jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type', 'power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected', 'error_count'])
-GetAllData2 = namedtuple('AllData2', ['shutdown_input_configuration', 'input_configuration', 'output_configuration', 'indication', 'duration', 'button_configuration', 'button_press_time', 'button_release_time', 'button_pressed', 'control_pilot', 'control_pilot_connected'])
+GetAllData2 = namedtuple('AllData2', ['shutdown_input_configuration', 'input_configuration', 'output_configuration', 'indication', 'duration', 'button_configuration', 'button_press_time', 'button_release_time', 'button_pressed', 'ev_wakeup_enabled', 'control_pilot_disconnect', 'boost_mode_enabled'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -71,12 +70,16 @@ class BrickletEVSEV2(Device):
     FUNCTION_SET_BUTTON_CONFIGURATION = 23
     FUNCTION_GET_BUTTON_CONFIGURATION = 24
     FUNCTION_GET_BUTTON_STATE = 25
-    FUNCTION_SET_CONTROL_PILOT_CONFIGURATION = 26
-    FUNCTION_GET_CONTROL_PILOT_CONFIGURATION = 27
-    FUNCTION_GET_ALL_DATA_1 = 28
-    FUNCTION_GET_ALL_DATA_2 = 29
-    FUNCTION_FACTORY_RESET = 30
-    FUNCTION_GET_BUTTON_PRESS_BOOT_TIME = 31
+    FUNCTION_SET_EV_WAKEUP = 26
+    FUNCTION_GET_EV_WAKUEP = 27
+    FUNCTION_SET_CONTROL_PILOT_DISCONNECT = 28
+    FUNCTION_GET_CONTROL_PILOT_DISCONNECT = 29
+    FUNCTION_GET_ALL_DATA_1 = 30
+    FUNCTION_GET_ALL_DATA_2 = 31
+    FUNCTION_FACTORY_RESET = 32
+    FUNCTION_GET_BUTTON_PRESS_BOOT_TIME = 33
+    FUNCTION_SET_BOOST_MODE = 34
+    FUNCTION_GET_BOOST_MODE = 35
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -200,12 +203,16 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BUTTON_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_STATE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletEVSEV2.FUNCTION_SET_CONTROL_PILOT_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletEVSEV2.FUNCTION_GET_CONTROL_PILOT_CONFIGURATION] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_EV_WAKEUP] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_EV_WAKUEP] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_CONTROL_PILOT_DISCONNECT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_CONTROL_PILOT_DISCONNECT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ALL_DATA_1] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_FACTORY_RESET] = BrickletEVSEV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_PRESS_BOOT_TIME] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -470,23 +477,41 @@ class BrickletEVSEV2(Device):
 
         return GetButtonState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_STATE, (), '', 17, 'I I !'))
 
-    def set_control_pilot_configuration(self, control_pilot):
+    def set_ev_wakeup(self, ev_wakeup_enabled):
         r"""
         TODO
         """
         self.check_validity()
 
-        control_pilot = int(control_pilot)
+        ev_wakeup_enabled = bool(ev_wakeup_enabled)
 
-        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CONTROL_PILOT_CONFIGURATION, (control_pilot,), 'B', 9, '!')
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_EV_WAKEUP, (ev_wakeup_enabled,), '!', 0, '')
 
-    def get_control_pilot_configuration(self):
+    def get_ev_wakuep(self):
         r"""
         TODO
         """
         self.check_validity()
 
-        return GetControlPilotConfiguration(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CONTROL_PILOT_CONFIGURATION, (), '', 10, 'B !'))
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_EV_WAKUEP, (), '', 9, '!')
+
+    def set_control_pilot_disconnect(self, control_pilot_disconnect):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        control_pilot_disconnect = bool(control_pilot_disconnect)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_CONTROL_PILOT_DISCONNECT, (control_pilot_disconnect,), '!', 9, '!')
+
+    def get_control_pilot_disconnect(self):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_CONTROL_PILOT_DISCONNECT, (), '', 9, '!')
 
     def get_all_data_1(self):
         r"""
@@ -502,7 +527,7 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetAllData2(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2, (), '', 27, 'B B B h H B I I ! B !'))
+        return GetAllData2(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_ALL_DATA_2, (), '', 28, 'B B B h H B I I ! ! ! !'))
 
     def factory_reset(self, password):
         r"""
@@ -523,6 +548,24 @@ class BrickletEVSEV2(Device):
         reset = bool(reset)
 
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BUTTON_PRESS_BOOT_TIME, (reset,), '!', 12, 'I')
+
+    def set_boost_mode(self, boost_mode_enabled):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        boost_mode_enabled = bool(boost_mode_enabled)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_BOOST_MODE, (boost_mode_enabled,), '!', 0, '')
+
+    def get_boost_mode(self):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BOOST_MODE, (), '', 9, '!')
 
     def get_spitfp_error_count(self):
         r"""
