@@ -90,21 +90,31 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         except IndexError:
             return None
 
+    def allow_calibration(self, allow, offset='-', gain='-'):
+        self.label_msg_a.setVisible(allow)
+        self.label_msg_b.setVisible(not allow)
+        self.check_enable_calibration.setEnabled(allow)
+
+        if not allow:
+            self.check_enable_calibration.setChecked(False)
+
+        self.label_offset.setText(offset)
+        self.label_gain.setText(gain)
+
     def update_calibration(self):
         device = self.current_device()
 
         if device is None or self.combo_port.count() == 0:
-            self.label_offset.setText('-')
-            self.label_gain.setText('-')
+            self.allow_calibration(False)
         else:
             def slot():
                 try:
                     offset, gain = self.parent.ipcon.get_adc_calibration(device)
                 except ip_connection.Error:
+                    self.allow_calibration(False)
                     return
 
-                self.label_offset.setText(str(offset))
-                self.label_gain.setText(str(gain))
+                self.allow_calibration(True, offset=str(offset), gain=str(gain))
 
             QTimer.singleShot(0, slot)
 

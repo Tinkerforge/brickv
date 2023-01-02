@@ -16,26 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Brick:</string>
-       </property>
-       <property name="buddy">
-        <cstring>combo_brick</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Port:</string>
-       </property>
-       <property name="buddy">
-        <cstring>combo_port</cstring>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="combo_brick">
        <property name="sizePolicy">
@@ -43,6 +23,45 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QLabel" name="label_msg_a">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;This process calibrates the Analog to Digital Converter (ADC) of the choosen Brick. To do this you need a Linear- or Rotary Poti Bricklet or simlar. See the &lt;a href=&quot;https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-adc-calibration&quot;&gt;&lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt;documentation&lt;/span&gt;&lt;/a&gt; for more details.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Warning:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If you accidentially miscalibrate the ADC and you don't have an appropriate Bricklet to recalibrate, you have to reflash the Brick to go back to default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="openExternalLinks">
+        <bool>true</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextBrowserInteraction</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="check_enable_calibration">
+       <property name="text">
+        <string>Enable Calibration</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="label_offset">
+       <property name="text">
+        <string>-</string>
        </property>
       </widget>
      </item>
@@ -70,28 +89,54 @@
        </item>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
-      <widget class="QLabel" name="label_4">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="8" column="0" colspan="2">
+      <widget class="QPushButton" name="button_close">
        <property name="text">
-        <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;The following calibration calibrates the Analog to Digital Converter of the choosen Brick above. To do this you need a Linear- or Rotary Poti Bricklet or simlar. See the &lt;a href=&quot;https://www.tinkerforge.com/en/doc/Software/Brickv.html#brick-adc-calibration&quot;&gt;&lt;span style=&quot;text-decoration: underline; color:#0000ff;&quot;&gt;documentation&lt;/span&gt;&lt;/a&gt; for more details.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Warning:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If you accidentially miscalibrate the ADC and you don't have an appropriate Bricklet to recalibrate, you have to reflash the Brick to go back to default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Close</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Brick:</string>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
+       <property name="buddy">
+        <cstring>combo_brick</cstring>
        </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QPushButton" name="button_calibrate">
+       <property name="text">
+        <string>Calibrate</string>
        </property>
-       <property name="textInteractionFlags">
-        <set>Qt::TextBrowserInteraction</set>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QLabel" name="label_gain">
+       <property name="text">
+        <string>-</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Gain:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Port:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_port</cstring>
        </property>
       </widget>
      </item>
@@ -102,55 +147,29 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QCheckBox" name="check_enable_calibration">
-       <property name="text">
-        <string>Enable Calibration</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QPushButton" name="button_calibrate">
-       <property name="text">
-        <string>Calibrate</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Gain:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Offset:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QLabel" name="label_gain">
-       <property name="text">
-        <string>-</string>
+     <item row="4" column="0" colspan="2">
+      <widget class="QLabel" name="label_msg_b">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
        </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="label_offset">
        <property name="text">
-        <string>-</string>
+        <string>No Analog to Digital Converter (ADC) calibration possible or necessary for the choosen Brick.</string>
        </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
-      <widget class="QPushButton" name="button_close">
-       <property name="text">
-        <string>Close</string>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
