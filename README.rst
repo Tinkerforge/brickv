@@ -46,10 +46,11 @@ The following libraries are required:
 * PySerial >= 3.0 (Linux), >= 3.5 (Windows, macOS)
 * pytz
 * tzlocal
+* pkg_resources
 
 On Debian based Linux distributions try::
 
- sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial python3-tz python3-tzlocal
+ sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtopengl python3-serial python3-tz python3-tzlocal python3-pkg-resources
 
 On other systems you can install the requirements with pip::
 
