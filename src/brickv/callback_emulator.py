@@ -106,6 +106,11 @@ class CallbackEmulator(QObject):
         elif result != None:
             arguments += (result,)
 
+        parent = self.parent()
+
+        if parent == None or getattr(parent, 'is_destroyed', False):
+            return
+
         self.result_callback(*arguments)
 
     def loop(self, period_queue, enable_ref):

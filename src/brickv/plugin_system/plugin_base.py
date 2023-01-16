@@ -44,6 +44,7 @@ class PluginBase(QWidget):
     def __init__(self, device_class, ipcon, device_info, override_base_name=None):
         super().__init__()
 
+        self.is_destroyed = False
         self.has_comcu = False # Will be overwritten if plugin has comcu
         self.is_tng = False # Will be overwritten if plugin is tng
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
@@ -202,6 +203,8 @@ class PluginBase(QWidget):
         except:
             # Report the exception without unwinding the call stack.
             sys.excepthook(*sys.exc_info())
+
+        self.is_destroyed = True
 
         # before destroying the widgets ensure that all callbacks are
         # unregistered. callbacks a typically bound to Qt slots. the plugin
