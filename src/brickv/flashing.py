@@ -823,7 +823,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         # resulting in endless recursion.
         self.ignore_tab_changed_event = True
         idx = self.tab_widget.currentIndex()
-        self.tab_widget.setTabEnabled(2, self.ipcon_available and self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != 'No Brick found')
+        self.tab_widget.setTabEnabled(2, self.ipcon_available and self.combo_parent.count() > 0 and self.combo_parent.itemText(0) != NO_BRICK)
         self.tab_widget.setTabEnabled(3, self.ipcon_available and len(self.extension_infos) > 0)
 
         if self.tab_widget.isTabEnabled(idx):
