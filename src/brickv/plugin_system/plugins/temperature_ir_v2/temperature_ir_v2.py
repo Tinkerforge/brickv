@@ -78,8 +78,8 @@ class TemperatureIRV2(COMCUPluginBase):
     def start(self):
         async_call(self.tir.get_emissivity, None, self.get_emissivity_async, self.increase_error_count)
 
-        self.cbe_ambient_temperature.set_period(250)
-        self.cbe_object_temperature.set_period(250)
+        self.cbe_ambient_temperature.set_period(100)
+        self.cbe_object_temperature.set_period(100)
 
         self.plot_widget.stop = False
 

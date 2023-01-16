@@ -71,7 +71,7 @@ class TemperatureV2(COMCUPluginBase):
     def start(self):
         async_call(self.tem.get_heater_configuration, None, self.get_heater_configuration_async, self.increase_error_count)
 
-        self.cbe_temperature.set_period(250)
+        self.cbe_temperature.set_period(100)
 
         self.plot_widget_temperature.stop = False
 
