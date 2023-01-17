@@ -134,7 +134,7 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.label_contactor_check_state.setText(str(state))
 
     def energy_meter_values_cb(self, emv):
-        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
+        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Import: {1:.2f}Wh, Energy Export: {2:.2f}Wh'.format(emv.power, emv.energy_import, emv.energy_export))
 
     def energy_meter_state_cb(self, ems):
         self.label_energy_meter_state.setText('Type: {0}, Error Counts: {1}'.format(ems.energy_meter_type, str(ems.error_count)))
