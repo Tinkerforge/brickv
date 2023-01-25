@@ -68,7 +68,7 @@ class RenderWidget(QOpenGLWidget):
         self.vertex_buf_offsets = [3, 3, 2] # position, normal, tex_coord
         self.vertex_buf_stride = sum(self.vertex_buf_offsets)
 
-        self.obj_path = obj_path
+        self.obj_vertices, self.obj_normals, self.obj_tex_coords, self.obj_faces, self.obj_material = read_obj(obj_path)
         self.initialized = False
 
     def __del__(self):
@@ -210,16 +210,14 @@ class RenderWidget(QOpenGLWidget):
         self.glClearColor(0.85, 0.85, 0.85, 1.0)
         self.program = self.init_shaders()
 
-        vertices, normals, tex_coords, faces, material = read_obj(self.obj_path)
-
-        self.bounding_box = get_bounding_box(vertices)
+        self.bounding_box = get_bounding_box(self.obj_vertices)
         self.model_offset = -(self.bounding_box[0] + 0.5 * (self.bounding_box[1] - self.bounding_box[0])) # Offset to move the model's center into 0,0,0
 
-        self.texture = load_texture(material)
+        self.texture = load_texture(self.obj_material)
         self.glEnable(GL_DEPTH_TEST)
         self.glEnable(GL_CULL_FACE)
 
-        self.vertex_buf, self.index_buf = self.init_buffers(vertices, normals, tex_coords, faces)
+        self.vertex_buf, self.index_buf = self.init_buffers(self.obj_vertices, self.obj_normals, self.obj_tex_coords, self.obj_faces)
         self.initialized = True
 
     def draw_geometry(self):
