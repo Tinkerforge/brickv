@@ -28,7 +28,7 @@
 
 import string
 
-from PyQt5.Qt import Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontMetrics, QClipboard, QPen, QPainter
 from PyQt5.QtWidgets import QMenu, QApplication, QAbstractScrollArea, QAction
 

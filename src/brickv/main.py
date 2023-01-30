@@ -70,8 +70,7 @@ def prepare_package(package_name):
 
 prepare_package('brickv')
 
-from PyQt5.Qt import PYQT_VERSION_STR
-from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR, QUrl
+from PyQt5.QtCore import QEvent, pyqtSignal, Qt, QSysInfo, QT_VERSION_STR, PYQT_VERSION_STR, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices, QPalette
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QTextBrowser, \
                             QPushButton, QWidget, QLabel, QCheckBox, QHBoxLayout, \
