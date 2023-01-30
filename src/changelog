@@ -268,7 +268,7 @@
 - Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
   Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
   Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
-- Fix callback handling in GPS Bricket plugin
+- Fix callback handling in GPS Bricklet plugin
 
 2015-07-29: 2.2.6 (2dec29a)
 - Add mobile Internet configuration tab to RED Brick plugin
@@ -661,3 +661,14 @@
 - Add tab select menu that stays in the top left corner
 - Fix corner cases in IMU Brick(let) plugin untab handling
 - Add manual firmware list update button if auto-search for updates is disabled
+
+2023-01-30: 2.4.24 (<unknown>)
+- Fix Python dev-mode default handling
+- Do not touch /usr/lib/python3/dist-packages on Debian Linux
+- Convert Debian Linux package build to debhelper
+- Disable ADC calibration for 7p Bricks
+- Add missing pkg_resources dependency on Linux
+- Update all temperature readings with 10 Hz
+- Stop callback emulator from delivering results to destroyed plugins
+- Avoid crash while loading the 3D model in all IMU plugins
+- Avoid PyQt5 import problem with the Qt module
