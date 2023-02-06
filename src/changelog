@@ -673,5 +673,5 @@
 - Avoid crash while loading the 3D model in all IMU plugins
 - Avoid PyQt5 import problem with the Qt module
 
-2023-02-06: 2.4.25 (<unknown>)
+2023-02-06: 2.4.25 (0944230)
 - Fix accidental dependency on newer PyQt5 version on Linux
