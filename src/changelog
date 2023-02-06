@@ -662,7 +662,7 @@
 - Fix corner cases in IMU Brick(let) plugin untab handling
 - Add manual firmware list update button if auto-search for updates is disabled
 
-2023-01-30: 2.4.24 (<unknown>)
+2023-01-30: 2.4.24 (51792c6)
 - Fix Python dev-mode default handling
 - Do not touch /usr/lib/python3/dist-packages on Debian Linux
 - Convert Debian Linux package build to debhelper
