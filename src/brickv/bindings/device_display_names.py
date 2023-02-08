@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-05-10.      #
+# This file was automatically generated on 2023-02-08.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -156,7 +156,8 @@ DEVICE_DISPLAY_NAMES = {
     2164: 'Industrial PTC Bricklet',
     2165: 'DC Bricklet 2.0',
     2166: 'Silent Stepper Bricklet 2.0',
-    2171: 'GPS Bricklet 3.0'
+    2171: 'GPS Bricklet 3.0',
+    2174: 'Industrial Dual AC In Bricklet'
 }
 
 def get_device_display_name(device_identifier):
