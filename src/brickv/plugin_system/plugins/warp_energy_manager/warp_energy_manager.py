@@ -98,11 +98,15 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.checkbox_enable_output.stateChanged.connect(self.enable_output_changed)
         self.button_energy_meter_reset.clicked.connect(self.energy_meter_reset_clicked)
         self.button_energy_meter_detailed.clicked.connect(self.energy_meter_detailed_clicked)
+        self.button_format_sd.clicked.connect(self.format_sd_clicked)
+        self.spin_led_hue.valueChanged.connect(self.new_led_state)
+        self.combo_led_pattern.currentIndexChanged.connect(self.new_led_state)
         self.cbe_input_voltage = CallbackEmulator(self, self.warp.get_input_voltage, None, self.cb_input_voltage, self.increase_error_count)
         self.cbe_input = CallbackEmulator(self, self.warp.get_input, None, self.cb_input, self.increase_error_count)
         self.cbe_state = CallbackEmulator(self, self.warp.get_state, None, self.cb_state, self.increase_error_count)
         self.cbe_energy_meter_values = CallbackEmulator(self, self.warp.get_energy_meter_values, None, self.energy_meter_values_cb, self.increase_error_count)
         self.cbe_energy_meter_state = CallbackEmulator(self, self.warp.get_energy_meter_state, None, self.energy_meter_state_cb, self.increase_error_count)
+        self.cbe_sd_information = CallbackEmulator(self, self.warp.get_sd_information, None, self.sd_information_cb, self.increase_error_count)
 
         def set_color(r, g, b):
             self.changing = True
@@ -122,6 +126,11 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
             button.setIcon(QIcon(pixmap))
             button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
 
+    def new_led_state(self):
+        pattern = self.combo_led_pattern.currentIndex()
+        hue = self.spin_led_hue.value()
+        self.warp.set_led_state(pattern, hue)
+
     def cb_input_voltage(self, voltage):
         self.label_input_voltage.setText('{:.2f}V'.format(voltage / 1000.0))
 
@@ -132,12 +141,18 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
 
     def cb_state(self, state):
         self.label_contactor_check_state.setText(str(state))
+    
+    def sd_information_cb(self, sd_info):
+        self.label_sd_info.setText("\n".join("{0}: {1}".format(x, sd_info[i]) for i, x in enumerate(sd_info._fields)))
 
     def energy_meter_values_cb(self, emv):
         self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Import: {1:.2f}Wh, Energy Export: {2:.2f}Wh'.format(emv.power, emv.energy_import, emv.energy_export))
 
     def energy_meter_state_cb(self, ems):
         self.label_energy_meter_state.setText('Type: {0}, Error Counts: {1}'.format(ems.energy_meter_type, str(ems.error_count)))
+    
+    def format_sd_clicked(self):
+        self.warp.format_sd(0x4223ABCD)
 
     def energy_meter_detailed_clicked(self):
         values = self.warp.get_energy_meter_detailed_values()
@@ -214,6 +229,7 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.cbe_state.set_period(100)
         self.cbe_energy_meter_values.set_period(100)
         self.cbe_energy_meter_state.set_period(100)
+        self.cbe_sd_information.set_period(500)
 
     def stop(self):
         self.cbe_input_voltage.set_period(0)
@@ -221,6 +237,7 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         self.cbe_state.set_period(0)
         self.cbe_energy_meter_values.set_period(0)
         self.cbe_energy_meter_state.set_period(0)
+        self.cbe_sd_information.set_period(0)
 
         if self.set_rgb_value_response_expected != None:
             self.warp.set_response_expected(self.warp.FUNCTION_SET_RGB_VALUE, self.set_rgb_value_response_expected)
