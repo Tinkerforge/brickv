@@ -89,7 +89,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         title = 'Brick Viewer ' + config.BRICKV_FULL_VERSION
 
-        if sys.flags.dev_mode:
+        # dev-mode is new in Python 3.7, but we only use it for internal purposes
+        # so don't raise the minimum Python version just for this, but instead just
+        # don't use dev-mode if its not available
+        has_dev_mode = hasattr(sys.flags, 'dev_mode')
+
+        if has_dev_mode and sys.flags.dev_mode:
             title += ' [Dev Mode]'
 
         self.setWindowTitle(title)
