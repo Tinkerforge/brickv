@@ -16,6 +16,58 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="4" column="0" colspan="2">
+      <widget class="QLabel" name="label_msg_b">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>No Analog to Digital Converter (ADC) calibration possible or necessary for the choosen Brick.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QCheckBox" name="check_enable_calibration">
+       <property name="text">
+        <string>Enable Calibration</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLabel" name="label_msg_c">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Looking up calibration capabilies...</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="combo_brick">
        <property name="sizePolicy">
@@ -51,14 +103,41 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QCheckBox" name="check_enable_calibration">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Enable Calibration</string>
+        <string>Brick:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_brick</cstring>
        </property>
       </widget>
      </item>
      <item row="7" column="1">
+      <widget class="QPushButton" name="button_calibrate">
+       <property name="text">
+        <string>Calibrate</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QLabel" name="label_gain">
+       <property name="text">
+        <string>-</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Offset:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
       <widget class="QLabel" name="label_offset">
        <property name="text">
         <string>-</string>
@@ -89,41 +168,7 @@
        </item>
       </widget>
      </item>
-     <item row="8" column="0" colspan="2">
-      <widget class="QPushButton" name="button_close">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Brick:</string>
-       </property>
-       <property name="buddy">
-        <cstring>combo_brick</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QPushButton" name="button_calibrate">
-       <property name="text">
-        <string>Calibrate</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QLabel" name="label_gain">
-       <property name="text">
-        <string>-</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Gain:</string>
@@ -140,38 +185,25 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="Line" name="line_2">
+     <item row="10" column="0" colspan="2">
+      <widget class="QPushButton" name="button_close">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Offset:</string>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="QLabel" name="label_msg_b">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>No Analog to Digital Converter (ADC) calibration possible or necessary for the choosen Brick.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
+      </spacer>
      </item>
     </layout>
    </item>

@@ -23,13 +23,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 
 from brickv.ui_advanced import Ui_Advanced
 from brickv.utils import get_modeless_dialog_flags
 from brickv.infos import inventory
-from brickv.bindings import ip_connection
+from brickv.async_call import async_call
 
 NO_BRICK = 'No Brick found'
 
@@ -40,8 +40,13 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.setupUi(self)
 
         self.ipcon_available = False
+        self.calibration_allowed = False
 
         self.button_calibrate.setEnabled(False)
+
+        self.label_msg_a.setVisible(False)
+        self.label_msg_b.setVisible(False)
+        self.label_msg_c.setVisible(True)
 
         self.brick_infos = []
 
@@ -55,6 +60,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.button_close.clicked.connect(self.hide)
 
         self.update_bricks()
+        self.update_ui_state()
 
     def reject(self):
         pass # avoid closing using ESC key
@@ -91,9 +97,11 @@ class AdvancedWindow(QDialog, Ui_Advanced):
             return None
 
     def allow_calibration(self, allow, offset='-', gain='-'):
-        self.label_msg_a.setVisible(allow)
-        self.label_msg_b.setVisible(not allow)
-        self.check_enable_calibration.setEnabled(allow)
+        self.calibration_allowed = allow
+
+        self.label_msg_a.setVisible(allow and self.combo_port.count() > 0)
+        self.label_msg_b.setVisible(not allow and self.combo_port.count() > 0)
+        self.label_msg_c.setVisible(False)
 
         if not allow:
             self.check_enable_calibration.setChecked(False)
@@ -101,22 +109,26 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.label_offset.setText(offset)
         self.label_gain.setText(gain)
 
+        self.update_ui_state()
+
+    def get_adc_calibration_async(self, device, offset, gain):
+        if device != self.current_device():
+            return
+
+        self.allow_calibration(True, offset=str(offset), gain=str(gain))
+
     def update_calibration(self):
+        self.label_msg_a.setVisible(False)
+        self.label_msg_b.setVisible(False)
+        self.label_msg_c.setVisible(True)
+
         device = self.current_device()
 
         if device is None or self.combo_port.count() == 0:
             self.allow_calibration(False)
         else:
-            def slot():
-                try:
-                    offset, gain = self.parent.ipcon.get_adc_calibration(device)
-                except ip_connection.Error:
-                    self.allow_calibration(False)
-                    return
-
-                self.allow_calibration(True, offset=str(offset), gain=str(gain))
-
-            QTimer.singleShot(0, slot)
+            async_call(self.parent.ipcon.get_adc_calibration, device, self.get_adc_calibration_async, lambda: self.allow_calibration(False),
+                       pass_arguments_to_result_callback=True, expand_result_tuple_for_callback=True)
 
     def brick_changed(self, index):
         self.combo_port.clear()
@@ -146,7 +158,7 @@ class AdvancedWindow(QDialog, Ui_Advanced):
 
         self.combo_brick.setEnabled(enabled and self.ipcon_available)
         self.combo_port.setEnabled(enabled and self.ipcon_available)
-        self.check_enable_calibration.setEnabled(enabled and self.ipcon_available and self.combo_port.count() > 0)
+        self.check_enable_calibration.setEnabled(enabled and self.ipcon_available and self.combo_port.count() > 0 and self.calibration_allowed)
         self.button_calibrate.setEnabled(enabled and self.ipcon_available and self.combo_port.count() > 0 and self.check_enable_calibration.isChecked())
 
     def set_ipcon_available(self, ipcon_available):

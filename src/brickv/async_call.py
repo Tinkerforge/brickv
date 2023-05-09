@@ -102,9 +102,9 @@ def async_event_handler():
                         arguments += (ac.arguments,)
 
                 if ac.expand_result_tuple_for_callback:
-                    assert isinstance(result, tuple)
+                    assert isinstance(result, (tuple, list)), repr(result)
 
-                    arguments += result
+                    arguments += tuple(result)
                 elif result != None:
                     arguments += (result,)
 
