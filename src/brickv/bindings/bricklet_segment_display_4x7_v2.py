@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -14,7 +14,10 @@ from collections import namedtuple
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetSegments = namedtuple('Segments', ['digit0', 'digit1', 'digit2', 'digit3', 'colon', 'tick'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])

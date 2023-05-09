@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2023-03-07.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -16,7 +16,10 @@ from collections import namedtuple
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetRGBValue = namedtuple('RGBValue', ['r', 'g', 'b'])
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_import', 'energy_export'])
@@ -76,6 +79,8 @@ class BrickletWARPEnergyManager(Device):
     FUNCTION_GET_DATE_TIME = 30
     FUNCTION_SET_LED_STATE = 31
     FUNCTION_GET_LED_STATE = 32
+    FUNCTION_GET_DATA_STORAGE = 33
+    FUNCTION_SET_DATA_STORAGE = 34
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -160,6 +165,8 @@ class BrickletWARPEnergyManager(Device):
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_DATE_TIME] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_SET_LED_STATE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_LED_STATE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_DATA_STORAGE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletWARPEnergyManager.FUNCTION_SET_DATA_STORAGE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_SET_BOOTLOADER_MODE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletWARPEnergyManager.FUNCTION_GET_BOOTLOADER_MODE] = BrickletWARPEnergyManager.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -486,6 +493,27 @@ class BrickletWARPEnergyManager(Device):
         self.check_validity()
 
         return GetLEDState(*self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_LED_STATE, (), '', 11, 'B H'))
+
+    def get_data_storage(self, page):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+
+        return self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_GET_DATA_STORAGE, (page,), 'B', 71, '63B')
+
+    def set_data_storage(self, page, data):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        page = int(page)
+        data = list(map(int, data))
+
+        self.ipcon.send_request(self, BrickletWARPEnergyManager.FUNCTION_SET_DATA_STORAGE, (page, data), 'B 63B', 0, '')
 
     def get_spitfp_error_count(self):
         r"""

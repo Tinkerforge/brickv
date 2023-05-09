@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -14,7 +14,10 @@ from collections import namedtuple
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetStatistics = namedtuple('Statistics', ['messages_from_brick', 'messages_from_bricklet', 'connected_bricklet_device_identifier', 'connected_bricklet_uid'])
 GetSPITFPBaudrateConfig = namedtuple('SPITFPBaudrateConfig', ['enable_dynamic_baudrate', 'minimum_dynamic_baudrate'])

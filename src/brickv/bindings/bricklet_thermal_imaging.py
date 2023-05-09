@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-06-14.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -14,13 +14,17 @@ from collections import namedtuple
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetHighContrastImageLowLevel = namedtuple('HighContrastImageLowLevel', ['image_chunk_offset', 'image_chunk_data'])
 GetTemperatureImageLowLevel = namedtuple('TemperatureImageLowLevel', ['image_chunk_offset', 'image_chunk_data'])
 GetStatistics = namedtuple('Statistics', ['spotmeter_statistics', 'temperatures', 'resolution', 'ffc_status', 'temperature_warning'])
 GetHighContrastConfig = namedtuple('HighContrastConfig', ['region_of_interest', 'dampening_factor', 'clip_limit', 'empty_counts'])
 GetFluxLinearParameters = namedtuple('FluxLinearParameters', ['scene_emissivity', 'temperature_background', 'tau_window', 'temperatur_window', 'tau_atmosphere', 'temperature_atmosphere', 'reflection_window', 'temperature_reflection'])
+GetFFCShutterMode = namedtuple('FFCShutterMode', ['shutter_mode', 'temp_lockout_state', 'video_freeze_during_ffc', 'ffc_desired', 'elapsed_time_since_last_ffc', 'desired_ffc_period', 'explicit_cmd_to_open', 'desired_ffc_temp_delta', 'imminent_delay'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -52,6 +56,9 @@ class BrickletThermalImaging(Device):
     FUNCTION_GET_IMAGE_TRANSFER_CONFIG = 11
     FUNCTION_SET_FLUX_LINEAR_PARAMETERS = 14
     FUNCTION_GET_FLUX_LINEAR_PARAMETERS = 15
+    FUNCTION_SET_FFC_SHUTTER_MODE = 16
+    FUNCTION_GET_FFC_SHUTTER_MODE = 17
+    FUNCTION_RUN_FFC_NORMALIZATION = 18
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -75,6 +82,12 @@ class BrickletThermalImaging(Device):
     IMAGE_TRANSFER_MANUAL_TEMPERATURE_IMAGE = 1
     IMAGE_TRANSFER_CALLBACK_HIGH_CONTRAST_IMAGE = 2
     IMAGE_TRANSFER_CALLBACK_TEMPERATURE_IMAGE = 3
+    SHUTTER_MODE_MANUAL = 0
+    SHUTTER_MODE_AUTO = 1
+    SHUTTER_MODE_EXTERNAL = 2
+    SHUTTER_LOCKOUT_INACTIVE = 0
+    SHUTTER_LOCKOUT_HIGH = 1
+    SHUTTER_LOCKOUT_LOW = 2
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -98,7 +111,7 @@ class BrickletThermalImaging(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletThermalImaging.DEVICE_IDENTIFIER, BrickletThermalImaging.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_HIGH_CONTRAST_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_TEMPERATURE_IMAGE_LOW_LEVEL] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -113,6 +126,9 @@ class BrickletThermalImaging(Device):
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_IMAGE_TRANSFER_CONFIG] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_FLUX_LINEAR_PARAMETERS] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_FLUX_LINEAR_PARAMETERS] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_SET_FFC_SHUTTER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletThermalImaging.FUNCTION_GET_FFC_SHUTTER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletThermalImaging.FUNCTION_RUN_FFC_NORMALIZATION] = BrickletThermalImaging.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_SET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletThermalImaging.FUNCTION_GET_BOOTLOADER_MODE] = BrickletThermalImaging.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -375,6 +391,52 @@ class BrickletThermalImaging(Device):
         self.check_validity()
 
         return GetFluxLinearParameters(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_FLUX_LINEAR_PARAMETERS, (), '', 24, 'H H H H H H H H'))
+
+    def set_ffc_shutter_mode(self, shutter_mode, temp_lockout_state, video_freeze_during_ffc, ffc_desired, elapsed_time_since_last_ffc, desired_ffc_period, explicit_cmd_to_open, desired_ffc_temp_delta, imminent_delay):
+        r"""
+        Sets the FFC shutter mode parameters.
+
+        See FLIR document 110-0144-03 4.5.15 for more details.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        shutter_mode = int(shutter_mode)
+        temp_lockout_state = int(temp_lockout_state)
+        video_freeze_during_ffc = bool(video_freeze_during_ffc)
+        ffc_desired = bool(ffc_desired)
+        elapsed_time_since_last_ffc = int(elapsed_time_since_last_ffc)
+        desired_ffc_period = int(desired_ffc_period)
+        explicit_cmd_to_open = bool(explicit_cmd_to_open)
+        desired_ffc_temp_delta = int(desired_ffc_temp_delta)
+        imminent_delay = int(imminent_delay)
+
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_SET_FFC_SHUTTER_MODE, (shutter_mode, temp_lockout_state, video_freeze_during_ffc, ffc_desired, elapsed_time_since_last_ffc, desired_ffc_period, explicit_cmd_to_open, desired_ffc_temp_delta, imminent_delay), 'B B ! ! I I ! H H', 0, '')
+
+    def get_ffc_shutter_mode(self):
+        r"""
+        Sets the FFC shutter mode parameters.
+
+        See FLIR document 110-0144-03 4.5.15 for more details.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return GetFFCShutterMode(*self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_GET_FFC_SHUTTER_MODE, (), '', 25, 'B B ! ! I I ! H H'))
+
+    def run_ffc_normalization(self):
+        r"""
+        Starts the Flat-Field Correction (FFC) normalization.
+
+        See FLIR document 110-0144-03 4.5.16 for more details.
+
+        .. versionadded:: 2.0.6$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        self.ipcon.send_request(self, BrickletThermalImaging.FUNCTION_RUN_FFC_NORMALIZATION, (), '', 0, '')
 
     def get_spitfp_error_count(self):
         r"""

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2022-12-22.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -16,7 +16,10 @@ from collections import namedtuple
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetState = namedtuple('State', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type'])
@@ -80,6 +83,7 @@ class BrickletEVSEV2(Device):
     FUNCTION_GET_BUTTON_PRESS_BOOT_TIME = 33
     FUNCTION_SET_BOOST_MODE = 34
     FUNCTION_GET_BOOST_MODE = 35
+    FUNCTION_TRIGGER_DC_FAULT_TEST = 36
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -153,6 +157,23 @@ class BrickletEVSEV2(Device):
     ENERGY_METER_TYPE_SDM72 = 1
     ENERGY_METER_TYPE_SDM630 = 2
     ENERGY_METER_TYPE_SDM72V2 = 3
+    INPUT_UNCONFIGURED = 0
+    INPUT_ACTIVE_LOW_MAX_0A = 1
+    INPUT_ACTIVE_LOW_MAX_6A = 2
+    INPUT_ACTIVE_LOW_MAX_8A = 3
+    INPUT_ACTIVE_LOW_MAX_10A = 4
+    INPUT_ACTIVE_LOW_MAX_13A = 5
+    INPUT_ACTIVE_LOW_MAX_16A = 6
+    INPUT_ACTIVE_LOW_MAX_20A = 7
+    INPUT_ACTIVE_LOW_MAX_25A = 8
+    INPUT_ACTIVE_HIGH_MAX_0A = 9
+    INPUT_ACTIVE_HIGH_MAX_6A = 10
+    INPUT_ACTIVE_HIGH_MAX_8A = 11
+    INPUT_ACTIVE_HIGH_MAX_10A = 12
+    INPUT_ACTIVE_HIGH_MAX_13A = 13
+    INPUT_ACTIVE_HIGH_MAX_16A = 14
+    INPUT_ACTIVE_HIGH_MAX_20A = 15
+    INPUT_ACTIVE_HIGH_MAX_25A = 16
     BOOTLOADER_MODE_BOOTLOADER = 0
     BOOTLOADER_MODE_FIRMWARE = 1
     BOOTLOADER_MODE_BOOTLOADER_WAIT_FOR_REBOOT = 2
@@ -213,6 +234,7 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BUTTON_PRESS_BOOT_TIME] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_TRIGGER_DC_FAULT_TEST] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -566,6 +588,16 @@ class BrickletEVSEV2(Device):
         self.check_validity()
 
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_BOOST_MODE, (), '', 9, '!')
+
+    def trigger_dc_fault_test(self, password):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        password = int(password)
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_TRIGGER_DC_FAULT_TEST, (password,), 'I', 9, '!')
 
     def get_spitfp_error_count(self):
         r"""

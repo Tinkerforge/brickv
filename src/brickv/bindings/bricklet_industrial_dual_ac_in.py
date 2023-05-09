@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2023-02-08.      #
+# This file was automatically generated on 2023-05-09.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -9,12 +9,17 @@
 # to the generators git repository on tinkerforge.com       #
 #############################################################
 
+#### __DEVICE_IS_NOT_RELEASED__ ####
+
 from collections import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 except (ValueError, ImportError):
-    from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    try:
+        from ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
+    except (ValueError, ImportError):
+        from tinkerforge.ip_connection import Device, IPConnection, Error, create_char, create_char_list, create_string, create_chunk_data
 
 GetValueCallbackConfiguration = namedtuple('ValueCallbackConfiguration', ['period', 'value_has_to_change'])
 GetAllValueCallbackConfiguration = namedtuple('AllValueCallbackConfiguration', ['period', 'value_has_to_change'])
@@ -112,7 +117,7 @@ class BrickletIndustrialDualACIn(Device):
 
     def get_value(self):
         r"""
-        Returns the input value as bools, *true* refers to "AC voltage detected" and *false* refers to no AC "votlage detected".
+        Returns the input values as bools, *true* refers to "AC voltage detected" and *false* refers to no AC "voltage detected".
         """
         self.check_validity()
 
