@@ -52,3 +52,9 @@ class ESP32Ethernet(PluginBase, Ui_ESP32Ethernet):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickESP32Ethernet.DEVICE_IDENTIFIER
+
+    def get_health_metric_names(self):
+        return [] # FIXME
+
+    def get_health_metric_values(self):
+        return {} # FIXME
