@@ -35,7 +35,6 @@ import struct
 import json
 import html
 from threading import Thread
-from pkg_resources import parse_version
 
 from PyQt5.QtCore import Qt, pyqtSignal, QStandardPaths
 from PyQt5.QtGui import QColor, QStandardItemModel, QStandardItem, QBrush, QFontMetrics
@@ -50,7 +49,7 @@ from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
 from brickv.utils import get_home_path, get_open_file_name, \
-                         get_modeless_dialog_flags
+                         get_modeless_dialog_flags, parse_version
 from brickv.esp_flash import ESPFlash, FatalError
 from brickv.infos import BrickREDInfo, DeviceInfo, inventory
 from brickv.firmware_fetch import ERROR_DOWNLOAD

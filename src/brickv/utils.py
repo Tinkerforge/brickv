@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import re
 import os
 import sys
 
@@ -125,3 +126,14 @@ def draw_rect(painter, x, y, width, height, thickness, color):
     painter.fillRect(x, y, thickness, height, color) # left
     painter.fillRect(x, y + height - thickness, width, thickness, color) # bottom
     painter.fillRect(x + width - thickness, y, thickness, height, color) # right
+
+def parse_version(v):
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:-(\d+))?", v)
+    if m is None:
+        raise Exception("Failed to parse {}".format(v))
+
+    major, minor, patch, package = m.groups()
+    if package is None:
+        package = 0
+
+    return (major, minor, patch, package)

@@ -22,7 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from pkg_resources import parse_version
 import json
 import queue
 import urllib.request
@@ -38,6 +37,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_red_update_tinkerforge_software import Ui_REDUpdateTinkerforgeSoftware
 from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.urlopen import urlopen
+from brickv.utils import parse_version
 
 class REDUpdateTinkerforgeSoftwareDialog(QDialog, Ui_REDUpdateTinkerforgeSoftware):
     # States.
