@@ -203,7 +203,12 @@ class BuildPkgUtils:
 
                     f.write(path + '\n')
 
-        system(['dpkg-buildpackage', '-us', '-uc'], cwd=self.build_data_dest_path)
+        dpkg_args = ['dpkg-buildpackage', '-us', '-uc']
+
+        if '--dpkg-no-check-builddeps' in sys.argv:
+            dpkg_args.append('-d')
+
+        system(dpkg_args, cwd=self.build_data_dest_path)
 
         if os.path.exists('/usr/bin/lintian'):
             system(['lintian', '--verbose', '--pedantic','--no-tag-display-limit', '--suppress-tags', 'changelog-file-missing-in-native-package,no-copyright-file,binary-without-manpage', os.path.join(self.dist_path, '{}_{}_all.deb'.format(self.executable_name, self.version))])
