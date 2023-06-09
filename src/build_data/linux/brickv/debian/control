@@ -2,7 +2,7 @@ Source: tinkerforge-brickv
 Section: electronics
 Priority: optional
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
-Build-Depends: debhelper-compat (= 10)
+Build-Depends: debhelper (>= 10)
 Standards-Version: 4.1.3
 Homepage: https://www.tinkerforge.com/
 
