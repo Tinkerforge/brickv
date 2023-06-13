@@ -87,7 +87,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.async_thread = async_start_thread(self)
 
-        title = 'Brick Viewer ' + config.BRICKV_FULL_VERSION
+        self.title = 'Brick Viewer ' + config.BRICKV_FULL_VERSION
 
         # dev-mode is new in Python 3.7, but we only use it for internal purposes
         # so don't raise the minimum Python version just for this, but instead just
@@ -95,9 +95,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         has_dev_mode = hasattr(sys.flags, 'dev_mode')
 
         if has_dev_mode and sys.flags.dev_mode:
-            title += ' [Dev Mode]'
+            self.title += ' [Dev Mode]'
 
-        self.setWindowTitle(title)
+        self.setWindowTitle(self.title)
 
         self.btn_select = QPushButton('Select')
         self.menu_select = QMenu()
@@ -1038,6 +1038,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_tree_view()
 
     def cb_connected(self, connect_reason):
+        self.setWindowTitle("{} @ {}:{}".format(self.title, self.pending_host_info.host, self.pending_host_info.port))
+
         self.update_ui_state()
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
@@ -1091,6 +1093,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.update_ui_state()
 
     def cb_disconnected(self, disconnect_reason):
+        self.setWindowTitle(self.title)
+
         self.hide_status('mainwindow_hotplug')
 
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
