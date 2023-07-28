@@ -351,9 +351,9 @@ class CSVWriter:
 
         # newline problem solved + import sys
         if sys.version_info >= (3, 0, 0):
-            self._raw_file = open(self._file_path, 'a', newline='')  # FIXME append or write?!
+            self._raw_file = open(self._file_path, 'a', newline='', encoding='utf-8')  # FIXME append or write?!
         else:
-            self._raw_file = open(self._file_path, 'ab')
+            self._raw_file = open(self._file_path, 'ab', encoding='utf-8')
 
         self._csv_file = csv.writer(self._raw_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
 

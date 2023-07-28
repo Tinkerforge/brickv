@@ -38,7 +38,7 @@ def load_and_validate_config(filename):
     EventLogger.info('Loading config from file: {0}'.format(filename))
 
     try:
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             s = f.read()
 
         config = json.loads(s)
@@ -59,7 +59,7 @@ def save_config(config, filename):
     try:
         s = json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2)
 
-        with open(filename, 'w') as f:
+        with open(filename, 'w', encoding='utf-8') as f:
             f.write(s)
     except Exception as e:
         EventLogger.critical('Could not write config file as JSON: {0}'.format(e))
