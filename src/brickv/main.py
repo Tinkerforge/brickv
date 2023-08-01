@@ -393,7 +393,7 @@ def main(dev_mode=None):
     args = stdio_wrapper(qapplication_argv, lambda: parser.parse_args(sys.argv[1:]))
 
     if has_dev_mode and not args.no_dev_mode and dev_mode and not sys.flags.dev_mode:
-        sys.exit(subprocess.run([sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv).returncode)
+        os.execv(sys.executable, [sys.executable, '-X', 'dev', '-W', 'error', '-B', '-X', 'pycache_prefix=__dev_mode_pycache__'] + sys.argv)
 
     # Catch all uncaught exceptions and show an error message for them.
     # PyQt5 does not silence exceptions in slots (as did PyQt4), so there
