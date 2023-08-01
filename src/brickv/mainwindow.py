@@ -298,7 +298,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             event.ignore()
             return
 
-        self.exit_brickv()
+        config.set_host_infos(self.host_infos)
+        self.do_disconnect()
         event.accept()
         async_stop_thread()
 
@@ -321,13 +322,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QApplication.quit()
 
     def exit_brickv(self, signl=None, frme=None):
-        config.set_host_infos(self.host_infos)
-
-        self.do_disconnect()
-
         if signl != None and frme != None:
             print("Received SIGINT or SIGTERM, shutting down.")
-            sys.exit()
+            self.close()
 
     def exit_logger(self):
         exitBrickv = True
