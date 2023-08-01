@@ -26,7 +26,7 @@ import os
 import shutil
 import sys
 import subprocess
-import plistlib
+import json
 import time
 import pprint
 
@@ -246,31 +246,40 @@ class PyinstallerUtils:
 
             print('notarize app')
             system(['ditto', '-c', '-k', '--keepParent', app_path, app_path + '.zip'])
-            output = subprocess.check_output(['xcrun', 'altool', '--notarize-app', '--primary-bundle-id', 'com.tinkerforge.' + self.underscore_name, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml', '--file', app_path + '.zip'])
-            plist = plistlib.loads(output)
+            output = subprocess.check_output(['xcrun', 'notarytool', 'submit', app_path + '.zip', '--output-format', 'json', '--keychain-profile', 'notary-tinkerforge'])
+            notarization_submit = json.loads(output)
 
             try:
-                request_uuid = plist['notarization-upload']['RequestUUID']
+                request_id = notarization_submit['id']
             except:
                 print('error: notarization output does not contain expected fields')
                 pprint.pprint(output)
-                pprint.pprint(plist)
+                pprint.pprint(notarization_submit)
                 sys.exit(1)
 
-            print('notarize request uuid', request_uuid)
+            print('notarize request id', request_id)
             notarization_info = None
+            notarization_status = None
 
             while True:
                 try:
-                    output = subprocess.check_output(['xcrun', 'altool', '--notarization-info', request_uuid, '--username', 'olaf@tinkerforge.com', '--password', '@keychain:Notarization', '--output-format', 'xml'])
+                    output = subprocess.check_output(['xcrun', 'notarytool', 'info', request_id, '--output-format', 'json', '--keychain-profile', 'notary-tinkerforge'])
                 except subprocess.CalledProcessError as e:
                     print('warning: notarize query failed, retrying', e)
                     time.sleep(1)
                     continue
 
-                notarization_info = plistlib.loads(output)['notarization-info']
+                notarization_info = json.loads(output)
 
-                if notarization_info['Status'] != 'in progress':
+                try:
+                    notarization_status = notarization_info['status']
+                except:
+                    print('error: notarization output does not contain expected fields')
+                    pprint.pprint(output)
+                    pprint.pprint(notarization_info)
+                    sys.exit(1)
+
+                if notarization_status != 'In Progress':
                     break
 
                 print('waiting for notarization to complete ...')
@@ -278,7 +287,7 @@ class PyinstallerUtils:
 
             print('notarization info', notarization_info)
 
-            if notarization_info['Status'] != 'success':
+            if notarization_status != 'Accepted':
                 print('error: notarization failed')
                 sys.exit(1)
 
