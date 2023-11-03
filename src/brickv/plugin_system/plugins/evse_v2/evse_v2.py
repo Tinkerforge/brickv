@@ -62,6 +62,8 @@ GPIO = ['Low', 'High']
 CONTACTOR = ['Inactive', 'Active']
 LOCK_SWITCH = ['Not Available', 'Available']
 CONTROL_PILOT = ['Disconnected', 'Connected', 'Automatic']
+DC_FAULT_STATE = ['Normal Condition', '6mA Fault', 'System Fault', 'Unkown Fault', 'Calibration Fault']
+DC_FAULT_TYPE = ['X904 (old)', 'X804 (new)']
 
 class DataStorageTable(QTableWidget):
     def __init__(self, page, data, *args):
@@ -158,9 +160,9 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.button_control_pilot_connect.clicked.connect(lambda: self.evse.set_control_pilot_configuration(1))
         self.button_control_pilot_automatic.clicked.connect(lambda: self.evse.set_control_pilot_configuration(2))
 
-        self.spin_slot_current = [self.spin_slot_current_0, self.spin_slot_current_1, self.spin_slot_current_2, self.spin_slot_current_3, self.spin_slot_current_4, self.spin_slot_current_5, self.spin_slot_current_6, self.spin_slot_current_7, self.spin_slot_current_8, self.spin_slot_current_9, self.spin_slot_current_10]
-        self.check_slot_active = [self.check_slot_active_0, self.check_slot_active_1, self.check_slot_active_2, self.check_slot_active_3, self.check_slot_active_4, self.check_slot_active_5, self.check_slot_active_6, self.check_slot_active_7, self.check_slot_active_8, self.check_slot_active_9, self.check_slot_active_10]
-        self.check_slot_clear  = [self.check_slot_clear_0,  self.check_slot_clear_1,  self.check_slot_clear_2,  self.check_slot_clear_3,  self.check_slot_clear_4,  self.check_slot_clear_5,  self.check_slot_clear_6,  self.check_slot_clear_7,  self.check_slot_clear_8,  self.check_slot_clear_9,  self.check_slot_clear_10]
+        self.spin_slot_current = [self.spin_slot_current_0, self.spin_slot_current_1, self.spin_slot_current_2, self.spin_slot_current_3, self.spin_slot_current_4, self.spin_slot_current_5, self.spin_slot_current_6, self.spin_slot_current_7, self.spin_slot_current_8, self.spin_slot_current_9, self.spin_slot_current_10, self.spin_slot_current_11, self.spin_slot_current_12, self.spin_slot_current_13, self.spin_slot_current_14, self.spin_slot_current_15, self.spin_slot_current_16, self.spin_slot_current_17, self.spin_slot_current_18, self.spin_slot_current_19]
+        self.check_slot_active = [self.check_slot_active_0, self.check_slot_active_1, self.check_slot_active_2, self.check_slot_active_3, self.check_slot_active_4, self.check_slot_active_5, self.check_slot_active_6, self.check_slot_active_7, self.check_slot_active_8, self.check_slot_active_9, self.check_slot_active_10, self.check_slot_active_11, self.check_slot_active_12, self.check_slot_active_13, self.check_slot_active_14, self.check_slot_active_15, self.check_slot_active_16, self.check_slot_active_17, self.check_slot_active_18, self.check_slot_active_19]
+        self.check_slot_clear  = [self.check_slot_clear_0,  self.check_slot_clear_1,  self.check_slot_clear_2,  self.check_slot_clear_3,  self.check_slot_clear_4,  self.check_slot_clear_5,  self.check_slot_clear_6,  self.check_slot_clear_7,  self.check_slot_clear_8,  self.check_slot_clear_9,  self.check_slot_clear_10,  self.check_slot_clear_11,  self.check_slot_clear_12,  self.check_slot_clear_13,  self.check_slot_clear_14,  self.check_slot_clear_15,  self.check_slot_clear_16,  self.check_slot_clear_17,  self.check_slot_clear_18,  self.check_slot_clear_19]
 
         def get_slot_changed_lambda(i):
             return lambda: self.slot_changed(i)
@@ -309,10 +311,10 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
             self.check_slot_clear[i].blockSignals(False)
 
     def state_cb(self, state):
-        self.label_dc_fault_current_state.setText(str(state.dc_fault_current_state))
+        self.label_dc_fault_current_state.setText('State: {0}, Pin x6: {1}, Pin x30: {2}, Pin err: {3}, Sensor Type {4}'.format(DC_FAULT_STATE[state.dc_fault_current_state & 0b111], (state.dc_fault_current_state >> 3) & 1, (state.dc_fault_current_state >> 4) & 1, (state.dc_fault_current_state >> 5) & 1, (state.dc_fault_current_state >> 6) & 1))
         self.label_iec61851_state.setText(IEC61851_STATE[state.iec61851_state])
         self.label_charger_state.setText(CHARGER_STATE[state.charger_state])
-        self.label_contactor_check.setText('Input: {0}, Output: {1}, Error: {2}'.format(CONTACTOR_STATE[state.contactor_state in (1, 3)], CONTACTOR_STATE[state.contactor_state in (2, 3)], state.contactor_error))
+        self.label_contactor_check.setText('State: {0}, PE Error: {1}, Error: {2}'.format(str(bin(state.contactor_state)), state.contactor_error & 1, state.contactor_error >> 1))
         self.label_lock_state.setText(LOCK_STATE[state.lock_state])
 
     def low_level_state_cb(self, state):

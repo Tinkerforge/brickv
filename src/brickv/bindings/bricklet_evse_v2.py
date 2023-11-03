@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2023-05-09.      #
+# This file was automatically generated on 2023-10-26.      #
 #                                                           #
 # Python Bindings Version 2.1.30                            #
 #                                                           #
@@ -23,17 +23,18 @@ except (ValueError, ImportError):
 
 GetState = namedtuple('State', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state'])
 GetHardwareConfiguration = namedtuple('HardwareConfiguration', ['jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type'])
-GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'charging_time', 'time_since_state_change', 'uptime'])
+GetLowLevelState = namedtuple('LowLevelState', ['led_state', 'cp_pwm_duty_cycle', 'adc_values', 'voltages', 'resistances', 'gpio', 'charging_time', 'time_since_state_change', 'time_since_dc_fault_check', 'uptime'])
 GetChargingSlot = namedtuple('ChargingSlot', ['max_current', 'active', 'clear_on_disconnect'])
 GetAllChargingSlots = namedtuple('AllChargingSlots', ['max_current', 'active_and_clear_on_disconnect'])
 GetChargingSlotDefault = namedtuple('ChargingSlotDefault', ['max_current', 'active', 'clear_on_disconnect'])
 GetEnergyMeterValues = namedtuple('EnergyMeterValues', ['power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected'])
 GetAllEnergyMeterValuesLowLevel = namedtuple('AllEnergyMeterValuesLowLevel', ['values_chunk_offset', 'values_chunk_data'])
 GetGPIOConfiguration = namedtuple('GPIOConfiguration', ['shutdown_input_configuration', 'input_configuration', 'output_configuration'])
-GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration'])
+GetIndicatorLED = namedtuple('IndicatorLED', ['indication', 'duration', 'color_h', 'color_s', 'color_v'])
 GetButtonState = namedtuple('ButtonState', ['button_press_time', 'button_release_time', 'button_pressed'])
 GetAllData1 = namedtuple('AllData1', ['iec61851_state', 'charger_state', 'contactor_state', 'contactor_error', 'allowed_charging_current', 'error_state', 'lock_state', 'dc_fault_current_state', 'jumper_configuration', 'has_lock_switch', 'evse_version', 'energy_meter_type', 'power', 'energy_relative', 'energy_absolute', 'phases_active', 'phases_connected', 'error_count'])
 GetAllData2 = namedtuple('AllData2', ['shutdown_input_configuration', 'input_configuration', 'output_configuration', 'indication', 'duration', 'button_configuration', 'button_press_time', 'button_release_time', 'button_pressed', 'ev_wakeup_enabled', 'control_pilot_disconnect', 'boost_mode_enabled'])
+GetPhaseControl = namedtuple('PhaseControl', ['phases_current', 'phases_requested', 'phases_status'])
 GetSPITFPErrorCount = namedtuple('SPITFPErrorCount', ['error_count_ack_checksum', 'error_count_message_checksum', 'error_count_frame', 'error_count_overflow'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -84,6 +85,10 @@ class BrickletEVSEV2(Device):
     FUNCTION_SET_BOOST_MODE = 34
     FUNCTION_GET_BOOST_MODE = 35
     FUNCTION_TRIGGER_DC_FAULT_TEST = 36
+    FUNCTION_SET_GP_OUTPUT = 37
+    FUNCTION_GET_TEMPERATURE = 38
+    FUNCTION_SET_PHASE_CONTROL = 39
+    FUNCTION_GET_PHASE_CONTROL = 40
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -116,6 +121,10 @@ class BrickletEVSEV2(Device):
     CONTACTOR_STATE_AC1_LIVE_AC2_NLIVE = 1
     CONTACTOR_STATE_AC1_NLIVE_AC2_LIVE = 2
     CONTACTOR_STATE_AC1_LIVE_AC2_LIVE = 3
+    CONTACTOR_STATE_CONTACTOR1_OFF_CONTACTOR2_OFF = 4
+    CONTACTOR_STATE_CONTACTOR1_ON_CONTACTOR2_OFF = 5
+    CONTACTOR_STATE_CONTACTOR1_OFF_CONTACTOR2_ON = 6
+    CONTACTOR_STATE_CONTACTOR1_ON_CONTACTOR2_ON = 7
     LOCK_STATE_INIT = 0
     LOCK_STATE_OPEN = 1
     LOCK_STATE_CLOSING = 2
@@ -144,8 +153,8 @@ class BrickletEVSEV2(Device):
     SHUTDOWN_INPUT_IGNORED = 0
     SHUTDOWN_INPUT_SHUTDOWN_ON_OPEN = 1
     SHUTDOWN_INPUT_SHUTDOWN_ON_CLOSE = 2
-    OUTPUT_LOW = 0
-    OUTPUT_HIGH = 1
+    OUTPUT_CONNECTED_TO_GROUND = 0
+    OUTPUT_HIGH_IMPEDANCE = 1
     BUTTON_CONFIGURATION_DEACTIVATED = 0
     BUTTON_CONFIGURATION_START_CHARGING = 1
     BUTTON_CONFIGURATION_STOP_CHARGING = 2
@@ -157,6 +166,9 @@ class BrickletEVSEV2(Device):
     ENERGY_METER_TYPE_SDM72 = 1
     ENERGY_METER_TYPE_SDM630 = 2
     ENERGY_METER_TYPE_SDM72V2 = 3
+    ENERGY_METER_TYPE_SDM72CTM = 4
+    ENERGY_METER_TYPE_SDM630MCTV2 = 5
+    ENERGY_METER_TYPE_DSZ15DZMOD = 6
     INPUT_UNCONFIGURED = 0
     INPUT_ACTIVE_LOW_MAX_0A = 1
     INPUT_ACTIVE_LOW_MAX_6A = 2
@@ -235,6 +247,10 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOST_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_TRIGGER_DC_FAULT_TEST] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_GP_OUTPUT] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_TEMPERATURE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletEVSEV2.FUNCTION_SET_PHASE_CONTROL] = BrickletEVSEV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletEVSEV2.FUNCTION_GET_PHASE_CONTROL] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -273,7 +289,7 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 62, 'B H 7H 7h 2I 24! I I I'))
+        return GetLowLevelState(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_LOW_LEVEL_STATE, (), '', 66, 'B H 7H 7h 2I 24! I I I I'))
 
     def set_charging_slot(self, slot, max_current, active, clear_on_disconnect):
         r"""
@@ -460,9 +476,9 @@ class BrickletEVSEV2(Device):
         """
         self.check_validity()
 
-        return GetIndicatorLED(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_INDICATOR_LED, (), '', 12, 'h H'))
+        return GetIndicatorLED(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_INDICATOR_LED, (), '', 16, 'h H H B B'))
 
-    def set_indicator_led(self, indication, duration):
+    def set_indicator_led(self, indication, duration, color_h, color_s, color_v):
         r"""
         TODO
         """
@@ -470,8 +486,11 @@ class BrickletEVSEV2(Device):
 
         indication = int(indication)
         duration = int(duration)
+        color_h = int(color_h)
+        color_s = int(color_s)
+        color_v = int(color_v)
 
-        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_INDICATOR_LED, (indication, duration), 'h H', 9, 'B')
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_INDICATOR_LED, (indication, duration, color_h, color_s, color_v), 'h H H B B', 9, 'B')
 
     def set_button_configuration(self, button_configuration):
         r"""
@@ -598,6 +617,42 @@ class BrickletEVSEV2(Device):
         password = int(password)
 
         return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_TRIGGER_DC_FAULT_TEST, (password,), 'I', 9, '!')
+
+    def set_gp_output(self, gp_output):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        gp_output = int(gp_output)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_GP_OUTPUT, (gp_output,), 'B', 0, '')
+
+    def get_temperature(self):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_TEMPERATURE, (), '', 10, 'H')
+
+    def set_phase_control(self, phases):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        phases = int(phases)
+
+        self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_SET_PHASE_CONTROL, (phases,), 'B', 0, '')
+
+    def get_phase_control(self):
+        r"""
+        TODO
+        """
+        self.check_validity()
+
+        return GetPhaseControl(*self.ipcon.send_request(self, BrickletEVSEV2.FUNCTION_GET_PHASE_CONTROL, (), '', 11, 'B B B'))
 
     def get_spitfp_error_count(self):
         r"""
