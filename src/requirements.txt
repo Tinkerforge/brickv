@@ -1,4 +1,4 @@
-PyInstaller == 4.7; sys_platform == 'darwin'
+PyInstaller == 5.13.1; sys_platform == 'darwin'
 PyInstaller >= 3.5; sys_platform != 'darwin'
 PyQt5 == 5.15.6; sys_platform == 'darwin' or sys_platform == 'win32'
 PyQt5 == 5.11.3; sys_platform != 'darwin' and sys_platform != 'win32'
