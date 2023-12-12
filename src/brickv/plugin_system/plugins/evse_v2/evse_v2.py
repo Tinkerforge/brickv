@@ -293,7 +293,7 @@ class EVSEV2(COMCUPluginBase, Ui_EVSEV2):
         self.label_control_pilot.setText('Disconnected: {0}'.format(disconnected))
 
     def energy_meter_values_cb(self, emv):
-        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Relative: {1:.2f}kWh, Energy Absolute: {2:.2f}kWh\nActive Phases: {3}, Connected Phases: {4}'.format(emv.power, emv.energy_relative, emv.energy_absolute, str(emv.phases_active), str(emv.phases_connected)))
+        self.label_energy_meter_values.setText('Power: {0:.2f}W, Current: {1:.2f}A, {2:.2f}A, {3:.2f}A\nActive Phases: {4}, Connected Phases: {5}'.format(emv.power, *emv.current, str(emv.phases_active), str(emv.phases_connected)))
 
     def energy_meter_errors_cb(self, eme):
         self.label_energy_meter_errors.setText('Error Counts: {0}'.format(str(eme)))
