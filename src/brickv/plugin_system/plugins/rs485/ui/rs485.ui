@@ -578,42 +578,42 @@
          </property>
          <item>
           <property name="text">
-           <string>Read Coils</string>
+           <string>Read Coils (Function Code 1)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Read Holding Registers</string>
+           <string>Read Holding Registers (Function Code 3)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Write Single Coil</string>
+           <string>Write Single Coil (Function Code 5)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Write Single Register</string>
+           <string>Write Single Register (Function Code 6)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Write Multiple Coils</string>
+           <string>Write Multiple Coils (Function Code 15)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Write Multiple Registers</string>
+           <string>Write Multiple Registers (Function Code 16)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Read Discrete Inputs</string>
+           <string>Read Discrete Inputs (Function Code 2)</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Read Input Registers</string>
+           <string>Read Input Registers (Function Code 4)</string>
           </property>
          </item>
         </widget>
