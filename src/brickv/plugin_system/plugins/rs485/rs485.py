@@ -425,7 +425,7 @@ class RS485(COMCUPluginBase, Ui_RS485):
         }
 
         request_fn_idx = self.modbus_master_function_combobox.currentIndex()
-        request_fn_name = re.sub(" \(Function Code \d*\)", "", self.modbus_master_function_combobox.currentText())
+        request_fn_name = re.sub(r" \(Function Code \d*\)", "", self.modbus_master_function_combobox.currentText())
         request_fn = request_fn_dict[request_fn_idx]
 
         slave_address = self.modbus_master_slave_address_spinbox.value()
