@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2024-02-20.      #
+# This file was automatically generated on 2024-02-27.      #
 #                                                           #
 # Python Bindings Version 2.1.31                            #
 #                                                           #
@@ -47,6 +47,7 @@ class BrickletEVSEV2(Device):
     DEVICE_DISPLAY_NAME = 'EVSE Bricklet 2.0'
     DEVICE_URL_PART = 'evse_v2' # internal
 
+    CALLBACK_ENERGY_METER_VALUES = 41
 
 
     FUNCTION_GET_STATE = 1
@@ -263,6 +264,7 @@ class BrickletEVSEV2(Device):
         self.response_expected[BrickletEVSEV2.FUNCTION_READ_UID] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletEVSEV2.FUNCTION_GET_IDENTITY] = BrickletEVSEV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletEVSEV2.CALLBACK_ENERGY_METER_VALUES] = (26, 'f 3f 3! 3!')
 
         ipcon.add_device(self)
 
@@ -846,5 +848,14 @@ class BrickletEVSEV2(Device):
                 raise Error(Error.STREAM_OUT_OF_SYNC, 'Values stream is out-of-sync')
 
         return values_data[:values_length]
+
+    def register_callback(self, callback_id, function):
+        r"""
+        Registers the given *function* with the given *callback_id*.
+        """
+        if function is None:
+            self.registered_callbacks.pop(callback_id, None)
+        else:
+            self.registered_callbacks[callback_id] = function
 
 EVSEV2 = BrickletEVSEV2 # for backward compatibility
