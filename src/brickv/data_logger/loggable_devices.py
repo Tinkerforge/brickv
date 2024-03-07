@@ -317,6 +317,11 @@ if 'merged_data_logger_modules' not in globals():
     except ImportError:
         BrickletIndustrialDual020mAV2_found = False
     try:
+        from brickv.bindings.bricklet_industrial_dual_ac_in import BrickletIndustrialDualACIn
+        BrickletIndustrialDualACIn_found = True
+    except ImportError:
+        BrickletIndustrialDualACIn_found = False
+    try:
         from brickv.bindings.bricklet_industrial_dual_ac_relay import BrickletIndustrialDualACRelay
         BrickletIndustrialDualACRelay_found = True
     except ImportError:
@@ -936,6 +941,11 @@ else:
         BrickletIndustrialDual020mAV2_found = True
     except ImportError:
         BrickletIndustrialDual020mAV2_found = False
+    try:
+        from tinkerforge.bricklet_industrial_dual_ac_in import BrickletIndustrialDualACIn
+        BrickletIndustrialDualACIn_found = True
+    except ImportError:
+        BrickletIndustrialDualACIn_found = False
     try:
         from tinkerforge.bricklet_industrial_dual_ac_relay import BrickletIndustrialDualACRelay
         BrickletIndustrialDualACRelay_found = True
@@ -3353,6 +3363,21 @@ if BrickletIndustrialDual020mAV2_found:
                 'default': '1x'
             }
         ]
+    }
+if BrickletIndustrialDualACIn_found:
+    device_specs[BrickletIndustrialDualACIn.DEVICE_DISPLAY_NAME] = {
+        'class': BrickletIndustrialDualACIn,
+        'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': ['Channel0', 'Channel1'],
+                'unit': [None, None],
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
     }
 if BrickletIndustrialDualACRelay_found:
     device_specs[BrickletIndustrialDualACRelay.DEVICE_DISPLAY_NAME] = {

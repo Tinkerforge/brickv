@@ -78,3 +78,6 @@
 
 2022-05-11: 2.1.9 (7f8c208)
 - Add support for GPS Bricklet 3.0
+
+2024-03-07: 2.1.10 (<unknown>)
+- Add support for Industrial Dual AC In Bricklet

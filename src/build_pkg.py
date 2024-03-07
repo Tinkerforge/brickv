@@ -189,7 +189,7 @@ def build_linux_flash_pkg():
 
     utils.build_debian_pkg()
 
-BRICK_LOGGER_VERSION = '2.1.9'
+BRICK_LOGGER_VERSION = '2.1.10'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')
