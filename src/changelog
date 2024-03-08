@@ -676,7 +676,7 @@
 2023-02-06: 2.4.25 (0944230)
 - Fix accidental dependency on newer PyQt5 version on Linux
 
-2024-03-07: 2.4.26 (<unknown>)
+2024-03-08: 2.4.26 (<unknown>)
 - Add support for Industrial Dual AC In Bricklet
 - Add Data Logger support for Industrial Dual AC In Bricklet
 - Only use Python dev-mode if available
