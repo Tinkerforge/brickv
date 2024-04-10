@@ -1273,7 +1273,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_port.addItem(port.upper(), (port, None))
 
         # Then we fill the non-standard ports (e.g. RPi or Isolator Bricklet)
-        for port, bricklet_info in brick_info.connections_items():
+        for port, bricklet_info in sorted(brick_info.connections_items()):
             if port in brick_info.bricklet_ports:
                 continue
 
