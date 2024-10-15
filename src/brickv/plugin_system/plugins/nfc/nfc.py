@@ -398,6 +398,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
             page_range = '{0}-{1}'.format(page, page+1)
         elif tt == self.nfc.TAG_TYPE_TYPE2:
             page_range = '{0}-{1}'.format(page, page+3)
+        elif tt == self.nfc.TAG_TYPE_TYPE5:
+            page_range = '{0}-{1}'.format(page, page+3)
 
         return page_range
 
@@ -498,6 +500,18 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.frame_tag_type4.show()
             self.frame_write_type4.show()
             self.frame_reader_type4_read_length.show()
+        elif index == self.nfc.TAG_TYPE_TYPE5:
+            self.frame_read.show()
+            self.frame_write.show()
+            self.frame_tag_type4.hide()
+            self.frame_write_type4.hide()
+            self.write_page_label1.show()
+            self.frame_reader_type4_read_length.hide()
+
+            for index, sp in enumerate(self.key_write_spinbox):
+                if index > 3:
+                    break
+                sp.show()
 
     def combo_p2p_operation_changed(self, index):
         if index == 0:
@@ -794,7 +808,7 @@ class NFC(COMCUPluginBase, Ui_NFC):
             self.group_box_reader_read_page.setEnabled(False)
             self.group_box_reader_write_page.setEnabled(False)
 
-            if tag_id_type > self.nfc.TAG_TYPE_TYPE4:
+            if tag_id_type > self.nfc.TAG_TYPE_TYPE5:
                 tag = 'Found tag with unsupported ID'
             else:
                 if self.combo_reader_tag_type.currentIndex() == tag_id_type:
@@ -977,6 +991,22 @@ class NFC(COMCUPluginBase, Ui_NFC):
 
                 if self.current_mode == self.nfc.MODE_READER:
                     self.nfc.reader_request_tag_id()
+            elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE5:
+                s = '''<b>Page {page_index}:</b>
+{byte_0}
+{byte_1}
+{byte_2}
+{byte_3}'''.format(page_index=page_index,
+                   byte_0=hex(page[0]),
+                   byte_1=hex(page[1]),
+                   byte_2=hex(page[2]),
+                   byte_3=hex(page[3]))
+
+                for index, sp in enumerate(self.key_write_spinbox):
+                    if index > 3:
+                        break
+
+                    sp.setValue(page[index])
 
             self.textedit_read_page.setText(s)
         elif state == self.nfc.READER_STATE_REQUEST_PAGE_ERROR:
@@ -1060,6 +1090,8 @@ class NFC(COMCUPluginBase, Ui_NFC):
                 elif self.combo_reader_type4_type.currentIndex() == 1:
                     self.nfc.reader_request_page(self.nfc.READER_REQUEST_TYPE4_NDEF,
                                                  self.spinbox_reader_type4_length.value())
+            elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE5:
+                self.nfc.reader_request_page(page, 4)
 
     def write_page_clicked(self):
         del self.write_page_clicked_data[:]
@@ -1124,6 +1156,13 @@ class NFC(COMCUPluginBase, Ui_NFC):
             elif self.combo_reader_type4_type.currentIndex() == 1:
                 self.nfc.reader_write_page(self.nfc.READER_REQUEST_TYPE4_NDEF,
                                            self.write_page_clicked_data)
+        elif self.combo_reader_tag_type.currentIndex() == self.nfc.TAG_TYPE_TYPE5:
+            for index, sp in enumerate(self.key_write_spinbox):
+                if index > 3:
+                    break
+
+                self.write_page_clicked_data.append(sp.value())
+            self.nfc.reader_write_page(page, self.write_page_clicked_data)
 
     def simple_get_tag_id_wrapper(self):
         if not self.has_simple_mode:

@@ -911,6 +911,11 @@
                    <string>NFC Forum Type 4</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>NFC Forum Type 5 (ISO 15693)</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="0" column="1">
