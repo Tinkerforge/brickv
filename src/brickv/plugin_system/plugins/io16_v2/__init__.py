@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-IO4 2.0 Plugin
+IO16 2.0 Plugin
 Copyright (C) 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 __init__.py: package initialization

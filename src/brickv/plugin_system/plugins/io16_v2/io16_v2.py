@@ -3,7 +3,7 @@
 IO16 2.0 Plugin
 Copyright (C) 2018 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
-humidity.py: IO16 2.0 Plugin Implementation
+io16_v2.py: IO16 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
