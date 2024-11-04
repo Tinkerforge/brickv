@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2024-10-15.      #
+# This file was automatically generated on 2024-11-04.      #
 #                                                           #
 # Python Bindings Version 2.1.31                            #
 #                                                           #
@@ -321,7 +321,7 @@ class BrickletNFC(Device):
         r"""
         Writes NDEF formated data.
 
-        This function currently supports NFC Forum Type 2 and 4.
+        This function currently supports NFC Forum Type 2, 4, 5 and Mifare Classic.
 
         The general approach for writing a NDEF message is as follows:
 
@@ -346,7 +346,7 @@ class BrickletNFC(Device):
         r"""
         Reads NDEF formated data from a tag.
 
-        This function currently supports NFC Forum Type 1, 2, 3 and 4.
+        This function currently supports NFC Forum Type 1, 2, 3, 4, 5 and Mifare Classic.
 
         The general approach for reading a NDEF message is as follows:
 
@@ -414,6 +414,7 @@ class BrickletNFC(Device):
         * NFC Forum Type 2 page size: 4 byte
         * NFC Forum Type 3 page size: 16 byte
         * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
+        * NFC Forum Type 5 page size: 4 byte
 
         The general approach for writing to a tag is as follows:
 
@@ -455,6 +456,7 @@ class BrickletNFC(Device):
         * NFC Forum Type 2 page size: 4 byte
         * NFC Forum Type 3 page size: 16 byte
         * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
+        * NFC Forum Type 5 page size: 4 byte
 
         The general approach for reading a tag is as follows:
 
@@ -749,7 +751,7 @@ class BrickletNFC(Device):
 
     def cardemu_get_tag_id(self):
         r"""
-        Returns the tag ID and length as set by :func:`Set Tag ID`.
+        Returns the tag ID and length as set by :func:`Cardemu Set Tag ID`.
 
         .. versionadded:: 2.1.0$nbsp;(Plugin)
         """
@@ -942,7 +944,7 @@ class BrickletNFC(Device):
         r"""
         Writes NDEF formated data.
 
-        This function currently supports NFC Forum Type 2 and 4.
+        This function currently supports NFC Forum Type 2, 4, 5 and Mifare Classic.
 
         The general approach for writing a NDEF message is as follows:
 
@@ -1011,6 +1013,7 @@ class BrickletNFC(Device):
         * NFC Forum Type 2 page size: 4 byte
         * NFC Forum Type 3 page size: 16 byte
         * NFC Forum Type 4: No pages, page = file selection (CC or NDEF, see below)
+        * NFC Forum Type 5 page size: 4 byte
 
         The general approach for writing to a tag is as follows:
 
