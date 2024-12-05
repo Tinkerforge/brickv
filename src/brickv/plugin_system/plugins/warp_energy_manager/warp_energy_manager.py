@@ -141,16 +141,16 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
 
     def cb_state(self, state):
         self.label_contactor_check_state.setText(str(state))
-    
+
     def sd_information_cb(self, sd_info):
         self.label_sd_info.setText("\n".join("{0}: {1}".format(x, sd_info[i]) for i, x in enumerate(sd_info._fields)))
 
     def energy_meter_values_cb(self, emv):
-        self.label_energy_meter_values.setText('Power: {0:.2f}W, Energy Import: {1:.2f}Wh, Energy Export: {2:.2f}Wh'.format(emv.power, emv.energy_import, emv.energy_export))
+        self.label_energy_meter_values.setText('Power: {0:.2f}W, Current L1 {1:.2f}A, Current L2 {2:.2f}A, Current L3 {3:.2f}A'.format(emv.power, *emv.current))
 
     def energy_meter_state_cb(self, ems):
         self.label_energy_meter_state.setText('Type: {0}, Error Counts: {1}'.format(ems.energy_meter_type, str(ems.error_count)))
-    
+
     def format_sd_clicked(self):
         self.warp.format_sd(0x4223ABCD)
 
@@ -210,7 +210,7 @@ class WARPEnergyManager(COMCUPluginBase, Ui_WARPEnergyManager):
         data['total_kvarh[SDM630_PHASE_NUM]']            = values[82], values[83], values[84]
 
         table = EnergyMeterTable(data, 50, 2, self)
-        # add Qt.Window to table's flags 
+        # add Qt.Window to table's flags
         table.setWindowFlags(table.windowFlags() | Qt.Window)
         table.resize(500, 700)
         table.show()
