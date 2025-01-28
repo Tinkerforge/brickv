@@ -1525,63 +1525,92 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.popup_fail('Bricklet', 'Could not find magic number in firmware')
                 return False
 
-            if self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER) == None or \
-               not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER):
+            XMC1_PAGE_SIZE = 256
+            MAX_SKIPPED_ZERO_BYTES = 20 * 1024 # Theoretical worst-case maximum possible is ~23KiB.
+            MAX_SKIPPED_PAGES = MAX_SKIPPED_ZERO_BYTES / XMC1_PAGE_SIZE
+
+            plugin_len = len(plugin)
+
+            if plugin_len % XMC1_PAGE_SIZE != 0:
                 progress.cancel()
-                self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds')
+                self.popup_fail('Bricklet', 'Firmware size is not a multiple of the page size')
                 return False
 
-            num_packets = len(plugin) // 64
+            flash_success = False
 
-            # If the magic number is in in the last page of the
-            # flash, we write the whole thing
-            if regular_plugin_upto >= (len(plugin) - 64 * 4):
-                index_list = list(range(num_packets))
-            else:
-                # We write the 64 byte packets up to the end of the last page that has meaningful data
-                packet_up_to = ((regular_plugin_upto // 256) + 1) * 4
-                index_list = list(range(0, packet_up_to)) + [num_packets - 4, num_packets - 3, num_packets - 2, num_packets - 1]
+            for attempt in range(2):
+                if attempt == 0:
+                    attempt_str = ''
+                    allow_skipping = True
+                else:
+                    attempt_str = ' (attempt ' + str(attempt + 1) + ')'
+                    allow_skipping = False
 
-            progress.setLabelText('Writing plugin: ' + name)
-            progress.setMaximum(len(index_list))
-            progress.setValue(0)
-            progress.show()
+                if self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER) == None or \
+                not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER):
+                    progress.cancel()
+                    self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds' + attempt_str)
+                    return False
 
-            for position in index_list:
-                start = position * 64
-                end = (position + 1) * 64
 
-                try:
-                    bricklet.set_write_firmware_pointer(start)
-                    bricklet.write_firmware(plugin[start:end])
-                except:
-                    # retry block a second time to recover from Co-MCU bootloader
-                    # bug that results in lost request, especially when used in
-                    # combination with an Isolator Bricklet
+                progress.setLabelText('Writing plugin' + attempt_str + ': ' + name)
+                progress.setMaximum(plugin_len)
+                progress.setValue(0)
+                progress.show()
 
-                    try:
-                        bricklet.set_write_firmware_pointer(start)
-                        bricklet.write_firmware(plugin[start:end])
-                    except Exception as e:
-                        progress.cancel()
-                        self.popup_fail('Bricklet', 'Could not write plugin: {0}'.format(e))
-                        return False
+                skipped_pages = MAX_SKIPPED_PAGES + 1 # Force writing the first page.
 
-                progress.setValue(position)
+                position = 0
+                while position < plugin_len:
+                    # Don't allow skipping the last page.
+                    if allow_skipping and skipped_pages < MAX_SKIPPED_PAGES and plugin_len - position > XMC1_PAGE_SIZE and all(b == 0 for b in plugin[position:position+XMC1_PAGE_SIZE]):
+                        skipped_pages += 1
+                        position += XMC1_PAGE_SIZE
+                        continue
 
-            progress.setLabelText('Changing from bootloader mode to firmware mode')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
+                    skipped_pages = 0
 
-            mode_ret = self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE)
+                    for block_offset in range(0, XMC1_PAGE_SIZE, 64):
+                        block_start = position + block_offset
+                        block_end = block_start + 64
 
-            if mode_ret == None:
-                progress.cancel()
-                self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
-                return False
+                        # retry block a three times to recover from Co-MCU bootloader
+                        # bug that results in lost request, especially when used in
+                        # combination with an Isolator Bricklet
+                        last_exception = None
+                        for subpage_attempt in range(3):
+                            try:
+                                bricklet.set_write_firmware_pointer(block_start)
+                                bricklet.write_firmware(plugin[block_start:block_end])
+                                last_exception = None
+                                break
+                            except Exception as e:
+                                last_exception = e
 
-            if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
+                        if last_exception is not None:
+                            progress.cancel()
+                            self.popup_fail('Bricklet', 'Could not write plugin: {0}'.format(last_exception))
+                            return False
+
+                    position += XMC1_PAGE_SIZE
+                    progress.setValue(position)
+
+                progress.setLabelText('Changing from bootloader mode to firmware mode' + attempt_str)
+                progress.setMaximum(0)
+                progress.setValue(0)
+                progress.show()
+
+                mode_ret = self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE)
+
+                if mode_ret == None:
+                    progress.cancel()
+                    self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
+                    return False
+
+                if mode_ret == 0 or mode_ret == 2: # 0 = ok, 2 = no change
+                    flash_success = True
+                    break
+
                 if mode_ret == 1:
                     error_str = 'Invalid mode (Error 1)'
                 elif mode_ret == 3:
@@ -1599,74 +1628,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 # to overwrite it with zeros.
                 # This sometimes seems to be the case with fresh XMCs. This should not
                 # happen according to the specification in the datasheet...
-                if mode_ret != 5:
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
-                    return False
+                if mode_ret == 5:
+                    continue
 
-                if self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER) == None or \
-                   not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_BOOTLOADER):
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Device did not enter bootloader mode in 2.5 seconds (second try)')
-                    return False
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
+                return False
 
-                num_packets = len(plugin) // 64
-                index_list = list(range(num_packets))
-
-                progress.setLabelText('Writing plugin (second try): ' + name)
-                progress.setMaximum(len(index_list))
-                progress.setValue(0)
-                progress.show()
-
-                for position in index_list:
-                    start = position * 64
-                    end = (position + 1) * 64
-
-                    try:
-                        bricklet.set_write_firmware_pointer(start)
-                        bricklet.write_firmware(plugin[start:end])
-                    except:
-                        # retry block a second time to recover from Co-MCU bootloader
-                        # bug that results in lost request, especially when used in
-                        # combination with an Isolator Bricklet
-
-                        try:
-                            bricklet.set_write_firmware_pointer(start)
-                            bricklet.write_firmware(plugin[start:end])
-                        except Exception as e:
-                            progress.cancel()
-                            self.popup_fail('Bricklet', 'Could not write plugin (second try): {0}'.format(e))
-                            return False
-
-                    progress.setValue(position)
-
-                progress.setLabelText('Changing from bootloader mode to firmware mode (second try)')
-                progress.setMaximum(0)
-                progress.setValue(0)
-                progress.show()
-
-                mode_ret = self.set_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE)
-
-                if mode_ret == None:
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Device did not enter firmware mode in 2.5 seconds')
-                    return False
-
-                if mode_ret != 0 and mode_ret != 2: # 0 = ok, 2 = no change
-                    if mode_ret == 1:
-                        error_str = 'Invalid mode (Error 1, second try)'
-                    elif mode_ret == 3:
-                        error_str = 'Entry function not present (Error 3, second try)'
-                    elif mode_ret == 4:
-                        error_str = 'Device identifier incorrect (Error 4, second try)'
-                    elif mode_ret == 5:
-                        error_str = 'CRC Mismatch (Error 5, second try)'
-                    else: # unknown error case
-                        error_str = 'Error ' + str(mode_ret)
-
-                    progress.cancel()
-                    self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
-                    return False
+            if not flash_success: # CRC failed after all attempts
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Could not change from bootloader mode to firmware mode: ' + error_str)
+                return False
 
             if not self.wait_for_comcu_bootloader_mode(bricklet, bricklet.BOOTLOADER_MODE_FIRMWARE):
                 progress.cancel()
