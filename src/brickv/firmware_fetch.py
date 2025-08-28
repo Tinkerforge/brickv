@@ -55,6 +55,10 @@ def refresh_firmware_info(url_part, latest_version):
         name = name.replace('warp_', 'WARP_')
     elif name.startswith('warp2_'):
         name = name.replace('warp2_', 'WARP2_')
+    elif name.startswith('warp3_'):
+        name = name.replace('warp3_', 'WARP3_')
+    elif name.startswith('warp4_'):
+        name = name.replace('warp4_', 'WARP4_')
     elif name.startswith('esp32_'):
         name = name.replace('esp32_', 'ESP32_')
 
