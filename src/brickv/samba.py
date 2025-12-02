@@ -23,14 +23,16 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-import glob
 import struct
 import time
 import serial
 import serial.tools.list_ports
 import collections
 
-from brickv.bindings.ip_connection import base58encode
+try:
+    from brickv.bindings.ip_connection import base58encode
+except:
+    base58encode = None
 
 SerialPort = collections.namedtuple('SerialPort', 'path description opaque')
 
@@ -58,7 +60,12 @@ def get_serial_ports(vid=None, pid=None, opaque=None):
             parts = serial_number.split('_')
             product_name = ' '.join([x.capitalize() for x in parts[1:-2]]).replace('Esp32', 'ESP32')
             description += ' - ' + product_name
-            uid = base58encode(int(parts[-1]))
+
+            if base58encode != None:
+                uid = base58encode(int(parts[-1]))
+            else:
+                uid = parts[-1]
+
             description += ' [' + uid + ']'
         elif info.description != 'n/a' and info.description != info.name:
             if info.description == 'RED Brick - CDC Abstract Control Model (ACM)':
