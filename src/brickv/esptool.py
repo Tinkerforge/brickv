@@ -430,14 +430,13 @@ class ESPLoader(object):
             except UnsupportedCommandError:
                 raise FatalError("Unsupported Command Error received. Probably this means Secure Download Mode is enabled, "
                                  "autodetection will not work. Need to manually specify the chip.")
-        finally:
-            if inst is not None:
-                print(' %s' % inst.CHIP_NAME, end='')
-                if detect_port.sync_stub_detected:
-                    inst = inst.STUB_CLASS(inst)
-                    inst.sync_stub_detected = True
-                print('')  # end line
-                return inst
+        if inst is not None:
+            print(' %s' % inst.CHIP_NAME, end='')
+            if detect_port.sync_stub_detected:
+                inst = inst.STUB_CLASS(inst)
+                inst.sync_stub_detected = True
+            print('')  # end line
+            return inst
         raise FatalError("Unexpected CHIP magic value 0x%08x. Failed to autodetect chip type." % (chip_magic_value))
 
     """ Read a SLIP packet from the serial port """
