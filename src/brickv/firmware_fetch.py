@@ -221,8 +221,8 @@ def parse_versions_line(line, report_error_fn):
 def fetch_latest_fw_versions(report_error_fn):
     result = LatestFirmwares({}, {}, {}, {}, {}, {})
 
-    exception = None
     for i in range(3):
+        exception = None
         try:
             with urlopen(LATEST_VERSIONS_URL, timeout=10) as response:
                 latest_versions_data = response.read().decode('utf-8')
