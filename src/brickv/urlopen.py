@@ -21,20 +21,23 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
 import ssl
 import urllib.request
 
-from brickv.utils import get_resources_path
-
-# On Windows, Python ignores the intermediate certificate sent by the tinkerforge.com server.
-# To be able to verify the cert chain, we package the intermediate cert and load it here.
 def urlopen(*args, **kwargs):
     if 'context' in kwargs:
         raise ValueError("Don't pass an SSL context to this function, as it creates a custom one.")
 
-    cert_path = get_resources_path('CertChain.crt', warn_on_missing_file=True)
     context = ssl.create_default_context()
-    context.load_verify_locations(cert_path)
+
+    if sys.platform == 'darwin':
+        # On some Macs Python doesn't load any CA store by default
+        # Force it to load the system CA store
+        try:
+            context.load_verify_locations('/etc/ssl/cert.pem')
+        except FileNotFoundError:
+            pass
 
     return urllib.request.urlopen(*args, **kwargs, context=context)
 

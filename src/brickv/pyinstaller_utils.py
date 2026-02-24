@@ -206,7 +206,6 @@ class PyinstallerUtils:
         self.datas += self.collect_data(by_name('internal'))
         self.datas += self.collect_data(by_name('snapshot'))
         self.datas += self.collect_data(by_name('package_type'))
-        self.datas += self.collect_data(by_name('CertChain.crt'))
 
     def strip_binaries(self, binaries, patterns):
         return [x for x in binaries if all(pattern not in x[0].lower() for pattern in patterns)]
