@@ -684,3 +684,8 @@
 - Add "@ host:port" to window title if connected
 - Avoid crash when closing Brick Viewer
 - Add function code to Modbus master function selection in RS485 Bricklet plugin
+
+2026-02-25: 2.4.27 (<unknown>)
+- Add support for NFC Forum Type 5 to NFC Bricklet plugin
+- Make flashing of Co-MCU Bricklets more robust
+- Fix firmware download on macOS
