@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2024-11-04.      #
+# This file was automatically generated on 2026-02-25.      #
 #                                                           #
-# Python Bindings Version 2.1.31                            #
+# Python Bindings Version 2.1.32                            #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -99,6 +99,7 @@ class BrickletNFC(Device):
     TAG_TYPE_TYPE3 = 3
     TAG_TYPE_TYPE4 = 4
     TAG_TYPE_TYPE5 = 5
+    TAG_TYPE_PHONE = 6
     READER_STATE_INITIALIZATION = 0
     READER_STATE_IDLE = 128
     READER_STATE_ERROR = 192
