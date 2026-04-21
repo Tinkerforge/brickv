@@ -1282,12 +1282,22 @@
        </item>
        <item>
         <property name="text">
-         <string>On Close</string>
+         <string>Block On Close</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>On Open</string>
+         <string>Block On Open</string>
+        </property>
+       </item>
+        <item>
+        <property name="text">
+         <string>Limit to 4200W On Close</string>
+        </property>
+       </item>
+        <item>
+        <property name="text">
+         <string>Limit to 4200W On Open</string>
         </property>
        </item>
       </widget>
