@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2026-02-25.      #
+# This file was automatically generated on 2026-10-14.      #
 #                                                           #
 # Python Bindings Version 2.1.32                            #
 #                                                           #
@@ -58,6 +58,10 @@ class BrickletCO2V2(Device):
     FUNCTION_GET_HUMIDITY = 17
     FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION = 18
     FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION = 19
+    FUNCTION_SET_AUTOMATIC_SELF_CALIBRATION = 21
+    FUNCTION_GET_AUTOMATIC_SELF_CALIBRATION = 22
+    FUNCTION_SET_FORCED_RECALIBRATION = 23
+    FUNCTION_GET_FORCED_RECALIBRATION = 24
     FUNCTION_GET_SPITFP_ERROR_COUNT = 234
     FUNCTION_SET_BOOTLOADER_MODE = 235
     FUNCTION_GET_BOOTLOADER_MODE = 236
@@ -99,7 +103,7 @@ class BrickletCO2V2(Device):
         """
         Device.__init__(self, uid, ipcon, BrickletCO2V2.DEVICE_IDENTIFIER, BrickletCO2V2.DEVICE_DISPLAY_NAME)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletCO2V2.FUNCTION_GET_ALL_VALUES] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_SET_AIR_PRESSURE] = BrickletCO2V2.RESPONSE_EXPECTED_FALSE
@@ -117,6 +121,10 @@ class BrickletCO2V2(Device):
         self.response_expected[BrickletCO2V2.FUNCTION_GET_HUMIDITY] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_SET_HUMIDITY_CALLBACK_CONFIGURATION] = BrickletCO2V2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCO2V2.FUNCTION_SET_AUTOMATIC_SELF_CALIBRATION] = BrickletCO2V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCO2V2.FUNCTION_GET_AUTOMATIC_SELF_CALIBRATION] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCO2V2.FUNCTION_SET_FORCED_RECALIBRATION] = BrickletCO2V2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCO2V2.FUNCTION_GET_FORCED_RECALIBRATION] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_GET_SPITFP_ERROR_COUNT] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_SET_BOOTLOADER_MODE] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCO2V2.FUNCTION_GET_BOOTLOADER_MODE] = BrickletCO2V2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -431,6 +439,100 @@ class BrickletCO2V2(Device):
         self.check_validity()
 
         return GetHumidityCallbackConfiguration(*self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_HUMIDITY_CALLBACK_CONFIGURATION, (), '', 18, 'I ! c H H'))
+
+    def set_automatic_self_calibration(self, enabled):
+        r"""
+        Enables/disables the automatic self-calibration (ASC) of the CO2 sensor.
+
+        If ASC is enabled the sensor continuously recalibrates itself. For this to work
+        the sensor has to be exposed to fresh air for at least one hour every day. The first
+        time ASC is enabled, the sensor needs at least 7 days of uninterrupted operation to
+        find its initial calibration parameters.
+
+        If the Bricklet is used in an environment where it does not regularly see fresh
+        air (for example in a living room or bedroom), ASC can result in wrong
+        CO2 concentration measurements over time. In this case we recommend to disable ASC
+        and to recalibrate the sensor with :func:`Set Forced Recalibration` instead.
+
+        Disabling ASC does not discard the calibration that was found so far. It stays in
+        use until it is replaced by :func:`Set Forced Recalibration` or by a new
+        calibration found by ASC.
+
+        The setting is saved in flash and applied again after a power loss.
+
+        By default ASC is enabled. Before firmware version 2.0.4 ASC was always enabled
+        and could not be disabled.
+
+        .. versionadded:: 2.0.4$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        enabled = bool(enabled)
+
+        self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_SET_AUTOMATIC_SELF_CALIBRATION, (enabled,), '!', 0, '')
+
+    def get_automatic_self_calibration(self):
+        r"""
+        Returns the automatic self-calibration configuration as set by
+        :func:`Set Automatic Self Calibration`.
+
+        .. versionadded:: 2.0.4$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_AUTOMATIC_SELF_CALIBRATION, (), '', 9, '!')
+
+    def set_forced_recalibration(self, co2_concentration):
+        r"""
+        Recalibrates the CO2 sensor with a known reference CO2 concentration
+        (forced recalibration, FRC).
+
+        For best results, operate the Bricklet in a stable environment with a known
+        CO2 concentration close to the sensor, for example next to a calibrated
+        reference instrument.
+
+        The sensor has to measure continuously for at least two minutes before the
+        recalibration is applied. If this function is called within the first two
+        minutes after the Bricklet was started, the recalibration is applied automatically
+        as soon as the two minutes have passed.
+
+        The recalibration is saved permanently in the sensor and stays in use after a
+        power loss.
+
+        A forced recalibration replaces the calibration found by the automatic
+        self-calibration (ASC) and vice versa. If you want to use forced recalibration,
+        we recommend to disable ASC with :func:`Set Automatic Self Calibration` first.
+        Otherwise the recalibration may later be overwritten by ASC.
+
+        The reference CO2 concentration of the most recent recalibration can be read
+        back with :func:`Get Forced Recalibration`.
+
+        .. versionadded:: 2.0.4$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        co2_concentration = int(co2_concentration)
+
+        self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_SET_FORCED_RECALIBRATION, (co2_concentration,), 'H', 0, '')
+
+    def get_forced_recalibration(self):
+        r"""
+        Returns the reference CO2 concentration of the most recent forced recalibration
+        as reported by the CO2 sensor.
+
+        The value is updated as soon as the recalibration set by
+        :func:`Set Forced Recalibration` has been applied (see the two minute
+        waiting period described there).
+
+        The sensor only keeps this value in volatile memory. After a power loss
+        400 ppm (the default reference value of the sensor) is returned, even though
+        the recalibration itself is saved permanently in the sensor and stays in use.
+
+        .. versionadded:: 2.0.4$nbsp;(Plugin)
+        """
+        self.check_validity()
+
+        return self.ipcon.send_request(self, BrickletCO2V2.FUNCTION_GET_FORCED_RECALIBRATION, (), '', 10, 'H')
 
     def get_spitfp_error_count(self):
         r"""
